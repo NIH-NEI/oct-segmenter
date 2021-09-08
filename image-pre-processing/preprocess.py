@@ -45,6 +45,26 @@ def create_linestrip(y_annotation, label, image_height):
 
     return shape
 
+def create_polygon(boundary, extra_points, label, image_height):
+    shape = {}
+    shape["label"] = label
+
+    points = []
+
+    for x, y in zip(range(0, 200, 10), boundary):
+        point = [x, image_height - y]
+        points.append(point)
+
+    points.extend(extra_points)
+
+    shape["points"] = points
+
+    shape["group_id"] = None
+    shape["shape_type"] = "polygon"
+    shape["flags"] = {}
+
+    return shape
+
 def create_labelme_file(img, annotations, in_file_name, out_file_name):
     file = {}
     file['imageData'] = str(utils.img_data_to_img_b64(utils.pil_to_data(img)), "utf-8")
@@ -54,8 +74,25 @@ def create_labelme_file(img, annotations, in_file_name, out_file_name):
 
     shapes = []
 
-    for i, annotation in enumerate(annotations):
-        shapes.append(create_linestrip(annotation, f"boundary_{i}", img.height))
+    # Bottom polygom
+    extra_points = [[img.width, img.height], [0, img.height]]
+    shapes.append(create_polygon(annotations[0], extra_points, "polygon_0", img.height))
+
+    # Second polygon
+    y_coordinates = [img.height - x for x in annotations[0]]
+    extra_points = [(x, y) for x, y in zip(range(0, 200, 10), y_coordinates)]
+    extra_points.reverse()
+    shapes.append(create_polygon(annotations[1], extra_points, "polygon_1", img.height))
+
+    # Third polygon
+    y_coordinates = [img.height - x for x in annotations[1]]
+    extra_points = [(x, y) for x, y in zip(range(0, 200, 10), y_coordinates)]
+    extra_points.reverse()
+    shapes.append(create_polygon(annotations[2], extra_points, "polygon_2", img.height))
+
+    # Upper polygon
+    extra_points = [[img.width, 0], [0, 0]]
+    shapes.append(create_polygon(annotations[2], extra_points, "polygon_3", img.height))
 
     file["shapes"] = shapes
     file["imageHeight"] = img.height
