@@ -38,3 +38,8 @@ def img_data_to_png_data(img_data):
             f.seek(0)
             return img, f.read()
 
+def pil_to_data(img):
+    with io.BytesIO() as f:
+        img.save(f, "PNG")
+        f.seek(0)
+        return f.read()
