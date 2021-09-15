@@ -1,6 +1,7 @@
 import json
 import utils
 import subprocess
+import sys
 
 from pathlib import Path
 
@@ -102,7 +103,7 @@ def create_labelme_file(img, annotations, in_file_name, out_file_name):
     with open(out_file_name, 'w') as outfile:
         json.dump(file, outfile)
 
-def process_image(image_path):
+def process_image(image_path, output_dir):
     im = open(image_path, "rb")
 
     csv_path = image_path.parent / Path(image_path.stem + ".csv")
@@ -145,8 +146,12 @@ def process_image(image_path):
     img_right = img.crop((x_right_start, 0, x_right_end, img.height))
     create_labelme_file(img_right, annotations[3:], image_path, img_right_path)
 
-    subprocess.run(["labelme_json_to_dataset", "example-input/001_right.json"])
+    subprocess.run(["labelme_json_to_dataset", img_right_path, "-o", output_dir])
 
 if __name__ == "__main__":
-    image_path = Path("example-input/001.tiff")
-    process_image(image_path)
+    if len(sys.argv) != 3:
+        print("Usage: python preprocess.py <path/to/tiff> <path/to/ouptut/dir>")
+        exit(1)
+
+    image_path = Path(sys.argv[1])
+    process_image(image_path, sys.argv[2])
