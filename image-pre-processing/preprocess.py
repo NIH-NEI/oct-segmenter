@@ -1,6 +1,10 @@
 import json
+import numpy as np
+import os
+import PIL.Image
 import utils
 import subprocess
+import shutil
 import sys
 
 from pathlib import Path
@@ -103,7 +107,28 @@ def create_labelme_file(img, annotations, in_file_name, out_file_name):
     with open(out_file_name, 'w') as outfile:
         json.dump(file, outfile)
 
+def create_label_image(img_path, output_dir):
+    tmp_output_dir = output_dir + "/tmp"
+    if os.path.isdir(tmp_output_dir):
+        shutil.rmtree(tmp_output_dir)
+    os.mkdir(tmp_output_dir)
+
+    subprocess.run(["labelme_json_to_dataset", img_path, "-o", tmp_output_dir])
+
+    label_img = PIL.Image.open(tmp_output_dir + "/label.png")
+    # labelme creates the segmentation map (label.png) using [1, 2, 3, 4, ...] and we want [0, 1, 2, 3, ...]
+    label_img = label_img.point(lambda i : i-1)
+    lbl = np.asarray(label_img)
+    new_label_img = PIL.Image.fromarray(lbl, mode='P')
+    new_label_img.putpalette(label_img.getpalette())
+    new_label_img.save(output_dir + img_path.stem + "_label.png")
+    shutil.rmtree(tmp_output_dir)
+
+
 def process_image(image_path, output_dir):
+
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
     im = open(image_path, "rb")
 
     csv_path = image_path.parent / Path(image_path.stem + ".csv")
@@ -138,15 +163,17 @@ def process_image(image_path, output_dir):
     img, _ = utils.img_data_to_png_data(im.read())
     img = img.point(lambda i : i*(1./256)).convert("L")
 
-    img_left_path = image_path.parent / Path(image_path.stem + "_left.json")
+    img_left_path = Path(output_dir + image_path.stem + "_left.json")
     img_left = img.crop((x_left_start, 0, x_left_end, img.height))
     create_labelme_file(img_left, annotations[:3], image_path, img_left_path)
     
-    img_right_path = image_path.parent / Path(image_path.stem + "_right.json")
+    img_right_path = Path(output_dir + image_path.stem + "_right.json")
     img_right = img.crop((x_right_start, 0, x_right_end, img.height))
     create_labelme_file(img_right, annotations[3:], image_path, img_right_path)
 
-    subprocess.run(["labelme_json_to_dataset", img_right_path, "-o", output_dir])
+    create_label_image(img_left_path, output_dir)
+    create_label_image(img_right_path, output_dir)
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
