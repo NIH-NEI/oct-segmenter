@@ -73,7 +73,8 @@ def create_polygon(boundary, extra_points, label, image_height):
 
 def create_labelme_file(img, annotations, in_file_name, out_file_name):
     file = {}
-    file['imageData'] = str(utils.img_data_to_img_b64(utils.pil_to_data(img)), "utf-8")
+    img_data = utils.pil_to_data(img)
+    file['imageData'] = str(utils.img_data_to_img_b64(img_data), "utf-8")
     file["imagePath"] = str(in_file_name)
     file["version"] = "4.5.9"
     file["flags"] = {}
@@ -107,11 +108,11 @@ def create_labelme_file(img, annotations, in_file_name, out_file_name):
     with open(out_file_name, 'w') as outfile:
         json.dump(file, outfile)
 
-def create_label_image(img_path, output_dir):
+
+def create_label_image(img_path, output_dir, save_file=True):
     tmp_output_dir = output_dir + "/tmp"
-    if os.path.isdir(tmp_output_dir):
-        shutil.rmtree(tmp_output_dir)
-    os.mkdir(tmp_output_dir)
+    if not os.path.isdir(tmp_output_dir):
+        os.mkdir(tmp_output_dir)
 
     subprocess.run(["labelme_json_to_dataset", img_path, "-o", tmp_output_dir])
 
@@ -119,16 +120,19 @@ def create_label_image(img_path, output_dir):
     # labelme creates the segmentation map (label.png) using [1, 2, 3, 4, ...] and we want [0, 1, 2, 3, ...]
     label_img = label_img.point(lambda i : i-1)
     lbl = np.asarray(label_img)
-    new_label_img = PIL.Image.fromarray(lbl, mode='P')
-    new_label_img.putpalette(label_img.getpalette())
-    new_label_img.save(output_dir + img_path.stem + "_label.png")
+    if save_file:
+        new_label_img = PIL.Image.fromarray(lbl, mode='P')
+        new_label_img.putpalette(label_img.getpalette())
+        new_label_img.save(output_dir + img_path.stem + "_label.png")
+
     shutil.rmtree(tmp_output_dir)
 
+    return lbl
 
-def process_image(image_path, output_dir):
-
+def process_image(image_path, output_dir, save_file=True):
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
+
     im = open(image_path, "rb")
 
     csv_path = image_path.parent / Path(image_path.stem + ".csv")
@@ -161,19 +165,35 @@ def process_image(image_path, output_dir):
 
     '''
     img, _ = utils.img_data_to_png_data(im.read())
+    # Save original pixel depth for return purposes
+    ret_img_left = utils.img_data_to_arr(utils.pil_to_data(img.crop((x_left_start, 0, x_left_end, img.height))))
+    ret_img_right = utils.img_data_to_arr(utils.pil_to_data(img.crop((x_right_start, 0, x_right_end, img.height))))
+
     img = img.point(lambda i : i*(1./256)).convert("L")
 
-    img_left_path = Path(output_dir + image_path.stem + "_left.json")
+    if save_file:
+        write_dir = output_dir
+        img_left_path = Path(write_dir + image_path.stem + "_left.json")
+        img_right_path = Path(write_dir + image_path.stem + "_right.json")
+    else: # If false we still save in a tmp location for use of `labelme_json_to_dataset` process
+        write_dir = output_dir + "/tmp/"
+        if not os.path.isdir(write_dir):
+            os.mkdir(write_dir)
+        img_left_path = Path(write_dir + image_path.stem + "_left.json")
+        img_right_path = Path(write_dir + image_path.stem + "_right.json")
+
     img_left = img.crop((x_left_start, 0, x_left_end, img.height))
     create_labelme_file(img_left, annotations[:3], image_path, img_left_path)
-    
-    img_right_path = Path(output_dir + image_path.stem + "_right.json")
+    label_img_left = create_label_image(img_left_path, write_dir, save_file)
+
     img_right = img.crop((x_right_start, 0, x_right_end, img.height))
     create_labelme_file(img_right, annotations[3:], image_path, img_right_path)
+    label_img_right = create_label_image(img_right_path, write_dir, save_file)
 
-    create_label_image(img_left_path, output_dir)
-    create_label_image(img_right_path, output_dir)
+    if not save_file:
+        shutil.rmtree(write_dir)
 
+    return str(image_path).encode("ascii"), ret_img_left, label_img_left, str(image_path).encode("ascii"), ret_img_right, label_img_right
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
