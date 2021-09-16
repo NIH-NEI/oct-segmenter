@@ -193,6 +193,10 @@ def process_image(image_path, output_dir, save_file=True):
     if not save_file:
         shutil.rmtree(write_dir)
 
+    ret_img_left = ret_img_left[..., np.newaxis]
+    ret_img_right = ret_img_right[..., np.newaxis]
+    label_img_left = label_img_left[..., np.newaxis]
+    label_img_right = label_img_right[..., np.newaxis]
     return str(image_path).encode("ascii"), ret_img_left, label_img_left, str(image_path).encode("ascii"), ret_img_right, label_img_right
 
 if __name__ == "__main__":
