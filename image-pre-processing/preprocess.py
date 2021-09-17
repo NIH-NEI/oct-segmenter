@@ -12,44 +12,39 @@ from pathlib import Path
 '''
 The images and labels recieved from the NEI are labeled in the following manner:
 - Each image has a correspoing CSV file. The CSV file contain six rows where:
+    - The CSV values are 1-index based since they are generated from MATLAB
     - Each row represents a boundary; they contain 20 columns.
-    - The first three rows represent the y-coordinate of the boundaries for x = [50, 60, ..., 230, 240]
-    - The last three rows represent the y-coordinate of the boundaries for x = [750, 760, ..., 930, 940]
+    - The first three rows represent the y-coordinate of the boundaries for x-intervals = [50-59, 60-69, ..., 230-239, 240-249] (0-index), [1-10, 51-60, ..., 241-250] (1-index)
+    - The last three rows represent the y-coordinate of the boundaries for x-intervals = [750-759, 760-769, ..., 930-939, 940-949] (0-index), [751-760, 761-770, ..., 941-950]
+    - The script uses the ceiling of the middle point for the x, y coordinates of the labels. i.e [54, 64, ..., 244] (0-index), [55, 65, ..., 245] (1-index)
 
-- The following script crops the original image and generates two images (left and right):
-    - The left image goes from x = [50, 240]
-    - The right image goes from x = [750, 940]
+- Given the U-net architecture of the Kugelman paper which has X pooling layers, we need the dimensions of the image to be multiple
+  of 16. The closest 16-multiple for the width is 192.
 
-- Then the boundaries are added as polygons.
+- The following script crops the original image and generates two images (left and right): (the resulting width is 192)
+    - The left image goes from x = [53, 245) (0-index), [54, 246) (1-index)
+    - The right image goes from x = [753, 945)
+
+- Then the boundaries are added as polygons. Notes:
+   - The labeled points coming from the CSV are added at the center of the x-interval (i.e. 54, 64, ..., 754, 764, ...) which in the
+   cropped images translate to (1, 11, 21, ..., 191)
+   - An additional point is added at coordinate (x, y) = (0, boundary[0]) to make the side of the polygon parallel to the vertical
+   side of the image.
+
+- For the y-coordinate, the Ys given on the CSV file are starting from bottom:
+    y_for_array = img.height - 1 - (y_csv - 1)   # The `-1` is because the CSV is 1-index.
+    y_for_array = img.height - y_csv
 
 - Finally the image is converted into a segmentation map: A 2D-matrix where each element represents the class
 the pixel belongs to.
 '''
 
-x_left_start = 50
-x_left_end = 240
+x_left_start = 53
+x_left_end = 245
 
-x_right_start = 750
-x_right_end = 940
+x_right_start = 753
+x_right_end = 945
 
-
-def create_linestrip(y_annotation, label, image_height):
-    shape = {}
-    shape["label"] = label
-
-    points = []
-
-    for x, y in zip(range(0, 200, 10), y_annotation):
-        point = [x, image_height - y]
-        points.append(point)
-
-    shape["points"] = points
-
-    shape["group_id"] = None
-    shape["shape_type"] = "linestrip"
-    shape["flags"] = {}
-
-    return shape
 
 def create_polygon(boundary, extra_points, label, image_height):
     shape = {}
@@ -57,7 +52,10 @@ def create_polygon(boundary, extra_points, label, image_height):
 
     points = []
 
-    for x, y in zip(range(0, 200, 10), boundary):
+    # Add left side-edge point
+    points.append([0, image_height - boundary[0]])
+
+    for x, y in zip(range(1, 192, 10), boundary):
         point = [x, image_height - y]
         points.append(point)
 
@@ -82,23 +80,25 @@ def create_labelme_file(img, annotations, in_file_name, out_file_name):
     shapes = []
 
     # Bottom polygom
-    extra_points = [[img.width, img.height], [0, img.height]]
+    extra_points = [[img.width-1, img.height-1], [0, img.height-1]]
     shapes.append(create_polygon(annotations[0], extra_points, "polygon_0", img.height))
 
     # Second polygon
     y_coordinates = [img.height - x for x in annotations[0]]
-    extra_points = [(x, y) for x, y in zip(range(0, 200, 10), y_coordinates)]
+    extra_points = [(0, y_coordinates[0])]
+    extra_points.extend([(x, y) for x, y in zip(range(1, 192, 10), y_coordinates)])
     extra_points.reverse()
     shapes.append(create_polygon(annotations[1], extra_points, "polygon_1", img.height))
 
     # Third polygon
     y_coordinates = [img.height - x for x in annotations[1]]
-    extra_points = [(x, y) for x, y in zip(range(0, 200, 10), y_coordinates)]
+    extra_points = [(0, y_coordinates[0])]
+    extra_points.extend([(x, y) for x, y in zip(range(1, 192, 10), y_coordinates)])
     extra_points.reverse()
     shapes.append(create_polygon(annotations[2], extra_points, "polygon_2", img.height))
 
     # Upper polygon
-    extra_points = [[img.width, 0], [0, 0]]
+    extra_points = [[img.width - 1, 0], [0, 0]]
     shapes.append(create_polygon(annotations[2], extra_points, "polygon_3", img.height))
 
     file["shapes"] = shapes
@@ -110,7 +110,7 @@ def create_labelme_file(img, annotations, in_file_name, out_file_name):
 
 
 def create_label_image(img_path, output_dir, save_file=True):
-    tmp_output_dir = output_dir + "/tmp"
+    tmp_output_dir = output_dir + "/tmp/"
     if not os.path.isdir(tmp_output_dir):
         os.mkdir(tmp_output_dir)
 
@@ -123,7 +123,7 @@ def create_label_image(img_path, output_dir, save_file=True):
     if save_file:
         new_label_img = PIL.Image.fromarray(lbl, mode='P')
         new_label_img.putpalette(label_img.getpalette())
-        new_label_img.save(output_dir + img_path.stem + "_label.png")
+        new_label_img.save(output_dir + "/" + img_path.stem + "_label.png")
 
     shutil.rmtree(tmp_output_dir)
 
@@ -173,8 +173,8 @@ def process_image(image_path, output_dir, save_file=True):
 
     if save_file:
         write_dir = output_dir
-        img_left_path = Path(write_dir + image_path.stem + "_left.json")
-        img_right_path = Path(write_dir + image_path.stem + "_right.json")
+        img_left_path = Path(write_dir + "/" + image_path.stem + "_left.json")
+        img_right_path = Path(write_dir + "/" + image_path.stem + "_right.json")
     else: # If false we still save in a tmp location for use of `labelme_json_to_dataset` process
         write_dir = output_dir + "/tmp/"
         if not os.path.isdir(write_dir):

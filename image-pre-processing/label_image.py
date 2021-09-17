@@ -1,6 +1,9 @@
 import json
 import utils
-
+'''
+    This script shall be used for visualization purposes only. It is not completely accuate in terms on
+    0-index vs. 1-index.
+'''
 x_left = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240]
 x_right = [750, 760, 770, 780, 790, 800, 810, 820, 830, 840, 850, 860, 870, 880, 890, 900, 910, 920, 930, 940]
 

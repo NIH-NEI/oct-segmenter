@@ -12,7 +12,7 @@ def process_directory(input_dir, output_dir, save_file=False):
 
     for subdir, dirs, files in os.walk(input_dir):
         for file in files:
-            if file.endswith(".tiff"):
+            if file.endswith(".tiff") or file.endswith(".TIFF"):
                 image_file = Path(os.path.join(subdir, file))
                 print(f"Processing file: {image_file}")
                 img_name_left, img_array_left, seg_map_left, img_name_right, img_array_right, seg_map_right = preprocess.process_image(image_file, output_dir, save_file)
