@@ -43,3 +43,7 @@ def pil_to_data(img):
         img.save(f, "PNG")
         f.seek(0)
         return f.read()
+
+def pil_to_array(img_pil):
+    img_arr = np.array(img_pil)
+    return img_arr

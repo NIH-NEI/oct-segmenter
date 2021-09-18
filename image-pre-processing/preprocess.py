@@ -119,21 +119,16 @@ def create_label_image(img_path, output_dir, save_file=True):
     label_img = PIL.Image.open(tmp_output_dir + "/label.png")
     # labelme creates the segmentation map (label.png) using [1, 2, 3, 4, ...] and we want [0, 1, 2, 3, ...]
     label_img = label_img.point(lambda i : i-1)
-    lbl = np.asarray(label_img)
     if save_file:
-        new_label_img = PIL.Image.fromarray(lbl, mode='P')
-        new_label_img.putpalette(label_img.getpalette())
-        new_label_img.save(output_dir + "/" + img_path.stem + "_label.png")
+        label_img.save(output_dir + "/" + img_path.stem + "_label.png")
 
     shutil.rmtree(tmp_output_dir)
 
-    return lbl
+    return np.asarray(label_img)
 
 def process_image(image_path, output_dir, save_file=True):
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
-
-    im = open(image_path, "rb")
 
     csv_path = image_path.parent / Path(image_path.stem + ".csv")
 
@@ -164,23 +159,25 @@ def process_image(image_path, output_dir, save_file=True):
     https://stackoverflow.com/questions/43978819/convert-tiff-i16-to-jpg-with-pil-pillow
 
     '''
-    img, _ = utils.img_data_to_png_data(im.read())
-    # Save original pixel depth for return purposes
-    ret_img_left = utils.img_data_to_arr(utils.pil_to_data(img.crop((x_left_start, 0, x_left_end, img.height))))
-    ret_img_right = utils.img_data_to_arr(utils.pil_to_data(img.crop((x_right_start, 0, x_right_end, img.height))))
+    img = PIL.Image.open(image_path, "r")
 
-    img = img.point(lambda i : i*(1./256)).convert("L")
+    if img.mode == "RGBA":
+        img = img.convert("L")
+    elif img.mode == "I;16":
+        img = img.point(lambda i : i*(1./256)).convert("L")
+    else:
+        print(f"Unexpected mode: {img.mode}")
+        exit(1)
 
     if save_file:
         write_dir = output_dir
-        img_left_path = Path(write_dir + "/" + image_path.stem + "_left.json")
-        img_right_path = Path(write_dir + "/" + image_path.stem + "_right.json")
     else: # If false we still save in a tmp location for use of `labelme_json_to_dataset` process
         write_dir = output_dir + "/tmp/"
         if not os.path.isdir(write_dir):
             os.mkdir(write_dir)
-        img_left_path = Path(write_dir + image_path.stem + "_left.json")
-        img_right_path = Path(write_dir + image_path.stem + "_right.json")
+
+    img_left_path = Path(write_dir + "/" + image_path.stem + "_left.json")
+    img_right_path = Path(write_dir + "/" + image_path.stem + "_right.json")
 
     img_left = img.crop((x_left_start, 0, x_left_end, img.height))
     create_labelme_file(img_left, annotations[:3], image_path, img_left_path)
@@ -193,11 +190,14 @@ def process_image(image_path, output_dir, save_file=True):
     if not save_file:
         shutil.rmtree(write_dir)
 
-    ret_img_left = ret_img_left[..., np.newaxis]
-    ret_img_right = ret_img_right[..., np.newaxis]
+    img_left = utils.pil_to_array(img_left)
+    img_left = img_left[..., np.newaxis]
+    img_right = utils.pil_to_array(img_right)
+    img_right = img_right[..., np.newaxis]
     label_img_left = label_img_left[..., np.newaxis]
     label_img_right = label_img_right[..., np.newaxis]
-    return str(image_path).encode("ascii"), ret_img_left, label_img_left, str(image_path).encode("ascii"), ret_img_right, label_img_right
+
+    return str(image_path).encode("ascii"), img_left, label_img_left, str(image_path).encode("ascii"), img_right, label_img_right
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
