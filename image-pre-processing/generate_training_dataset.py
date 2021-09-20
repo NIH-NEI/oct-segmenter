@@ -14,7 +14,6 @@ dataset_name_3 = "val_images"
 dataset_name_4 = "val_labels"
 
 def generate_datasets(train_input_dir, validation_input_dir, output_file):
-
     generator.generate_hdf5_file(train_input_dir, training_hdf5_file)
     generator.generate_hdf5_file(validation_input_dir, validation_hdf5_file)
 
