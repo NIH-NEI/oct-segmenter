@@ -21,12 +21,15 @@ def process_directory(input_dir, output_dir, save_file=False):
                 labeled_file_data.extend([seg_map_left, seg_map_right])
     return img_file_names, img_file_data, labeled_file_data
 
-def generate_hdf5_file(input_dir, file_name, output_dir):
-    if not os.path.isdir(output_dir):
-        os.mkdir(output_dir)
-    file_path = Path(output_dir + "/" + file_name + ".hdf5")
+def generate_hdf5_file(input_dir, file_name):
+
+    file_path = Path(file_name)
+
+    if not os.path.isdir(file_path.parent):
+        os.mkdir(file_path.parent)
+
     hf = h5py.File(file_path, "w")
-    img_file_names, img_file_data, labeled_file_data = process_directory(input_dir, output_dir, save_file=False)
+    img_file_names, img_file_data, labeled_file_data = process_directory(input_dir, str(file_path.parent), save_file=False)
     hf.create_dataset("xhat", data=img_file_data)
     hf.create_dataset("yhat", data=labeled_file_data)
     hf.create_dataset("image_source", data=img_file_names)
@@ -34,11 +37,10 @@ def generate_hdf5_file(input_dir, file_name, output_dir):
 
 if __name__ == '__main__':
 
-    if len(sys.argv) != 4:
-        print("Usage: python generate_dataset.py </path/to/input/dir> <HDF5 file name> </path/to/output/dir>")
+    if len(sys.argv) != 3:
+        print("Usage: python generate_dataset.py </path/to/input/dir> </path/to/output/hdf5/file>")
         exit(1)
 
     input_dir = sys.argv[1]
     hdf5_file_name = sys.argv[2]
-    file_ouptput_dir = sys.argv[3]
-    generate_hdf5_file(input_dir, hdf5_file_name, file_ouptput_dir)
+    generate_hdf5_file(input_dir, hdf5_file_name)
