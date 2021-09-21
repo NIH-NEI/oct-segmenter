@@ -45,6 +45,21 @@ x_left_end = 245
 x_right_start = 753
 x_right_end = 945
 
+'''
+    Convention used by code in model: Considering the image in a
+    top to bottom fashion, the areas do not include the pixel of the
+    boundary of which it ends; in other words, boundaries belong to
+    the first pixel of the "next region". For example: If the first
+    boundary is an array of 2's the top region will be height 2 (0th
+    and 1st row)
+'''
+def generate_boundary(img_array):
+    boundaries = []
+    num_classes = np.amax(img_array)
+
+    for i in range(1, num_classes + 1):
+        boundaries.append([x for x in np.argmax(img_array == i, axis=0)])
+    return boundaries
 
 def create_polygon(boundary, extra_points, label, image_height):
     shape = {}
@@ -119,6 +134,8 @@ def create_label_image(img_path, output_dir, save_file=True):
     label_img = PIL.Image.open(tmp_output_dir + "/label.png")
     # labelme creates the segmentation map (label.png) using [1, 2, 3, 4, ...] and we want [0, 1, 2, 3, ...]
     label_img = label_img.point(lambda i : i-1)
+    num_classes = label_img.getextrema()[1] # Get max value
+    label_img = label_img.point(lambda x: num_classes - x) # labelme labels 0 -> num_classes from bottom to top. Model uses the reverse convention
     if save_file:
         label_img.save(output_dir + "/" + img_path.stem + "_label.png")
 
@@ -182,22 +199,32 @@ def process_image(image_path, output_dir, save_file=True):
     img_left = img.crop((x_left_start, 0, x_left_end, img.height))
     create_labelme_file(img_left, annotations[:3], image_path, img_left_path)
     label_img_left = create_label_image(img_left_path, write_dir, save_file)
+    segs_left = generate_boundary(label_img_left)
 
     img_right = img.crop((x_right_start, 0, x_right_end, img.height))
     create_labelme_file(img_right, annotations[3:], image_path, img_right_path)
     label_img_right = create_label_image(img_right_path, write_dir, save_file)
+    segs_right = generate_boundary(label_img_right)
 
     if not save_file:
         shutil.rmtree(write_dir)
 
-    img_left = utils.pil_to_array(img_left)
+    '''
+    The images need to be transposed because the `model` expects
+    and array of shape (image_width, image_height) and recall that
+    in an array (rows x columns) the rows are the height and columns
+    are the width.
+    '''
+    img_left = np.transpose(utils.pil_to_array(img_left))
     img_left = img_left[..., np.newaxis]
-    img_right = utils.pil_to_array(img_right)
+    img_right = np.transpose(utils.pil_to_array(img_right))
     img_right = img_right[..., np.newaxis]
+    label_img_left = np.transpose(label_img_left)
     label_img_left = label_img_left[..., np.newaxis]
+    label_img_right = np.transpose(label_img_right)
     label_img_right = label_img_right[..., np.newaxis]
 
-    return str(image_path).encode("ascii"), img_left, label_img_left, str(image_path).encode("ascii"), img_right, label_img_right
+    return str(image_path).encode("ascii"), img_left, label_img_left, segs_left, str(image_path).encode("ascii"), img_right, label_img_right, segs_right
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

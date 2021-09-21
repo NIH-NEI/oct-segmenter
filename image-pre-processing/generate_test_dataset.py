@@ -6,8 +6,6 @@ import sys
 from pathlib import Path
 
 test_hdf5_file = "/tmp/testing_dataset.hdf5"
-dataset_name_1 = "test_images"
-dataset_name_2 = "test_labels"
 
 def generate_test_dataset(test_input_dir, output_file):
     generator.generate_hdf5_file(test_input_dir, test_hdf5_file)
@@ -20,9 +18,10 @@ def generate_test_dataset(test_input_dir, output_file):
     output_hf = h5py.File(output_file_path, "w")
     input_hf = h5py.File(test_hdf5_file, "r")
 
-    output_hf.create_dataset(dataset_name_1, data=input_hf["xhat"])
-    output_hf.create_dataset(dataset_name_2, data=input_hf["yhat"])
-    output_hf.create_dataset(dataset_name_1 + "_source", data=input_hf["image_source"])
+    output_hf.create_dataset("test_images", data=input_hf["xhat"])
+    output_hf.create_dataset("test_labels", data=input_hf["yhat"])
+    output_hf.create_dataset("test_images_source", data=input_hf["image_source"])
+    output_hf.create_dataset("test_segs", data=input_hf["segs"])
     output_hf.close()
 
     os.remove(test_hdf5_file)
