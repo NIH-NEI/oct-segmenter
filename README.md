@@ -57,6 +57,15 @@ For example:
 
 `python3 generate_test_dataset.py ../images/testing/ example-output/test_dataset.hdf5`
 
+## Post-processing
+
+The script `merge_images.py` merges the original image withe the segmentation plots from the model evaluation/prediction. Usage:
+
+`python3 merge_image.py <path/to/original/image> <path/to/left/segment/plot> <path/to/right/segment/plot> <path/to/output_file>`
+
+For example:
+
+`python3 merge_image.py ../images/testing/2019.10.23/508_OD_R_1_0_0000097_RegAvg/001.tiff ../../ML-Image-Segmentation/results/2021-09-21_21_26_25_U-net_mice_oct/no\ aug_testing_dataset.hdf5/image_6/seg_plot.png ../../ML-Image-Segmentation/results/2021-09-21_21_26_25_U-net_mice_oct/no\ aug_testing_dataset.hdf5/image_7/seg_plot.png mice4.png`
 
 # Environment Dependencies
 
