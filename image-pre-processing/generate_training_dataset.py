@@ -39,7 +39,8 @@ def generate_datasets(train_input_dir, validation_input_dir, output_file):
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
-        print("Usage: python generate_training_dataset.py <path/to/training/input/dir> <path/to/validation/input/dir> <output_file_name>")
+        print("Usage: python3 generate_training_dataset.py <path/to/training/input/dir> <path/to/validation/input/dir> <output_file_name>")
+        exit(1)
 
     train_input_dir = sys.argv[1]
     validation_input_dir = sys.argv[2]

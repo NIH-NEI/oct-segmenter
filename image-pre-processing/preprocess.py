@@ -59,7 +59,7 @@ def generate_boundary(img_array):
 
     for i in range(1, num_classes + 1):
         boundaries.append([x for x in np.argmax(img_array == i, axis=0)])
-    return boundaries
+    return np.array(boundaries)
 
 def create_polygon(boundary, extra_points, label, image_height):
     shape = {}
