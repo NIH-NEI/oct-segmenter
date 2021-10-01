@@ -1,9 +1,11 @@
-import h5py
 import os
-import preprocess
 import sys
 
+import h5py
 from pathlib import Path
+
+from oct_segmenter.preprocessing import preprocess
+
 
 def process_directory(input_dir, output_dir, save_file=False):
     img_file_names = []

@@ -1,11 +1,13 @@
-import generate_dataset as generator
-import h5py
 import os
 import sys
 
+import h5py
 from pathlib import Path
 
+from oct_segmenter.preprocessing import generate_dataset as generator
+
 test_hdf5_file = "/tmp/testing_dataset.hdf5"
+
 
 def generate_test_dataset(test_input_dir, output_file):
     generator.generate_hdf5_file(test_input_dir, test_hdf5_file)

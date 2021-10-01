@@ -1,11 +1,12 @@
-import json
-import numpy as np
 import os
-import PIL.Image
-import utils
 import sys
 
+import json
+import numpy as np
 from pathlib import Path
+import PIL.Image
+
+from oct_segmenter.preprocessing import utils
 
 '''
 The images and labels recieved from the NEI are labeled in the following manner:
@@ -173,7 +174,7 @@ def create_label_image(labelme_img_json, output_name, save_file=True):
     return label_arr
 
 
-def process_image(image_path, output_dir, save_file=True):
+def generate_image_label(image_path, output_dir, save_file=True):
     if save_file and not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
@@ -247,10 +248,45 @@ def process_image(image_path, output_dir, save_file=True):
     return str(image_path).encode("ascii"), img_left, label_img_left, segs_left, str(image_path).encode("ascii"), img_right, label_img_right, segs_right
 
 
+def generate_prediction_input_image(image_path):
+    """Generates the numpy matrices that can be fed to the Unet model
+    for prediction. It crops the input image (left and right sections), 
+    performing dimension expansion and transpose.
+
+    Parameters
+    ----------
+    image_path: str
+        Path to the input image (i.e. .tiff file)
+    
+    Returns
+    -------
+    img_left, img_right: np.array, np.array
+        The numpy matrices that can be fed to Unet for prediction.
+    """
+    img = PIL.Image.open(image_path, "r")
+
+    if img.mode == "RGBA" or img.mode == "RGB":
+        img = img.convert("L")
+    elif img.mode == "I;16":
+        img = img.point(lambda i : i*(1./256)).convert("L")
+    else:
+        print(f"Unexpected mode: {img.mode}")
+        exit(1)
+
+    img_left = img.crop((x_left_start, 0, x_left_end, img.height))
+    img_left = np.transpose(utils.pil_to_array(img_left))
+    img_left = img_left[..., np.newaxis]
+    img_right = img.crop((x_right_start, 0, x_right_end, img.height))
+    img_right = np.transpose(utils.pil_to_array(img_right))
+    img_right = img_right[..., np.newaxis]
+
+    return img_left, img_right
+
+
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python preprocess.py <path/to/tiff> <path/to/ouptut/dir>")
+        print("Usage: python generate_image_label.py <path/to/tiff> <path/to/ouptut/dir>")
         exit(1)
 
     image_path = Path(sys.argv[1])
-    process_image(image_path, sys.argv[2])
+    generate_image_label(image_path, sys.argv[2])
