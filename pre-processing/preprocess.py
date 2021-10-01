@@ -3,7 +3,6 @@ import numpy as np
 import os
 import PIL.Image
 import utils
-import shutil
 import sys
 
 from pathlib import Path
@@ -103,7 +102,7 @@ def create_polygon(boundary, extra_points, label, image_height):
     return shape
 
 
-def create_labelme_file(img, annotations, in_file_name, out_file_name):
+def create_labelme_file(img, annotations, in_file_name, out_file_name, save_file):
     file = {}
     img_data = utils.pil_to_data(img)
     file['imageData'] = str(utils.img_data_to_img_b64(img_data), "utf-8")
@@ -139,8 +138,9 @@ def create_labelme_file(img, annotations, in_file_name, out_file_name):
     file["imageHeight"] = img.height
     file["imageWidth"] = img.width
 
-    with open(out_file_name, 'w') as outfile:
-        json.dump(file, outfile)
+    if save_file:
+        with open(out_file_name, 'w') as outfile:
+            json.dump(file, outfile)
 
     return file
 
@@ -174,7 +174,7 @@ def create_label_image(labelme_img_json, output_name, save_file=True):
 
 
 def process_image(image_path, output_dir, save_file=True):
-    if not os.path.isdir(output_dir):
+    if save_file and not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
     csv_path = image_path.parent / Path(image_path.stem + ".csv")
@@ -208,7 +208,7 @@ def process_image(image_path, output_dir, save_file=True):
     '''
     img = PIL.Image.open(image_path, "r")
 
-    if img.mode == "RGBA":
+    if img.mode == "RGBA" or img.mode == "RGB":
         img = img.convert("L")
     elif img.mode == "I;16":
         img = img.point(lambda i : i*(1./256)).convert("L")
@@ -216,28 +216,18 @@ def process_image(image_path, output_dir, save_file=True):
         print(f"Unexpected mode: {img.mode}")
         exit(1)
 
-    if save_file:
-        write_dir = output_dir
-    else: # If false we still save in a tmp location for use of `labelme_json_to_dataset` process
-        write_dir = output_dir + "/tmp/"
-        if not os.path.isdir(write_dir):
-            os.mkdir(write_dir)
-
-    img_left_path = Path(write_dir + "/" + image_path.stem + "_left.json")
-    img_right_path = Path(write_dir + "/" + image_path.stem + "_right.json")
+    img_left_path = Path(output_dir + "/" + image_path.stem + "_left.json")
+    img_right_path = Path(output_dir + "/" + image_path.stem + "_right.json")
 
     img_left = img.crop((x_left_start, 0, x_left_end, img.height))
-    labelme_img_left_json = create_labelme_file(img_left, annotations[:3], image_path, img_left_path)
-    label_img_left = create_label_image(labelme_img_left_json, write_dir + "/" + image_path.stem + "_left_label.png", save_file)
+    labelme_img_left_json = create_labelme_file(img_left, annotations[:3], image_path, img_left_path, save_file)
+    label_img_left = create_label_image(labelme_img_left_json, output_dir + "/" + image_path.stem + "_left_label.png", save_file)
     segs_left = generate_boundary(label_img_left)
 
     img_right = img.crop((x_right_start, 0, x_right_end, img.height))
-    lebelme_img_right_json = create_labelme_file(img_right, annotations[3:], image_path, img_right_path)
-    label_img_right = create_label_image(lebelme_img_right_json, write_dir + "/" + image_path.stem + "_right_label.png", save_file)
+    lebelme_img_right_json = create_labelme_file(img_right, annotations[3:], image_path, img_right_path, save_file)
+    label_img_right = create_label_image(lebelme_img_right_json, output_dir + "/" + image_path.stem + "_right_label.png", save_file)
     segs_right = generate_boundary(label_img_right)
-
-    if not save_file:
-        shutil.rmtree(write_dir)
 
     '''
     The images need to be transposed because the `model` expects
