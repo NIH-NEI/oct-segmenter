@@ -3,7 +3,6 @@ import numpy as np
 import os
 import PIL.Image
 import utils
-import subprocess
 import shutil
 import sys
 
@@ -45,6 +44,25 @@ x_left_end = 245
 x_right_start = 753
 x_right_end = 945
 
+
+def image_to_label(labelme_img_json):
+    label_name_to_value = {"_background_": 0}
+    for shape in sorted(labelme_img_json["shapes"], key=lambda x: x["label"]):
+        label_name = shape["label"]
+        if label_name in label_name_to_value:
+            label_value = label_name_to_value[label_name]
+        else:
+            label_value = len(label_name_to_value)
+            label_name_to_value[label_name] = label_value
+    shape = (labelme_img_json["imageHeight"], labelme_img_json["imageWidth"])
+
+    lbl, _ = utils.shapes_to_label(
+        shape, labelme_img_json["shapes"], label_name_to_value
+    )
+
+    return lbl
+
+
 '''
     Convention used by code in model: Considering the image in a
     top to bottom fashion, the areas do not include the pixel of the
@@ -83,6 +101,7 @@ def create_polygon(boundary, extra_points, label, image_height):
     shape["flags"] = {}
 
     return shape
+
 
 def create_labelme_file(img, annotations, in_file_name, out_file_name):
     file = {}
@@ -123,39 +142,36 @@ def create_labelme_file(img, annotations, in_file_name, out_file_name):
     with open(out_file_name, 'w') as outfile:
         json.dump(file, outfile)
 
+    return file
 
-def create_label_image(img_path, output_dir, save_file=True):
-    tmp_output_dir = output_dir + "/tmp/"
-    if not os.path.isdir(tmp_output_dir):
-        os.mkdir(tmp_output_dir)
 
-    subprocess.run(["labelme_json_to_dataset", img_path, "-o", tmp_output_dir])
+def create_label_image(labelme_img_json, output_name, save_file=True):
+    label_arr = image_to_label(labelme_img_json)
 
-    label_img = PIL.Image.open(tmp_output_dir + "/label.png")
     # labelme creates the segmentation map (label.png) using [1, 2, 3, 4, ...] and we want [0, 1, 2, 3, ...]
-    num_classes = label_img.getextrema()[1] # Get max value
-    label_img = label_img.point(lambda i : i-1)
-
     # We apply the convention that the top layer is labeled as 0 and increase downwards.
     # This is done for consistency across images, so that get_boundaries() works, and because
     # it is the convention used by the unet repo
-    img_array = np.asarray(label_img)
-    _, idx = np.unique(img_array[:,0], return_index=True) # Gets the row indices of the first occurences of each class in the first column
-    index_list = img_array[np.sort(idx),0] # index_list lists the classes as they appear in the array from top to bottom
+    num_classes = np.max(label_arr) # Get max value
+    _, idx = np.unique(label_arr[:,0], return_index=True) # Gets the row indices of the first occurences of each class in the first column
+    index_list = label_arr[np.sort(idx),0] # index_list lists the classes as they appear in the array from top to bottom
 
     # Mapping dictionary
     index_dict = {}
     for i in range(num_classes):
         index_dict[index_list[i]] = i
 
-    label_img = label_img.point(lambda x: x < num_classes and index_dict[x])
+    def convert(x):
+        return index_dict[x]
+
+    vfunc = np.vectorize(convert)
+    label_arr = vfunc(label_arr)
 
     if save_file:
-        label_img.save(output_dir + "/" + img_path.stem + "_label.png")
+        utils.lblsave(output_name, label_arr)
 
-    shutil.rmtree(tmp_output_dir)
+    return label_arr
 
-    return np.asarray(label_img)
 
 def process_image(image_path, output_dir, save_file=True):
     if not os.path.isdir(output_dir):
@@ -211,13 +227,13 @@ def process_image(image_path, output_dir, save_file=True):
     img_right_path = Path(write_dir + "/" + image_path.stem + "_right.json")
 
     img_left = img.crop((x_left_start, 0, x_left_end, img.height))
-    create_labelme_file(img_left, annotations[:3], image_path, img_left_path)
-    label_img_left = create_label_image(img_left_path, write_dir, save_file)
+    labelme_img_left_json = create_labelme_file(img_left, annotations[:3], image_path, img_left_path)
+    label_img_left = create_label_image(labelme_img_left_json, write_dir + "/" + image_path.stem + "_left_label.png", save_file)
     segs_left = generate_boundary(label_img_left)
 
     img_right = img.crop((x_right_start, 0, x_right_end, img.height))
-    create_labelme_file(img_right, annotations[3:], image_path, img_right_path)
-    label_img_right = create_label_image(img_right_path, write_dir, save_file)
+    lebelme_img_right_json = create_labelme_file(img_right, annotations[3:], image_path, img_right_path)
+    label_img_right = create_label_image(lebelme_img_right_json, write_dir + "/" + image_path.stem + "_right_label.png", save_file)
     segs_right = generate_boundary(label_img_right)
 
     if not save_file:
@@ -239,6 +255,7 @@ def process_image(image_path, output_dir, save_file=True):
     label_img_right = label_img_right[..., np.newaxis]
 
     return str(image_path).encode("ascii"), img_left, label_img_left, segs_left, str(image_path).encode("ascii"), img_right, label_img_right, segs_right
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
