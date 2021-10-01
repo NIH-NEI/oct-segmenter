@@ -133,9 +133,23 @@ def create_label_image(img_path, output_dir, save_file=True):
 
     label_img = PIL.Image.open(tmp_output_dir + "/label.png")
     # labelme creates the segmentation map (label.png) using [1, 2, 3, 4, ...] and we want [0, 1, 2, 3, ...]
-    label_img = label_img.point(lambda i : i-1)
     num_classes = label_img.getextrema()[1] # Get max value
-    label_img = label_img.point(lambda x: num_classes - x) # labelme labels 0 -> num_classes from bottom to top. Model uses the reverse convention
+    label_img = label_img.point(lambda i : i-1)
+
+    # We apply the convention that the top layer is labeled as 0 and increase downwards.
+    # This is done for consistency across images, so that get_boundaries() works, and because
+    # it is the convention used by the unet repo
+    img_array = np.asarray(label_img)
+    _, idx = np.unique(img_array[:,0], return_index=True) # Gets the row indices of the first occurences of each class in the first column
+    index_list = img_array[np.sort(idx),0] # index_list lists the classes as they appear in the array from top to bottom
+
+    # Mapping dictionary
+    index_dict = {}
+    for i in range(num_classes):
+        index_dict[index_list[i]] = i
+
+    label_img = label_img.point(lambda x: x < num_classes and index_dict[x])
+
     if save_file:
         label_img.save(output_dir + "/" + img_path.stem + "_label.png")
 
