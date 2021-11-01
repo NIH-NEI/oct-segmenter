@@ -213,6 +213,8 @@ def generate_image_label(image_path, output_dir, save_file=True):
         img = img.convert("L")
     elif img.mode == "I;16":
         img = img.point(lambda i : i*(1./256)).convert("L")
+    elif img.mode == "L":
+        pass
     else:
         print(f"Unexpected mode: {img.mode}")
         exit(1)
@@ -269,6 +271,8 @@ def generate_prediction_input_image(image_path):
         img = img.convert("L")
     elif img.mode == "I;16":
         img = img.point(lambda i : i*(1./256)).convert("L")
+    elif img.mode == "L":
+        pass
     else:
         print(f"Unexpected mode: {img.mode}")
         exit(1)
