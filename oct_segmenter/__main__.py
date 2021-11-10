@@ -44,6 +44,9 @@ def main():
         "--input-dir", "-d", help="input directory containing .tiff images to be segmented."
     )
 
+    predict_subparser.add_argument("-c", default=False, action="store_true",
+        help="label complete PNG image instead of left/right regions")
+
     predict_subparser.add_argument("--label-png", "-l", help="output segmentation map PNG file")
 
     predict_subparser.add_argument(

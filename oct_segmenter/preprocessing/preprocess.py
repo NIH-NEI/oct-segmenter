@@ -250,7 +250,7 @@ def generate_image_label(image_path, output_dir, save_file=True):
     return str(image_path).encode("ascii"), img_left, label_img_left, segs_left, str(image_path).encode("ascii"), img_right, label_img_right, segs_right
 
 
-def generate_prediction_input_image(image_path):
+def generate_side_region_input_image(image_path):
     """Generates the numpy matrices that can be fed to the Unet model
     for prediction. It crops the input image (left and right sections), 
     performing dimension expansion and transpose.
@@ -285,6 +285,43 @@ def generate_prediction_input_image(image_path):
     img_right = img_right[..., np.newaxis]
 
     return img_left, img_right
+
+
+def generate_input_image(image_path):
+    """
+    Generates the numpy matrix that can be fed to the Unet model
+    for prediction. It performs dimension expansion and transpose.
+
+    Parameters
+    ----------
+    image_path: str
+        Path to the input image (i.e. .tiff file)
+
+    Returns
+    -------
+    img: np.array, np.array
+        The numpy matrices that can be fed to Unet for prediction.
+    """
+    img = PIL.Image.open(image_path, "r")
+    if img.mode == "RGBA" or img.mode == "RGB":
+        img = img.convert("L")
+    elif img.mode == "I;16":
+        img = img.point(lambda i : i*(1./256)).convert("L")
+    elif img.mode == "L":
+        pass
+    else:
+        print(f"Unexpected mode: {img.mode}")
+        exit(1)
+
+    # U-net architecture requires images with dimensions that are multiple of 16
+    new_width = (int) (img.width // 16) * 16
+    left_margin = (int) ((img.width - new_width)/2)
+    right_margin = (int) (left_margin + new_width)
+
+    img = img.crop((left_margin, 0, right_margin, img.height))
+    img = np.transpose(utils.pil_to_array(img))
+    img = img[..., np.newaxis]
+    return img
 
 
 if __name__ == "__main__":

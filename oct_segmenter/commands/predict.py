@@ -38,12 +38,17 @@ def predict(args):
         else:
             output = input_path.parent
 
-        img_left, img_right = preprocess.generate_prediction_input_image(input_path)
-        pred_images = np.array([img_left, img_right])
+        if args.c:
+            img = preprocess.generate_input_image(input_path)
+            pred_images = np.array([img])
+            pred_image_names = [Path(input_path.stem + "_labeled" + input_path.suffix)]
+        else:
+            img_left, img_right = preprocess.generate_side_region_input_image(input_path)
+            pred_images = np.array([img_left, img_right])
 
-        img_left_path = Path(input_path.stem + "_left" + input_path.suffix)
-        img_right_path = Path(input_path.stem + "_right" + input_path.suffix)
-        pred_image_names = [img_left_path, img_right_path]
+            img_left_path = Path(input_path.stem + "_left" + input_path.suffix)
+            img_right_path = Path(input_path.stem + "_right" + input_path.suffix)
+            pred_image_names = [img_left_path, img_right_path]
 
         eval_model.evaluate_model(
             MODEL,
