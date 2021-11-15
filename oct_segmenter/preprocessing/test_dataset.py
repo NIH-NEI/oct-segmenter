@@ -4,13 +4,16 @@ import sys
 import h5py
 from pathlib import Path
 
-from oct_segmenter.preprocessing import generate_dataset as generator
+from oct_segmenter.preprocessing import generic_dataset as generator
 
 test_hdf5_file = "/tmp/testing_dataset.hdf5"
 
 
-def generate_test_dataset(test_input_dir, output_file):
-    generator.generate_hdf5_file(test_input_dir, test_hdf5_file)
+def generate_test_dataset(test_input_dir, output_file, wayne_format=False):
+    if wayne_format:
+        generator.generate_hdf5_file_wayne(test_input_dir, test_hdf5_file)
+    else:
+        generator.generate_hdf5_file(test_input_dir, test_hdf5_file)
 
     output_file_path = Path(output_file)
     output_dir = output_file_path.parent
@@ -27,13 +30,3 @@ def generate_test_dataset(test_input_dir, output_file):
     output_hf.close()
 
     os.remove(test_hdf5_file)
-
-
-if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python generate_test_dataset.py <path/to/test/input/dir> <output_file_name>")
-
-    input_test_dir = sys.argv[1]
-    output_file_path = sys.argv[2]
-    generate_test_dataset(input_test_dir, output_file_path)
-
