@@ -4,15 +4,19 @@ import sys
 import h5py
 from pathlib import Path
 
-from oct_segmenter.preprocessing import generate_dataset as generator
+from oct_segmenter.preprocessing import generic_dataset as generator
 
 training_hdf5_file = "/tmp/training_dataset.hdf5"
 validation_hdf5_file = "/tmp/validation_dataset.hdf5"
 
 
-def generate_datasets(train_input_dir, validation_input_dir, output_file):
-    generator.generate_hdf5_file(train_input_dir, training_hdf5_file)
-    generator.generate_hdf5_file(validation_input_dir, validation_hdf5_file)
+def generate_training_dataset(train_input_dir, validation_input_dir, output_file, wayne_format=False):
+    if wayne_format:
+        generator.generate_hdf5_file_wayne(train_input_dir, training_hdf5_file)
+        generator.generate_hdf5_file_wayne(validation_input_dir, validation_hdf5_file)
+    else:
+        generator.generate_hdf5_file(train_input_dir, training_hdf5_file)
+        generator.generate_hdf5_file(validation_input_dir, validation_hdf5_file)
 
     output_file_path = Path(output_file)
     output_dir = output_file_path.parent
@@ -37,15 +41,3 @@ def generate_datasets(train_input_dir, validation_input_dir, output_file):
 
     os.remove(training_hdf5_file)
     os.remove(validation_hdf5_file)
-
-
-if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Usage: python3 generate_training_dataset.py <path/to/training/input/dir> <path/to/validation/input/dir> <output_file_name>")
-        exit(1)
-
-    train_input_dir = sys.argv[1]
-    validation_input_dir = sys.argv[2]
-    output_file = sys.argv[3]
-
-    generate_datasets(train_input_dir, validation_input_dir, output_file)
