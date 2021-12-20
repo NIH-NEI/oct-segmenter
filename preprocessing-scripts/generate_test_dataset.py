@@ -1,7 +1,9 @@
 import sys
 
+import h5py
+
 from pathlib import Path
-file = Path(__file__). resolve()
+file = Path(__file__).resolve()
 package_root_directory = file.parents[1]
 sys.path.append(str(package_root_directory))
 
@@ -15,7 +17,8 @@ if __name__ == "__main__":
         print("Usage: python3 generate_training_dataset.py <path/to/training/input/dir> <output_file_name>")
         exit(1)
 
-    test_input_dir = sys.argv[1]
-    output_file = sys.argv[2]
+    test_input_dir = Path(sys.argv[1])
+    output_file = Path(sys.argv[2])
 
-    generate_test_dataset(test_input_dir, output_file, wayne_format=True)
+    test_dataset: h5py.File = generate_test_dataset(test_input_dir, output_file, wayne_format=True)
+    test_dataset.close()

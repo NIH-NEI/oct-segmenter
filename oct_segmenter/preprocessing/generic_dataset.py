@@ -65,31 +65,25 @@ def process_directory_wayne(input_dir, output_dir, save_file=False):
     return img_file_names, img_file_data, segments_data, labeled_file_data
 
 
-def generate_hdf5_file(input_dir, file_name):
-    file_path = Path(file_name)
+def generate_generic_dataset(
+    input_dir: Path,
+    file_name: Path,
+    wayne_format: bool,
+    backing_store: bool=True,
+) -> h5py.File:
+    if not os.path.isdir(file_name.parent):
+        os.makedirs(file_name.parent)
 
-    if not os.path.isdir(file_path.parent):
-        os.mkdir(file_path.parent)
+    hf = h5py.File(file_name, "w", driver="core", backing_store=backing_store)
 
-    hf = h5py.File(file_path, "w")
-    img_file_names, img_file_data, segments_data, labeled_file_data = process_directory(input_dir, str(file_path.parent), save_file=False)
+    if wayne_format:
+        img_file_names, img_file_data, segments_data, labeled_file_data = process_directory_wayne(input_dir, str(file_name.parent), save_file=False)
+    else:
+        img_file_names, img_file_data, segments_data, labeled_file_data = process_directory(input_dir, str(file_name.parent), save_file=False)
+
     hf.create_dataset("xhat", data=img_file_data)
     hf.create_dataset("yhat", data=labeled_file_data)
     hf.create_dataset("segs", data=segments_data)
     hf.create_dataset("image_source", data=img_file_names)
-    hf.close()
 
-
-def generate_hdf5_file_wayne(input_dir, file_name):
-    file_path = Path(file_name)
-
-    if not os.path.isdir(file_path.parent):
-        os.mkdir(file_path.parent)
-
-    hf = h5py.File(file_path, "w")
-    img_file_names, img_file_data, segments_data, labeled_file_data = process_directory_wayne(input_dir, str(file_path.parent), save_file=False)
-    hf.create_dataset("xhat", data=img_file_data)
-    hf.create_dataset("yhat", data=labeled_file_data)
-    hf.create_dataset("segs", data=segments_data)
-    hf.create_dataset("image_source", data=img_file_names)
-    hf.close()
+    return hf

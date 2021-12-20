@@ -3,7 +3,7 @@ import argparse
 import art
 
 from oct_segmenter.commands.predict import predict
-from oct_segmenter.preprocessing import generate_test_dataset, generate_training_dataset
+from oct_segmenter.preprocessing import test_dataset, training_dataset
 
 def main():
     print(art.text2art("oct-segmenter"))

@@ -6,38 +6,32 @@ from pathlib import Path
 
 from oct_segmenter.preprocessing import generic_dataset as generator
 
-training_hdf5_file = "/tmp/training_dataset.hdf5"
-validation_hdf5_file = "/tmp/validation_dataset.hdf5"
 
-
-def generate_training_dataset(train_input_dir, validation_input_dir, output_file, wayne_format=False):
-    if wayne_format:
-        generator.generate_hdf5_file_wayne(train_input_dir, training_hdf5_file)
-        generator.generate_hdf5_file_wayne(validation_input_dir, validation_hdf5_file)
-    else:
-        generator.generate_hdf5_file(train_input_dir, training_hdf5_file)
-        generator.generate_hdf5_file(validation_input_dir, validation_hdf5_file)
-
-    output_file_path = Path(output_file)
-    output_dir = output_file_path.parent
-    if not os.path.isdir(output_dir):
-        os.mkdir(output_dir)
-
-    output_hf = h5py.File(output_file_path, "w")
-
-    input_hf_1 = h5py.File(training_hdf5_file, "r")
-    input_hf_2 = h5py.File(validation_hdf5_file, "r")
-
-    output_hf.create_dataset("train_images", data=input_hf_1["xhat"])
-    output_hf.create_dataset("train_labels", data=input_hf_1["yhat"])
-    output_hf.create_dataset("train_segs", data=input_hf_1["segs"])
-    output_hf.create_dataset("train_images_source", data=input_hf_1["image_source"])
+def generate_training_dataset(
+    train_input_dir: Path,
+    validation_input_dir: Path,
+    output_file: Path,
+    wayne_format: bool=False,
+) -> h5py.File:
     
-    output_hf.create_dataset("val_images", data=input_hf_2["xhat"])
-    output_hf.create_dataset("val_labels", data=input_hf_2["yhat"])
-    output_hf.create_dataset("val_segs", data=input_hf_2["segs"])
-    output_hf.create_dataset("val_images_source", data=input_hf_2["image_source"])
-    output_hf.close()
+    training_dataset = generator.generate_generic_dataset(train_input_dir, output_file, wayne_format)
+    validation_dataset = generator.generate_generic_dataset(
+        validation_input_dir,
+        Path("/tmp/validation.hdf5"),
+        wayne_format,
+        backing_store=False,
+    )
 
-    os.remove(training_hdf5_file)
-    os.remove(validation_hdf5_file)
+    training_dataset["train_images"] = training_dataset["xhat"]
+    training_dataset["train_labels"] = training_dataset["yhat"]
+    training_dataset["train_images_source"] = training_dataset["image_source"]
+
+    del training_dataset["xhat"]
+    del training_dataset["yhat"]
+    del training_dataset["image_source"]
+
+    training_dataset.create_dataset("val_images", data=validation_dataset["xhat"])
+    training_dataset.create_dataset("val_labels", data=validation_dataset["yhat"])
+    training_dataset.create_dataset("val_images_source", data=validation_dataset["image_source"])
+
+    return training_dataset
