@@ -46,7 +46,7 @@ def generate_side_region_input_image(image_path):
     return img_left, img_right
 
 
-def generate_input_image(image_path):
+def generate_input_image(image_path: Path) -> np.array:
     """
     Generates the numpy matrix that can be fed to the Unet model
     for prediction. It performs dimension expansion and transpose.
@@ -73,11 +73,7 @@ def generate_input_image(image_path):
         exit(1)
 
     # U-net architecture requires images with dimensions that are multiple of 16
-    new_width = (int) (img.width // 16) * 16
-    left_margin = (int) ((img.width - new_width)/2)
-    right_margin = (int) (left_margin + new_width)
-
-    img = img.crop((left_margin, 0, right_margin, img.height))
-    img = np.transpose(utils.pil_to_array(img))
-    img = img[..., np.newaxis]
-    return img
+    cropped_img, _, _ = utils.make_img_size_multiple(img, 16)
+    cropped_img = np.transpose(utils.pil_to_array(cropped_img))
+    cropped_img = cropped_img[..., np.newaxis]
+    return cropped_img

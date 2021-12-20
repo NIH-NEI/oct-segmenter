@@ -133,3 +133,15 @@ def lblsave(filename, lbl):
             "[%s] Cannot save the pixel-wise class label as PNG. "
             "Please consider using the .npy format." % filename
         )
+
+
+def make_img_size_multiple(img, multiple=16) -> PIL.Image:
+    new_width = (int) (img.width // multiple) * multiple
+    left_margin = (int) ((img.width - new_width)/2)
+    right_margin = (int) (left_margin + new_width)
+
+    new_height = (int) (img.height // multiple) * multiple
+    top_margin = (int) ((img.height - new_height)/2)
+    bottom_margin = (int) (top_margin + new_height)
+
+    return img.crop((left_margin, top_margin, right_margin, bottom_margin)), left_margin, top_margin
