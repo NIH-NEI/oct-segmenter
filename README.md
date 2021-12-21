@@ -129,6 +129,14 @@ For example:
 
 # Other Information
 
+## Run CLI tool from repo without installing packages
+
+`python3 run.py`
+
+For example:
+
+`python3 run.py predict -d images/ -c`
+
 ## Repo Contents
 
 ## Preprocess

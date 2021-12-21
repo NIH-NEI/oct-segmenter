@@ -9,7 +9,7 @@ import PIL.Image
 from oct_segmenter.preprocessing import utils
 
 
-def generate_side_region_input_image(image_path):
+def generate_side_region_input_image(image_path: Path) -> tuple[np.array]:
     """Generates the numpy matrices that can be fed to the Unet model
     for prediction. It crops the input image (left and right sections), 
     performing dimension expansion and transpose.
