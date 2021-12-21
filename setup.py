@@ -5,7 +5,7 @@ from setuptools import setup
 
 
 def get_install_requires():
-    return ["art", "imgviz", "unet"]
+    return ["art", "imgviz", "prettytable", "unet"]
 
 
 def get_long_description():

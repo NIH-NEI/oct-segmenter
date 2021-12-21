@@ -1,9 +1,13 @@
-import argparse
+import os
 
+import argparse
 import art
 
+from oct_segmenter import DEFAULT_MODEL_INDEX
+from oct_segmenter.commands.list import list_models
 from oct_segmenter.commands.predict import predict
 from oct_segmenter.preprocessing import test_dataset, training_dataset
+
 
 def main():
     print(art.text2art("oct-segmenter"))
@@ -44,6 +48,14 @@ def main():
         "--input-dir", "-d", help="input directory containing .tiff images to be segmented."
     )
 
+    predict_subparser.add_argument(
+        "-model-index",
+        "-m",
+        help="Model to use for prediction. Run 'oct-segmenter list' to see full list.",
+        default=DEFAULT_MODEL_INDEX,
+        type=int
+    )
+
     predict_subparser.add_argument("-c", default=False, action="store_true",
         help="label complete PNG image instead of left/right regions")
 
@@ -56,6 +68,9 @@ def main():
         help="output file or directory (if it ends with .csv it is "
         "recognized as file, else as directory)",
     )
+
+    # List Models
+    list_subparser = cmd_subparser.add_parser("list")
 
     args = parser.parse_args()
 
@@ -77,7 +92,8 @@ def main():
 
     elif args.command == "predict":
         predict(args)
-
+    elif args.command == "list":
+        list_models()
 
 if __name__ == "__main__":
     main()

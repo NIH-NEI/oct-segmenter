@@ -3,17 +3,20 @@ import os
 import numpy as np
 from pathlib import Path
 
-from oct_segmenter import __version__
-from oct_segmenter.preprocessing import preprocess
-
 from unet.model import augmentation as aug
 from unet.model import evaluation
 from unet.model.evaluation_parameters import EvaluationParameters, PredictionDataset
 from unet.model.save_parameters import SaveParameters
 
+from oct_segmenter import MODELS_TABLE, MODELS_INDEX_MAP
+from oct_segmenter.preprocessing import preprocess
 
-MODEL = Path(os.path.dirname(os.path.abspath(__file__)) + "/../data/model/" + __version__ + "/model.hdf5")
+
 def predict(args):
+    model_name = MODELS_INDEX_MAP[args.model_index]
+    model_path = MODELS_TABLE[model_name]
+    print(f"Using model: {model_name}")
+
     input_paths = []
     if args.input:
         path = Path(args.input)
@@ -78,7 +81,7 @@ def predict(args):
     )
 
     eval_params = EvaluationParameters(
-        model_file_path=MODEL,
+        model_file_path=model_path,
         prediction_dataset=pred_dataset,
         is_evaluate=False,
         col_error_range=None,
