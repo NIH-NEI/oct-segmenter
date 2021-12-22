@@ -13,7 +13,6 @@ def generate_training_dataset(
     output_file: Path,
     wayne_format: bool=False,
 ) -> h5py.File:
-    
     training_dataset = generator.generate_generic_dataset(train_input_dir, output_file, wayne_format)
     validation_dataset = generator.generate_generic_dataset(
         validation_input_dir,

@@ -4,10 +4,10 @@ import argparse
 import art
 
 from oct_segmenter import DEFAULT_MODEL_INDEX
+from oct_segmenter.commands.generate import generate_training_dataset, generate_test_dataset
 from oct_segmenter.commands.list import list_models
 from oct_segmenter.commands.predict import predict
-from oct_segmenter.preprocessing import test_dataset, training_dataset
-
+from oct_segmenter.commands.train import train
 
 def main():
     print(art.text2art("oct-segmenter"))
@@ -18,27 +18,74 @@ def main():
     generate_subparser = generate.add_subparsers(dest="generate", required=True)
 
     # Generate test dataset
-    test_parser = generate_subparser.add_parser("test")
-    test_parser.add_argument(
-        "--test-input-dir", "-t", help="path to the directory containing test images", required=True
+    gen_test_parser = generate_subparser.add_parser("test")
+    gen_test_parser.add_argument(
+        "-t",
+        "--test-input-dir",
+        help="path to the directory containing test images",
+        required=True,
     )
 
-    test_parser.add_argument("--output", "-o", help="name of the output name file")
+    gen_test_parser.add_argument(
+        "-w",
+        "--wayne-state-format",
+        default=False,
+        action="store_true",
+        help="Generate dataset using the Wayne state format (vs. visual function core format)",
+    )
+
+    gen_test_parser.add_argument(
+        "-o",
+        "--output-dir",
+        help="name of the output name file",
+        default=".",
+    )
 
     # Generate training dataset
-    train_parser = generate_subparser.add_parser("train")
-    train_parser.add_argument(
-        "--train-input-dir",
+    gen_train_parser = generate_subparser.add_parser("training")
+    gen_train_parser.add_argument(
+        "--training-input-dir",
         "-t",
         help="path to the directory containing training images",
         required=True,
     )
 
-    train_parser.add_argument(
-        "--validation-input-dir", "-v", help="path to the directory containing validation images"
+    gen_train_parser.add_argument(
+        "-v",
+        "--validation-input-dir",
+        help="path to the directory containing validation images",
+        required=True,
     )
 
-    train_parser.add_argument("--output", "-o", help="name of the output name file")
+    gen_train_parser.add_argument(
+        "-w",
+        "--wayne-state-format",
+        default=False,
+        action="store_true",
+        help="Generate dataset using the Wayne state format (vs. visual function core format)",
+    )
+
+    gen_train_parser.add_argument(
+        "-o",
+        "--output-dir",
+        help="name of the output name file",
+        default="."
+    )
+
+    # Train
+    train_subparser = cmd_subparser.add_parser("train")
+    train_subparser.add_argument(
+        "-i",
+        "--input",
+        help="input training dataset (hdf5 file)",
+        required=True,
+    )
+    train_subparser.add_argument(
+        "-o",
+        "--output-dir",
+        help="name of the output directory to save model",
+        required=True,
+    )
 
     # Predict
     predict_subparser = cmd_subparser.add_parser("predict")
@@ -56,14 +103,20 @@ def main():
         type=int
     )
 
-    predict_subparser.add_argument("-c", default=False, action="store_true",
-        help="label complete PNG image instead of left/right regions")
+    predict_subparser.add_argument("-c",
+        default=False,
+        action="store_true",
+        help="label complete PNG image instead of left/right regions"
+    )
 
-    predict_subparser.add_argument("--label-png", "-l", help="output segmentation map PNG file")
+    predict_subparser.add_argument(
+        "--label-png",
+        "-l",
+        help="output segmentation map PNG file"
+    )
 
     predict_subparser.add_argument(
         "--output",
-        "-O",
         "-o",
         help="output file or directory (if it ends with .csv it is "
         "recognized as file, else as directory)",
@@ -75,14 +128,10 @@ def main():
     args = parser.parse_args()
 
     if args.command == "generate":
-        output = args.output
-
         if args.generate == "test":
-            if output is None:
-                output = "test_dataset.hdf5"
-            generate_test_dataset.generate_test_dataset(args.test_input_dir, output)
-        elif args.generate == "train":
-            generate_training_dataset.generate_datasets()
+            generate_test_dataset(args)
+        elif args.generate == "training":
+            generate_training_dataset(args)
         else:
             print(
                 "Unrecognized 'generate' option. Type: oct-segmenter \
@@ -94,6 +143,9 @@ def main():
         predict(args)
     elif args.command == "list":
         list_models()
+    elif args.command == "train":
+        train(args)
+
 
 if __name__ == "__main__":
     main()
