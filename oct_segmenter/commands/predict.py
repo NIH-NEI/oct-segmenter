@@ -13,6 +13,16 @@ from oct_segmenter.preprocessing import preprocess
 
 
 def predict(args):
+    # Check selected model is valid
+    if args.model_index == None:
+        print("oct-segementer: Looks like no model has been loaded. Make sure a model exists.")
+        exit(1)
+
+    number_of_models = len(MODELS_INDEX_MAP)
+    if args.model_index >= number_of_models:
+        print(f"Please select an index model from 0 to {number_of_models - 1}")
+        exit(1)
+
     model_name = MODELS_INDEX_MAP[args.model_index]
     model_path = MODELS_TABLE[model_name]
     print(f"Using model: {model_name}")
