@@ -2,6 +2,7 @@ import os
 
 import argparse
 import art
+import logging
 
 from oct_segmenter import DEFAULT_MODEL_INDEX
 from oct_segmenter.commands.generate import generate_training_dataset, generate_test_dataset
@@ -11,6 +12,12 @@ from oct_segmenter.commands.train import train
 
 def main():
     print(art.text2art("oct-segmenter"))
+
+    # Set logging
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.INFO)
+
+    # Create args-parser
     parser = argparse.ArgumentParser()
     cmd_subparser = parser.add_subparsers(dest="command", required=True)
     generate = cmd_subparser.add_parser("generate")
@@ -96,7 +103,7 @@ def main():
     )
 
     predict_subparser.add_argument(
-        "-model-index",
+        "--model-index",
         "-m",
         help="Model to use for prediction. Run 'oct-segmenter list' to see full list.",
         default=DEFAULT_MODEL_INDEX,

@@ -1,5 +1,6 @@
 import os
 
+import logging as log
 import numpy as np
 from pathlib import Path
 
@@ -25,7 +26,7 @@ def predict(args):
 
     model_name = MODELS_INDEX_MAP[args.model_index]
     model_path = MODELS_TABLE[model_name]
-    print(f"Using model: {model_name}")
+    log.info(f"Using model: {model_name}")
 
     input_paths = []
     if args.input:
