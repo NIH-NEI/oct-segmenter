@@ -14,14 +14,14 @@ Link: https://www.nature.com/articles/s41598-019-49816-4
 
 To use `oct-segmenter` you should have:
 1. recieved two wheel files from Bioteam named: `oct_segmenter-x-py2.py3-none-any.whl`
-and `unet-x-py2.py3-none-any.whl`
+and `oct_unet-x-py2.py3-none-any.whl`
 
 or
 
 2. Run the `build.sh` scripts located in:
   - `mouse-image-segmentation` directory: this will generate the `oct-segmenter` wheel file under
   the `dist` directory.
-  - `unet` directory: this will generate the `unet` wheel file under the `unet/dist` directory.
+  - `unet-mod` directory: this will generate the `oct_unet` wheel file under the `unet-mod/dist` directory.
 
 
 ### Windows
@@ -34,11 +34,11 @@ The following steps describe all the steps and dependencies to run `oct-segmente
 
 2. Open the Conda Powershell and create a new Conda environment:
 
-`conda create --name <env_name> python=3.8`
+`conda create --name <env_name> python=3.9`
 
 For example:
 
-`conda create --name oct-segmenter-env python=3.8`
+`conda create --name oct-segmenter-env python=3.9`
 
 3. Install the `oct-segmenter` python package:
 
@@ -46,13 +46,13 @@ There are two ways to install `oct-segmenter`:
 
   - Installing each package separately:
 
-    3.a.i. `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org <path/to/unet/wheel/file>`
+    3.a.i. `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org <path/to/oct_unet/wheel/file>`
 
     For example:
 
-    `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org ~/unet-1.0-py2.py3-none-any.whl`
+    `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org ~/oct_unet-0.3.0-py2.py3-none-any.whl`
 
-    3.a.ii. `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org <path/to/oct-segmenter/wheel/file>`
+    3.a.ii. `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org <path/to/oct_segmenter/wheel/file>`
 
     For example:
 

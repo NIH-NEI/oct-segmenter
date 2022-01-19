@@ -1,11 +1,20 @@
+import os
 import re
 
 from setuptools import find_packages
 from setuptools import setup
 
 
+def package_files(directory):
+    paths = []
+    for (path, directories, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join('..', path, filename))
+    return paths
+
+
 def get_install_requires():
-    return ["art", "imgviz", "prettytable", "unet"]
+    return ["art", "imgviz", "prettytable", "oct_unet"]
 
 
 def get_long_description():
@@ -30,13 +39,13 @@ def main():
     setup(
         name="oct-segmenter",
         version=version,
-        packages=find_packages(),
+        packages=find_packages(exclude=["unet*"]),
         description="Image Segmentation Tool for Mice OCT scans",
         long_description=get_long_description(),
         long_description_content_type="text/markdown",
         author="BioTeam, Inc.",
-        author_email="some_email@bioteam.net",
-        url="https://bioteam.net",
+        author_email="bruno@bioteam.net",
+        url="https://www.bioteam.net",
         install_requires=get_install_requires(),
         license="GPLv3",
         keywords="Image Segmentation, Machine Learning",
@@ -45,10 +54,10 @@ def main():
             "Intended Audience :: Researchers",
             "Natural Language :: English",
             "Programming Language :: Python",
-            "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.9",
         ],
         package_data={
-            "oct_segmenter": ["data/model/" + version + "/model.hdf5"]
+            "oct_segmenter": package_files("oct_segmenter/data/models/")
         },
         entry_points={
             "console_scripts": [
