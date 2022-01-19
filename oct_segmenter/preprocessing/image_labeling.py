@@ -6,10 +6,13 @@ import numpy as np
 from pathlib import Path
 import PIL.Image
 
+from oct_segmenter.preprocessing import VISUAL_CORE_BOUND_X_LEFT_START,\
+    VISUAL_CORE_BOUND_X_LEFT_END, VISUAL_CORE_BOUND_X_RIGHT_START, VISUAL_CORE_BOUND_X_RIGHT_END
 from oct_segmenter.preprocessing import utils
 
+
 '''
-The images and labels recieved from the NEI are labeled in the following manner:
+The images and labels recieved from the Visual Core group are labeled in the following manner:
 - Each image has a correspoing CSV file. The CSV file contain six rows where:
     - The CSV values are 1-index based since they are generated from MATLAB
     - Each row represents a boundary; they contain 20 columns.
@@ -37,12 +40,6 @@ The images and labels recieved from the NEI are labeled in the following manner:
 - Finally the image is converted into a segmentation map: A 2D-matrix where each element represents the class
 the pixel belongs to.
 '''
-
-x_left_start = 53
-x_left_end = 245
-
-x_right_start = 753
-x_right_end = 945
 
 
 def image_to_label(labelme_img_json):
@@ -300,7 +297,7 @@ def generate_image_label_wayne(image_path, output_dir, save_file=True):
     return str(image_path).encode("ascii"), img, label_img, segs
 
 
-def generate_image_label(image_path, output_dir, save_file=True):
+def generate_image_label(image_path: Path, output_dir, save_file=True):
     if save_file and not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
@@ -333,27 +330,18 @@ def generate_image_label(image_path, output_dir, save_file=True):
     https://stackoverflow.com/questions/43978819/convert-tiff-i16-to-jpg-with-pil-pillow
 
     '''
-    img = PIL.Image.open(image_path, "r")
-
-    if img.mode == "RGBA" or img.mode == "RGB":
-        img = img.convert("L")
-    elif img.mode == "I;16":
-        img = img.point(lambda i : i*(1./256)).convert("L")
-    elif img.mode == "L":
-        pass
-    else:
-        print(f"Unexpected mode: {img.mode}")
-        exit(1)
+    img = utils.convert_to_grayscale(PIL.Image.open(image_path, "r"))
 
     img_left_path = Path(output_dir + "/" + image_path.stem + "_left.json")
     img_right_path = Path(output_dir + "/" + image_path.stem + "_right.json")
 
-    img_left = img.crop((x_left_start, 0, x_left_end, img.height))
+
+    img_left = img.crop((VISUAL_CORE_BOUND_X_LEFT_START, 0, VISUAL_CORE_BOUND_X_LEFT_END, img.height))
     labelme_img_left_json = create_labelme_file(img_left, annotations[:3], image_path, img_left_path, save_file)
     label_img_left = create_label_image(labelme_img_left_json, output_dir + "/" + image_path.stem + "_left_label.png", save_file)
     segs_left = generate_boundary(label_img_left)
 
-    img_right = img.crop((x_right_start, 0, x_right_end, img.height))
+    img_right = img.crop((VISUAL_CORE_BOUND_X_RIGHT_START, 0, VISUAL_CORE_BOUND_X_RIGHT_END, img.height))
     lebelme_img_right_json = create_labelme_file(img_right, annotations[3:], image_path, img_right_path, save_file)
     label_img_right = create_label_image(lebelme_img_right_json, output_dir + "/" + image_path.stem + "_right_label.png", save_file)
     segs_right = generate_boundary(label_img_right)

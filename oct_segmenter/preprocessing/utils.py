@@ -145,3 +145,17 @@ def make_img_size_multiple(img, multiple=16) -> PIL.Image:
     bottom_margin = (int) (top_margin + new_height)
 
     return img.crop((left_margin, top_margin, right_margin, bottom_margin)), left_margin, top_margin
+
+
+def convert_to_grayscale(img: PIL.Image) -> PIL.Image:
+    if img.mode == "RGBA" or img.mode == "RGB":
+        img = img.convert("L")
+    elif img.mode == "I;16":
+        img = img.point(lambda i : i*(1./256)).convert("L")
+    elif img.mode == "L":
+        pass
+    else:
+        print(f"Unexpected mode: {img.mode}")
+        exit(1)
+
+    return img
