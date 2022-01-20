@@ -17,7 +17,7 @@ def process_directory(input_dir, output_dir, save_file=False):
         for file in files:
             if file.endswith(".tiff") or file.endswith(".TIFF") and not file.startswith("."):
                 image_file = Path(os.path.join(subdir, file))
-                print(f"Processing file: {image_file}")
+                print(f"Processing file from Visual Core: {image_file}")
                 img_name_left, img_array_left, seg_map_left, segs_left, img_name_right, img_array_right, seg_map_right, segs_right = generate_image_label(image_file, output_dir, save_file)
                 if img_file_data:
                     if img_file_data[0].shape == img_array.shape:
