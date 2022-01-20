@@ -2,13 +2,9 @@ import os
 import shutil
 import sys
 
+import logging
 import numpy as np
 from pathlib import Path
-
-
-TEST_PARTITION = 0.3
-TRAINING_PARTITION = 0.8 * (1 - TEST_PARTITION)
-VALIDATION_PARTITION = 0.2 * (1 - TEST_PARTITION)
 
 
 def copy_images_and_csvs(i, image_paths, permutation, dst_path):
@@ -20,16 +16,36 @@ def copy_images_and_csvs(i, image_paths, permutation, dst_path):
     shutil.copyfile(parent / csv_name, dst_path / csv_name)
 
 
-"""
-python3 preprocessing-scripts/generate_dataset_images_directories.py ~/mac/Box/oct_segmentation_haohua_qian/WayneOCTimages_Sorted/ wayne-images/
-"""
-if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print("Usage: python generate_dataset_images_directories.py </path/to/input/dir> </path/to/output/dir>")
+def partition(args):
+    """
+    Given an input directory this command:
+        1. Recursively finds all the .tiff images
+        2. Creates a random permutation of [0 - # images found]
+        3. Partitions the images into the training, validation and test datasets
+    """
+
+    # Check partitions add up to 1
+    training_partition = args.training
+    validation_partition = args.validation
+    test_partition = args.test
+    partition_sum = training_partition + validation_partition + test_partition
+
+    if(partition_sum != 1.0):
+        print(f"Parititons sum is {partition_sum}. They should add up to 1")
         exit(1)
 
-    input_dir = sys.argv[1]
-    output_dir = sys.argv[2]
+    logging.info(f"Paritioning images with the following proportions: training {training_partition}"
+        f", validation: {validation_partition}, testing: {test_partition}")
+
+    input_dir = args.input_dir
+    if not os.path.isdir(input_dir):
+        print("Input directory doesn't exist")
+        exit(1)
+
+    output_dir = args.output_dir
+    if not os.path.isdir(output_dir):
+        print("Output directory doesn't exist")
+        exit(1)
 
     image_paths = []
     for subdir, dirs, files in os.walk(input_dir):
@@ -37,7 +53,7 @@ if __name__ == '__main__':
             if (file.endswith(".tiff") or file.endswith(".TIFF")) and not file.startswith("."):
                 image_paths.append(Path(os.path.join(subdir, file)))
 
-    print(f"Found {len(image_paths)} images")
+    logging.info(f"Found {len(image_paths)} images")
 
     # Cleanup
     training_path = Path(output_dir + "/training")
@@ -54,8 +70,13 @@ if __name__ == '__main__':
     
     permutation = np.random.permutation(len(image_paths))
 
-    test_images = int(round(TEST_PARTITION * len(image_paths)))
-    validation_images = int(round(VALIDATION_PARTITION * len(image_paths)))
+    test_images = int(round(test_partition * len(image_paths)))
+    validation_images = int(round(validation_partition * len(image_paths)))
+    training_images = len(image_paths) - validation_images - test_images
+
+    logging.info(f"Training Images: {training_images}")
+    logging.info(f"Validation Images: {validation_images}")
+    logging.info(f"Test Images: {test_images}")
 
     for i in range(test_images):
         copy_images_and_csvs(i, image_paths, permutation, test_path)

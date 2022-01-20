@@ -4,9 +4,11 @@ import argparse
 import art
 import logging
 
-from oct_segmenter import DEFAULT_MODEL_INDEX
+from oct_segmenter import DEFAULT_MODEL_INDEX, DEFAULT_TEST_PARTITION, DEFAULT_TRAINING_PARTITION,\
+    DEFAULT_TEST_PARTITION, DEFAULT_VALIDATION_PARTITION
 from oct_segmenter.commands.generate import generate_training_dataset, generate_test_dataset
 from oct_segmenter.commands.list import list_models
+from oct_segmenter.commands.partition import partition
 from oct_segmenter.commands.predict import predict
 from oct_segmenter.commands.train import train
 
@@ -94,6 +96,47 @@ def main():
         required=True,
     )
 
+    # Partition
+    partition_subparser = cmd_subparser.add_parser(
+        "partition",
+        help="Given an input directory, partition the images into the training, validation and test datasets"
+    )
+
+    partition_subparser.add_argument(
+        "-i",
+        "--input-dir",
+        help="input directory with images and csvs",
+        required=True,
+    )
+
+    partition_subparser.add_argument(
+        "-o",
+        "--output-dir",
+        help="name of the output directory to save the training, validation and test images",
+        required=True,
+    )
+
+    partition_subparser.add_argument(
+        "--training",
+        help="Fraction of the total images to use for the training dataset",
+        type=float,
+        default=DEFAULT_TRAINING_PARTITION
+    )
+
+    partition_subparser.add_argument(
+        "--validation",
+        help="Fraction of the total images to use for the validation dataset",
+        type=float,
+        default=DEFAULT_VALIDATION_PARTITION
+    )
+
+    partition_subparser.add_argument(
+        "--test",
+        help="Fraction of the total images to use for the test dataset",
+        type=float,
+        default=DEFAULT_TEST_PARTITION
+    )
+
     # Predict
     predict_subparser = cmd_subparser.add_parser("predict")
     predict_input_group = predict_subparser.add_mutually_exclusive_group(required=True)
@@ -146,6 +189,8 @@ def main():
             )
             exit(1)
 
+    elif args.command == "partition":
+        partition(args)
     elif args.command == "predict":
         predict(args)
     elif args.command == "list":
