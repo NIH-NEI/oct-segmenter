@@ -145,12 +145,21 @@ def main():
         "--input-dir", "-d", help="input directory containing .tiff images to be segmented."
     )
 
-    predict_subparser.add_argument(
+    predict_model_group = predict_subparser.add_mutually_exclusive_group(required=False)
+
+    predict_model_group.add_argument(
         "--model-index",
-        "-m",
+        "-n",
         help="Model to use for prediction. Run 'oct-segmenter list' to see full list.",
         default=DEFAULT_MODEL_INDEX,
         type=int
+    )
+
+    predict_model_group.add_argument(
+        "--model-path",
+        "-m",
+        help="Path to model to use for prediction (HDF5 file).",
+        type=str,
     )
 
     predict_subparser.add_argument("-c",
