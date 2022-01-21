@@ -96,6 +96,13 @@ def main():
         required=True,
     )
 
+    train_subparser.add_argument(
+        "-c",
+        "--config",
+        help="path to JSON config file",
+        required=False,
+    )
+
     # Partition
     partition_subparser = cmd_subparser.add_parser(
         "partition",
