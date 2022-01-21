@@ -99,7 +99,7 @@ indentical.
 
 #### Example
 
-`oct-segmenter generate training --training-input-dir <path/to/training/dir> --validation-dir
+`oct-segmenter generate training --training-input-dir <path/to/training/dir> --validation-input-dir
 <path/to/validation/dir> -o <directory/to/place/the/training_hdf5_file>`
 
 
@@ -115,6 +115,20 @@ indentical.
 
 `oct-segmenter generate test -t <path/to/test/dir> -o <directory/to/place/the/test_hdf5_file>`
 
+### Listing and selecting available models
+`oct-segmenter` is packaged with trained models. Currently the included models are:
+- `visual-function-core`: Model trained with images provided by the NIH-NEI Visual Function Core
+group.
+- `wayne-state-university`: Model trained with images provided by Wayne State University.
+
+To list the available models:
+```
+oct-segmenter list
+```
+
+The command will display the list of available models and the default model to use in the
+`predict` and `evaluate` subcommands.
+The command will prompt the user to type a number to select a new default model. If no change is desired, press `Enter`.
 
 ### Prediction
 
@@ -167,15 +181,16 @@ For example:
 
 # Other Information
 
-## Run `oct-segmenter` from repo without installing packages
+## No package installation usage
+To run `oct-segmenter` from repo without installing packages
 
 `python3 run.py`
 
-For example:
+#### Example
 
-`python3 run.py predict -d images/ -c`
-
-## Repo Contents
+```
+python3 run.py predict -d images/
+```
 
 ## Preprocess
 
@@ -191,26 +206,11 @@ Usage:
 Note: The script assumes that given the path to an input image, a corresponding CSV files with the labels for each layer will
 be present in the ◊same directory.
 
-## HDF5 file
 
-The script `generate_dataset.py` generates a single hdf5 file. Usage:
-
-`python generate_dataset.py </path/to/input/dir> </path/to/output/hdf5/file>`
-
-The hdf5 file will contain 3 datasets:
-- x: Original images
-- y: Segmentation maps of `x`
-- image_names: The path to the image files corresponding to `x`
-
-For example:
-
-`python3 generate_dataset.py ../images/training/ example-output/training_dataset.hdf5`
-
-
-## Building Wheel
+## Building Python Wheel Package
 
 To build the `oct-segmenter` wheel package, from the root directory do
 
 ```
-python setup.py bdist_wheel --universal
+./build.sh
 ```
