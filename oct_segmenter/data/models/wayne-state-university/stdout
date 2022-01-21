@@ -1,0 +1,794 @@
+root@9ab4e32d1d1b:/home/bruno/mouse-image-registration# python run.py train -i current/wayne_training_dataset.hdf5 -o current/
+              _                                                     _               
+  ___    ___ | |_         ___   ___   __ _  _ __ ___    ___  _ __  | |_   ___  _ __ 
+ / _ \  / __|| __| _____ / __| / _ \ / _` || '_ ` _ \  / _ \| '_ \ | __| / _ \| '__|
+| (_) || (__ | |_ |_____|\__ \|  __/| (_| || | | | | ||  __/| | | || |_ |  __/| |   
+ \___/  \___| \__|       |___/ \___| \__, ||_| |_| |_| \___||_| |_| \__| \___||_|   
+                                     |___/                                          
+
+INFO:root:Detected 7 classes
+INFO:root:Detected 1 input channels
+Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ input_1 (InputLayer)           [(None, None, None,  0           []                               
+                                 1)]                                                              
+                                                                                                  
+ conv2d (Conv2D)                (None, None, None,   80          ['input_1[0][0]']                
+                                8)                                                                
+                                                                                                  
+ batch_normalization (BatchNorm  (None, None, None,   32         ['conv2d[0][0]']                 
+ alization)                     8)                                                                
+                                                                                                  
+ activation (Activation)        (None, None, None,   0           ['batch_normalization[0][0]']    
+                                8)                                                                
+                                                                                                  
+ conv2d_1 (Conv2D)              (None, None, None,   584         ['activation[0][0]']             
+                                8)                                                                
+                                                                                                  
+ batch_normalization_1 (BatchNo  (None, None, None,   32         ['conv2d_1[0][0]']               
+ rmalization)                   8)                                                                
+                                                                                                  
+ activation_1 (Activation)      (None, None, None,   0           ['batch_normalization_1[0][0]']  
+                                8)                                                                
+                                                                                                  
+ max_pooling2d (MaxPooling2D)   (None, None, None,   0           ['activation_1[0][0]']           
+                                8)                                                                
+                                                                                                  
+ conv2d_2 (Conv2D)              (None, None, None,   1168        ['max_pooling2d[0][0]']          
+                                16)                                                               
+                                                                                                  
+ batch_normalization_2 (BatchNo  (None, None, None,   64         ['conv2d_2[0][0]']               
+ rmalization)                   16)                                                               
+                                                                                                  
+ activation_2 (Activation)      (None, None, None,   0           ['batch_normalization_2[0][0]']  
+                                16)                                                               
+                                                                                                  
+ conv2d_3 (Conv2D)              (None, None, None,   2320        ['activation_2[0][0]']           
+                                16)                                                               
+                                                                                                  
+ batch_normalization_3 (BatchNo  (None, None, None,   64         ['conv2d_3[0][0]']               
+ rmalization)                   16)                                                               
+                                                                                                  
+ activation_3 (Activation)      (None, None, None,   0           ['batch_normalization_3[0][0]']  
+                                16)                                                               
+                                                                                                  
+ max_pooling2d_1 (MaxPooling2D)  (None, None, None,   0          ['activation_3[0][0]']           
+                                16)                                                               
+                                                                                                  
+ conv2d_4 (Conv2D)              (None, None, None,   4640        ['max_pooling2d_1[0][0]']        
+                                32)                                                               
+                                                                                                  
+ batch_normalization_4 (BatchNo  (None, None, None,   128        ['conv2d_4[0][0]']               
+ rmalization)                   32)                                                               
+                                                                                                  
+ activation_4 (Activation)      (None, None, None,   0           ['batch_normalization_4[0][0]']  
+                                32)                                                               
+                                                                                                  
+ conv2d_5 (Conv2D)              (None, None, None,   9248        ['activation_4[0][0]']           
+                                32)                                                               
+                                                                                                  
+ batch_normalization_5 (BatchNo  (None, None, None,   128        ['conv2d_5[0][0]']               
+ rmalization)                   32)                                                               
+                                                                                                  
+ activation_5 (Activation)      (None, None, None,   0           ['batch_normalization_5[0][0]']  
+                                32)                                                               
+                                                                                                  
+ max_pooling2d_2 (MaxPooling2D)  (None, None, None,   0          ['activation_5[0][0]']           
+                                32)                                                               
+                                                                                                  
+ conv2d_6 (Conv2D)              (None, None, None,   18496       ['max_pooling2d_2[0][0]']        
+                                64)                                                               
+                                                                                                  
+ batch_normalization_6 (BatchNo  (None, None, None,   256        ['conv2d_6[0][0]']               
+ rmalization)                   64)                                                               
+                                                                                                  
+ activation_6 (Activation)      (None, None, None,   0           ['batch_normalization_6[0][0]']  
+                                64)                                                               
+                                                                                                  
+ conv2d_7 (Conv2D)              (None, None, None,   36928       ['activation_6[0][0]']           
+                                64)                                                               
+                                                                                                  
+ batch_normalization_7 (BatchNo  (None, None, None,   256        ['conv2d_7[0][0]']               
+ rmalization)                   64)                                                               
+                                                                                                  
+ activation_7 (Activation)      (None, None, None,   0           ['batch_normalization_7[0][0]']  
+                                64)                                                               
+                                                                                                  
+ max_pooling2d_3 (MaxPooling2D)  (None, None, None,   0          ['activation_7[0][0]']           
+                                64)                                                               
+                                                                                                  
+ conv2d_8 (Conv2D)              (None, None, None,   73856       ['max_pooling2d_3[0][0]']        
+                                128)                                                              
+                                                                                                  
+ batch_normalization_8 (BatchNo  (None, None, None,   512        ['conv2d_8[0][0]']               
+ rmalization)                   128)                                                              
+                                                                                                  
+ activation_8 (Activation)      (None, None, None,   0           ['batch_normalization_8[0][0]']  
+                                128)                                                              
+                                                                                                  
+ conv2d_9 (Conv2D)              (None, None, None,   147584      ['activation_8[0][0]']           
+                                128)                                                              
+                                                                                                  
+ batch_normalization_9 (BatchNo  (None, None, None,   512        ['conv2d_9[0][0]']               
+ rmalization)                   128)                                                              
+                                                                                                  
+ activation_9 (Activation)      (None, None, None,   0           ['batch_normalization_9[0][0]']  
+                                128)                                                              
+                                                                                                  
+ dropout (Dropout)              (None, None, None,   0           ['activation_9[0][0]']           
+                                128)                                                              
+                                                                                                  
+ up_sampling2d (UpSampling2D)   (None, None, None,   0           ['dropout[0][0]']                
+                                128)                                                              
+                                                                                                  
+ conv2d_10 (Conv2D)             (None, None, None,   32832       ['up_sampling2d[0][0]']          
+                                64)                                                               
+                                                                                                  
+ batch_normalization_10 (BatchN  (None, None, None,   256        ['conv2d_10[0][0]']              
+ ormalization)                  64)                                                               
+                                                                                                  
+ activation_10 (Activation)     (None, None, None,   0           ['batch_normalization_10[0][0]'] 
+                                64)                                                               
+                                                                                                  
+ concatenate (Concatenate)      (None, None, None,   0           ['activation_10[0][0]',          
+                                128)                              'activation_7[0][0]']           
+                                                                                                  
+ conv2d_11 (Conv2D)             (None, None, None,   73792       ['concatenate[0][0]']            
+                                64)                                                               
+                                                                                                  
+ batch_normalization_11 (BatchN  (None, None, None,   256        ['conv2d_11[0][0]']              
+ ormalization)                  64)                                                               
+                                                                                                  
+ activation_11 (Activation)     (None, None, None,   0           ['batch_normalization_11[0][0]'] 
+                                64)                                                               
+                                                                                                  
+ conv2d_12 (Conv2D)             (None, None, None,   36928       ['activation_11[0][0]']          
+                                64)                                                               
+                                                                                                  
+ batch_normalization_12 (BatchN  (None, None, None,   256        ['conv2d_12[0][0]']              
+ ormalization)                  64)                                                               
+                                                                                                  
+ activation_12 (Activation)     (None, None, None,   0           ['batch_normalization_12[0][0]'] 
+                                64)                                                               
+                                                                                                  
+ up_sampling2d_1 (UpSampling2D)  (None, None, None,   0          ['activation_12[0][0]']          
+                                64)                                                               
+                                                                                                  
+ conv2d_13 (Conv2D)             (None, None, None,   8224        ['up_sampling2d_1[0][0]']        
+                                32)                                                               
+                                                                                                  
+ batch_normalization_13 (BatchN  (None, None, None,   128        ['conv2d_13[0][0]']              
+ ormalization)                  32)                                                               
+                                                                                                  
+ activation_13 (Activation)     (None, None, None,   0           ['batch_normalization_13[0][0]'] 
+                                32)                                                               
+                                                                                                  
+ concatenate_1 (Concatenate)    (None, None, None,   0           ['activation_13[0][0]',          
+                                64)                               'activation_5[0][0]']           
+                                                                                                  
+ conv2d_14 (Conv2D)             (None, None, None,   18464       ['concatenate_1[0][0]']          
+                                32)                                                               
+                                                                                                  
+ batch_normalization_14 (BatchN  (None, None, None,   128        ['conv2d_14[0][0]']              
+ ormalization)                  32)                                                               
+                                                                                                  
+ activation_14 (Activation)     (None, None, None,   0           ['batch_normalization_14[0][0]'] 
+                                32)                                                               
+                                                                                                  
+ conv2d_15 (Conv2D)             (None, None, None,   9248        ['activation_14[0][0]']          
+                                32)                                                               
+                                                                                                  
+ batch_normalization_15 (BatchN  (None, None, None,   128        ['conv2d_15[0][0]']              
+ ormalization)                  32)                                                               
+                                                                                                  
+ activation_15 (Activation)     (None, None, None,   0           ['batch_normalization_15[0][0]'] 
+                                32)                                                               
+                                                                                                  
+ up_sampling2d_2 (UpSampling2D)  (None, None, None,   0          ['activation_15[0][0]']          
+                                32)                                                               
+                                                                                                  
+ conv2d_16 (Conv2D)             (None, None, None,   2064        ['up_sampling2d_2[0][0]']        
+                                16)                                                               
+                                                                                                  
+ batch_normalization_16 (BatchN  (None, None, None,   64         ['conv2d_16[0][0]']              
+ ormalization)                  16)                                                               
+                                                                                                  
+ activation_16 (Activation)     (None, None, None,   0           ['batch_normalization_16[0][0]'] 
+                                16)                                                               
+                                                                                                  
+ concatenate_2 (Concatenate)    (None, None, None,   0           ['activation_16[0][0]',          
+                                32)                               'activation_3[0][0]']           
+                                                                                                  
+ conv2d_17 (Conv2D)             (None, None, None,   4624        ['concatenate_2[0][0]']          
+                                16)                                                               
+                                                                                                  
+ batch_normalization_17 (BatchN  (None, None, None,   64         ['conv2d_17[0][0]']              
+ ormalization)                  16)                                                               
+                                                                                                  
+ activation_17 (Activation)     (None, None, None,   0           ['batch_normalization_17[0][0]'] 
+                                16)                                                               
+                                                                                                  
+ conv2d_18 (Conv2D)             (None, None, None,   2320        ['activation_17[0][0]']          
+                                16)                                                               
+                                                                                                  
+ batch_normalization_18 (BatchN  (None, None, None,   64         ['conv2d_18[0][0]']              
+ ormalization)                  16)                                                               
+                                                                                                  
+ activation_18 (Activation)     (None, None, None,   0           ['batch_normalization_18[0][0]'] 
+                                16)                                                               
+                                                                                                  
+ up_sampling2d_3 (UpSampling2D)  (None, None, None,   0          ['activation_18[0][0]']          
+                                16)                                                               
+                                                                                                  
+ conv2d_19 (Conv2D)             (None, None, None,   520         ['up_sampling2d_3[0][0]']        
+                                8)                                                                
+                                                                                                  
+ batch_normalization_19 (BatchN  (None, None, None,   32         ['conv2d_19[0][0]']              
+ ormalization)                  8)                                                                
+                                                                                                  
+ activation_19 (Activation)     (None, None, None,   0           ['batch_normalization_19[0][0]'] 
+                                8)                                                                
+                                                                                                  
+ concatenate_3 (Concatenate)    (None, None, None,   0           ['activation_19[0][0]',          
+                                16)                               'activation_1[0][0]']           
+                                                                                                  
+ conv2d_20 (Conv2D)             (None, None, None,   1160        ['concatenate_3[0][0]']          
+                                8)                                                                
+                                                                                                  
+ batch_normalization_20 (BatchN  (None, None, None,   32         ['conv2d_20[0][0]']              
+ ormalization)                  8)                                                                
+                                                                                                  
+ activation_20 (Activation)     (None, None, None,   0           ['batch_normalization_20[0][0]'] 
+                                8)                                                                
+                                                                                                  
+ conv2d_21 (Conv2D)             (None, None, None,   584         ['activation_20[0][0]']          
+                                8)                                                                
+                                                                                                  
+ batch_normalization_21 (BatchN  (None, None, None,   32         ['conv2d_21[0][0]']              
+ ormalization)                  8)                                                                
+                                                                                                  
+ activation_21 (Activation)     (None, None, None,   0           ['batch_normalization_21[0][0]'] 
+                                8)                                                                
+                                                                                                  
+ conv2d_22 (Conv2D)             (None, None, None,   63          ['activation_21[0][0]']          
+                                7)                                                                
+                                                                                                  
+==================================================================================================
+Total params: 489,151
+Trainable params: 487,439
+Non-trainable params: 1,712
+__________________________________________________________________________________________________
+/home/bruno/mouse-image-registration/unet/model/training.py:215: UserWarning: `Model.fit_generator` is deprecated and will be removed in a future version. Please use `Model.fit`, which supports generators.
+  model_info = model.fit_generator(generator=train_gen,
+Epoch 1/1000
+ 6/22 [=======>......................] - ETA: 11s - loss: 0.8183 - dice_coef: 0.0762WARNING:tensorflow:Callback method `on_train_batch_end` is slow compared to the batch time (batch time: 0.1314s vs `on_train_batch_end` time: 0.4991s). Check your callbacks.
+WARNING:tensorflow:Callback method `on_train_batch_end` is slow compared to the batch time (batch time: 0.1314s vs `on_train_batch_end` time: 0.4991s). Check your callbacks.
+22/22 [==============================] - 36s 1s/step - loss: 0.7502 - dice_coef: 0.1410 - val_loss: 0.8506 - val_dice_coef: 0.0000e+00
+Epoch 2/1000
+22/22 [==============================] - 22s 959ms/step - loss: 0.6380 - dice_coef: 0.4702 - val_loss: 0.8543 - val_dice_coef: 0.0000e+00
+Epoch 3/1000
+22/22 [==============================] - 21s 945ms/step - loss: 0.5323 - dice_coef: 0.6439 - val_loss: 0.8434 - val_dice_coef: 0.0000e+00
+Epoch 4/1000
+22/22 [==============================] - 21s 940ms/step - loss: 0.4700 - dice_coef: 0.6605 - val_loss: 0.8175 - val_dice_coef: 0.0000e+00
+Epoch 5/1000
+22/22 [==============================] - 22s 980ms/step - loss: 0.4220 - dice_coef: 0.6806 - val_loss: 0.8108 - val_dice_coef: 0.0271
+Epoch 6/1000
+22/22 [==============================] - 22s 979ms/step - loss: 0.3780 - dice_coef: 0.7055 - val_loss: 0.5435 - val_dice_coef: 0.5392
+Epoch 7/1000
+22/22 [==============================] - 22s 982ms/step - loss: 0.3349 - dice_coef: 0.8467 - val_loss: 0.4942 - val_dice_coef: 0.6238
+Epoch 8/1000
+22/22 [==============================] - 22s 975ms/step - loss: 0.2934 - dice_coef: 0.9232 - val_loss: 0.4321 - val_dice_coef: 0.7426
+Epoch 9/1000
+22/22 [==============================] - 22s 955ms/step - loss: 0.2566 - dice_coef: 0.9219 - val_loss: 0.4753 - val_dice_coef: 0.6201
+Epoch 10/1000
+22/22 [==============================] - 21s 948ms/step - loss: 0.2259 - dice_coef: 0.9233 - val_loss: 0.4441 - val_dice_coef: 0.6447
+Epoch 11/1000
+22/22 [==============================] - 22s 965ms/step - loss: 0.2016 - dice_coef: 0.9241 - val_loss: 0.3691 - val_dice_coef: 0.7047
+Epoch 12/1000
+22/22 [==============================] - 22s 961ms/step - loss: 0.1831 - dice_coef: 0.9245 - val_loss: 0.3576 - val_dice_coef: 0.7092
+Epoch 13/1000
+22/22 [==============================] - 21s 946ms/step - loss: 0.1693 - dice_coef: 0.9247 - val_loss: 0.3536 - val_dice_coef: 0.7051
+Epoch 14/1000
+22/22 [==============================] - 22s 982ms/step - loss: 0.1587 - dice_coef: 0.9248 - val_loss: 0.3104 - val_dice_coef: 0.7411
+Epoch 15/1000
+22/22 [==============================] - 21s 927ms/step - loss: 0.1502 - dice_coef: 0.9249 - val_loss: 0.3070 - val_dice_coef: 0.7417
+Epoch 16/1000
+22/22 [==============================] - 22s 971ms/step - loss: 0.1437 - dice_coef: 0.9248 - val_loss: 0.2920 - val_dice_coef: 0.7566
+Epoch 17/1000
+22/22 [==============================] - 22s 970ms/step - loss: 0.1379 - dice_coef: 0.9250 - val_loss: 0.2726 - val_dice_coef: 0.7715
+Epoch 18/1000
+22/22 [==============================] - 22s 962ms/step - loss: 0.1329 - dice_coef: 0.9251 - val_loss: 0.2564 - val_dice_coef: 0.7872
+Epoch 19/1000
+22/22 [==============================] - 22s 967ms/step - loss: 0.1281 - dice_coef: 0.9343 - val_loss: 0.2173 - val_dice_coef: 0.8381
+Epoch 20/1000
+22/22 [==============================] - 22s 982ms/step - loss: 0.1232 - dice_coef: 0.9442 - val_loss: 0.1993 - val_dice_coef: 0.8629
+Epoch 21/1000
+22/22 [==============================] - 22s 974ms/step - loss: 0.1185 - dice_coef: 0.9452 - val_loss: 0.1735 - val_dice_coef: 0.8875
+Epoch 22/1000
+22/22 [==============================] - 22s 967ms/step - loss: 0.1144 - dice_coef: 0.9455 - val_loss: 0.1606 - val_dice_coef: 0.8960
+Epoch 23/1000
+22/22 [==============================] - 22s 965ms/step - loss: 0.1107 - dice_coef: 0.9456 - val_loss: 0.1617 - val_dice_coef: 0.8924
+Epoch 24/1000
+22/22 [==============================] - 22s 994ms/step - loss: 0.1072 - dice_coef: 0.9458 - val_loss: 0.1428 - val_dice_coef: 0.9034
+Epoch 25/1000
+22/22 [==============================] - 22s 975ms/step - loss: 0.1041 - dice_coef: 0.9458 - val_loss: 0.1261 - val_dice_coef: 0.9249
+Epoch 26/1000
+22/22 [==============================] - 23s 997ms/step - loss: 0.1013 - dice_coef: 0.9456 - val_loss: 0.1081 - val_dice_coef: 0.9449
+Epoch 27/1000
+22/22 [==============================] - 22s 956ms/step - loss: 0.0984 - dice_coef: 0.9458 - val_loss: 0.1182 - val_dice_coef: 0.9302
+Epoch 28/1000
+22/22 [==============================] - 22s 981ms/step - loss: 0.0957 - dice_coef: 0.9459 - val_loss: 0.1017 - val_dice_coef: 0.9452
+Epoch 29/1000
+22/22 [==============================] - 22s 989ms/step - loss: 0.0932 - dice_coef: 0.9460 - val_loss: 0.0990 - val_dice_coef: 0.9457
+Epoch 30/1000
+22/22 [==============================] - 22s 955ms/step - loss: 0.0911 - dice_coef: 0.9459 - val_loss: 0.0953 - val_dice_coef: 0.9462
+Epoch 31/1000
+22/22 [==============================] - 22s 952ms/step - loss: 0.0888 - dice_coef: 0.9462 - val_loss: 0.0935 - val_dice_coef: 0.9454
+Epoch 32/1000
+22/22 [==============================] - 21s 941ms/step - loss: 0.0867 - dice_coef: 0.9462 - val_loss: 0.0905 - val_dice_coef: 0.9456
+Epoch 33/1000
+22/22 [==============================] - 22s 961ms/step - loss: 0.0846 - dice_coef: 0.9463 - val_loss: 0.0881 - val_dice_coef: 0.9462
+Epoch 34/1000
+22/22 [==============================] - 22s 960ms/step - loss: 0.0828 - dice_coef: 0.9460 - val_loss: 0.0863 - val_dice_coef: 0.9457
+Epoch 35/1000
+22/22 [==============================] - 22s 972ms/step - loss: 0.0808 - dice_coef: 0.9458 - val_loss: 0.1118 - val_dice_coef: 0.9183
+Epoch 36/1000
+22/22 [==============================] - 22s 965ms/step - loss: 0.0885 - dice_coef: 0.9364 - val_loss: 0.4298 - val_dice_coef: 0.5846
+Epoch 37/1000
+22/22 [==============================] - 22s 978ms/step - loss: 0.0794 - dice_coef: 0.9429 - val_loss: 0.3871 - val_dice_coef: 0.6386
+Epoch 38/1000
+22/22 [==============================] - 22s 971ms/step - loss: 0.0747 - dice_coef: 0.9450 - val_loss: 0.2439 - val_dice_coef: 0.7739
+Epoch 39/1000
+22/22 [==============================] - 23s 1s/step - loss: 0.0713 - dice_coef: 0.9500 - val_loss: 0.0905 - val_dice_coef: 0.9501
+Epoch 40/1000
+22/22 [==============================] - 22s 975ms/step - loss: 0.0677 - dice_coef: 0.9727 - val_loss: 0.0746 - val_dice_coef: 0.9691
+Epoch 41/1000
+22/22 [==============================] - 22s 962ms/step - loss: 0.0640 - dice_coef: 0.9725 - val_loss: 0.0797 - val_dice_coef: 0.9621
+Epoch 42/1000
+22/22 [==============================] - 22s 961ms/step - loss: 0.0599 - dice_coef: 0.9722 - val_loss: 0.0649 - val_dice_coef: 0.9708
+Epoch 43/1000
+22/22 [==============================] - 22s 968ms/step - loss: 0.0543 - dice_coef: 0.9728 - val_loss: 0.0610 - val_dice_coef: 0.9712
+Epoch 44/1000
+22/22 [==============================] - 22s 977ms/step - loss: 0.0501 - dice_coef: 0.9728 - val_loss: 0.0552 - val_dice_coef: 0.9721
+Epoch 45/1000
+22/22 [==============================] - 22s 980ms/step - loss: 0.0468 - dice_coef: 0.9728 - val_loss: 0.0497 - val_dice_coef: 0.9734
+Epoch 46/1000
+22/22 [==============================] - 21s 940ms/step - loss: 0.0446 - dice_coef: 0.9730 - val_loss: 0.0472 - val_dice_coef: 0.9732
+Epoch 47/1000
+22/22 [==============================] - 22s 953ms/step - loss: 0.0428 - dice_coef: 0.9732 - val_loss: 0.0451 - val_dice_coef: 0.9732
+Epoch 48/1000
+22/22 [==============================] - 22s 971ms/step - loss: 0.0415 - dice_coef: 0.9730 - val_loss: 0.0435 - val_dice_coef: 0.9734
+Epoch 49/1000
+22/22 [==============================] - 21s 942ms/step - loss: 0.0406 - dice_coef: 0.9726 - val_loss: 0.0409 - val_dice_coef: 0.9734
+Epoch 50/1000
+22/22 [==============================] - 22s 965ms/step - loss: 0.0395 - dice_coef: 0.9724 - val_loss: 0.0402 - val_dice_coef: 0.9734
+Epoch 51/1000
+22/22 [==============================] - 22s 984ms/step - loss: 0.0384 - dice_coef: 0.9718 - val_loss: 0.0388 - val_dice_coef: 0.9717
+Epoch 52/1000
+22/22 [==============================] - 22s 956ms/step - loss: 0.0377 - dice_coef: 0.9721 - val_loss: 0.0374 - val_dice_coef: 0.9728
+Epoch 53/1000
+22/22 [==============================] - 22s 961ms/step - loss: 0.0368 - dice_coef: 0.9730 - val_loss: 0.0373 - val_dice_coef: 0.9734
+Epoch 54/1000
+22/22 [==============================] - 22s 978ms/step - loss: 0.0362 - dice_coef: 0.9722 - val_loss: 0.0361 - val_dice_coef: 0.9736
+Epoch 55/1000
+22/22 [==============================] - 22s 959ms/step - loss: 0.0356 - dice_coef: 0.9713 - val_loss: 0.0362 - val_dice_coef: 0.9735
+Epoch 56/1000
+22/22 [==============================] - 22s 984ms/step - loss: 0.0352 - dice_coef: 0.9710 - val_loss: 0.0356 - val_dice_coef: 0.9729
+Epoch 57/1000
+22/22 [==============================] - 22s 951ms/step - loss: 0.0349 - dice_coef: 0.9708 - val_loss: 0.0354 - val_dice_coef: 0.9723
+Epoch 58/1000
+22/22 [==============================] - 22s 969ms/step - loss: 0.0345 - dice_coef: 0.9707 - val_loss: 0.0352 - val_dice_coef: 0.9715
+Epoch 59/1000
+22/22 [==============================] - 22s 960ms/step - loss: 0.0341 - dice_coef: 0.9707 - val_loss: 0.0348 - val_dice_coef: 0.9712
+Epoch 60/1000
+22/22 [==============================] - 21s 946ms/step - loss: 0.0338 - dice_coef: 0.9707 - val_loss: 0.0347 - val_dice_coef: 0.9710
+Epoch 61/1000
+22/22 [==============================] - 22s 954ms/step - loss: 0.0335 - dice_coef: 0.9705 - val_loss: 0.0339 - val_dice_coef: 0.9711
+Epoch 62/1000
+22/22 [==============================] - 21s 941ms/step - loss: 0.0331 - dice_coef: 0.9706 - val_loss: 0.0339 - val_dice_coef: 0.9708
+Epoch 63/1000
+22/22 [==============================] - 22s 955ms/step - loss: 0.0328 - dice_coef: 0.9705 - val_loss: 0.0338 - val_dice_coef: 0.9710
+Epoch 64/1000
+22/22 [==============================] - 22s 953ms/step - loss: 0.0325 - dice_coef: 0.9706 - val_loss: 0.0336 - val_dice_coef: 0.9701
+Epoch 65/1000
+22/22 [==============================] - 21s 948ms/step - loss: 0.0325 - dice_coef: 0.9702 - val_loss: 0.0329 - val_dice_coef: 0.9706
+Epoch 66/1000
+22/22 [==============================] - 22s 960ms/step - loss: 0.0318 - dice_coef: 0.9705 - val_loss: 0.0326 - val_dice_coef: 0.9705
+Epoch 67/1000
+22/22 [==============================] - 22s 967ms/step - loss: 0.0314 - dice_coef: 0.9705 - val_loss: 0.0327 - val_dice_coef: 0.9703
+Epoch 68/1000
+22/22 [==============================] - 22s 959ms/step - loss: 0.0309 - dice_coef: 0.9711 - val_loss: 0.0319 - val_dice_coef: 0.9722
+Epoch 69/1000
+22/22 [==============================] - 22s 993ms/step - loss: 0.0302 - dice_coef: 0.9730 - val_loss: 0.0320 - val_dice_coef: 0.9745
+Epoch 70/1000
+22/22 [==============================] - 22s 974ms/step - loss: 0.0290 - dice_coef: 0.9770 - val_loss: 0.0327 - val_dice_coef: 0.9755
+Epoch 71/1000
+22/22 [==============================] - 23s 993ms/step - loss: 0.0250 - dice_coef: 0.9817 - val_loss: 0.0307 - val_dice_coef: 0.9800
+Epoch 72/1000
+22/22 [==============================] - 22s 980ms/step - loss: 0.0230 - dice_coef: 0.9817 - val_loss: 0.0289 - val_dice_coef: 0.9795
+Epoch 73/1000
+22/22 [==============================] - 22s 987ms/step - loss: 0.0224 - dice_coef: 0.9820 - val_loss: 0.0254 - val_dice_coef: 0.9816
+Epoch 74/1000
+22/22 [==============================] - 22s 979ms/step - loss: 0.0219 - dice_coef: 0.9822 - val_loss: 0.0249 - val_dice_coef: 0.9817
+Epoch 75/1000
+22/22 [==============================] - 22s 969ms/step - loss: 0.0217 - dice_coef: 0.9822 - val_loss: 0.0251 - val_dice_coef: 0.9807
+Epoch 76/1000
+22/22 [==============================] - 22s 960ms/step - loss: 0.0215 - dice_coef: 0.9822 - val_loss: 0.0242 - val_dice_coef: 0.9810
+Epoch 77/1000
+22/22 [==============================] - 22s 960ms/step - loss: 0.0212 - dice_coef: 0.9824 - val_loss: 0.0233 - val_dice_coef: 0.9815
+Epoch 78/1000
+22/22 [==============================] - 23s 996ms/step - loss: 0.0209 - dice_coef: 0.9825 - val_loss: 0.0233 - val_dice_coef: 0.9811
+Epoch 79/1000
+22/22 [==============================] - 22s 966ms/step - loss: 0.0208 - dice_coef: 0.9825 - val_loss: 0.0273 - val_dice_coef: 0.9769
+Epoch 80/1000
+22/22 [==============================] - 22s 983ms/step - loss: 0.0206 - dice_coef: 0.9825 - val_loss: 0.0226 - val_dice_coef: 0.9813
+Epoch 81/1000
+22/22 [==============================] - 21s 948ms/step - loss: 0.0202 - dice_coef: 0.9828 - val_loss: 0.0229 - val_dice_coef: 0.9807
+Epoch 82/1000
+22/22 [==============================] - 22s 952ms/step - loss: 0.0199 - dice_coef: 0.9829 - val_loss: 0.0224 - val_dice_coef: 0.9811
+Epoch 83/1000
+22/22 [==============================] - 22s 952ms/step - loss: 0.0201 - dice_coef: 0.9827 - val_loss: 0.0224 - val_dice_coef: 0.9810
+Epoch 84/1000
+22/22 [==============================] - 22s 980ms/step - loss: 0.0196 - dice_coef: 0.9831 - val_loss: 0.0217 - val_dice_coef: 0.9814
+Epoch 85/1000
+22/22 [==============================] - 23s 997ms/step - loss: 0.0195 - dice_coef: 0.9830 - val_loss: 0.0217 - val_dice_coef: 0.9813
+Epoch 86/1000
+22/22 [==============================] - 22s 956ms/step - loss: 0.0194 - dice_coef: 0.9831 - val_loss: 0.0214 - val_dice_coef: 0.9815
+Epoch 87/1000
+22/22 [==============================] - 22s 964ms/step - loss: 0.0195 - dice_coef: 0.9829 - val_loss: 0.0217 - val_dice_coef: 0.9811
+Epoch 88/1000
+22/22 [==============================] - 22s 961ms/step - loss: 0.0192 - dice_coef: 0.9831 - val_loss: 0.0217 - val_dice_coef: 0.9810
+Epoch 89/1000
+22/22 [==============================] - 22s 963ms/step - loss: 0.0191 - dice_coef: 0.9832 - val_loss: 0.0275 - val_dice_coef: 0.9752
+Epoch 90/1000
+22/22 [==============================] - 21s 941ms/step - loss: 0.0188 - dice_coef: 0.9834 - val_loss: 0.0243 - val_dice_coef: 0.9783
+Epoch 91/1000
+22/22 [==============================] - 22s 965ms/step - loss: 0.0189 - dice_coef: 0.9832 - val_loss: 0.0254 - val_dice_coef: 0.9770
+Epoch 92/1000
+22/22 [==============================] - 22s 975ms/step - loss: 0.0186 - dice_coef: 0.9835 - val_loss: 0.0234 - val_dice_coef: 0.9789
+Epoch 93/1000
+22/22 [==============================] - 22s 973ms/step - loss: 0.0185 - dice_coef: 0.9835 - val_loss: 0.0217 - val_dice_coef: 0.9806
+Epoch 94/1000
+22/22 [==============================] - 22s 958ms/step - loss: 0.0185 - dice_coef: 0.9834 - val_loss: 0.0211 - val_dice_coef: 0.9810
+Epoch 95/1000
+22/22 [==============================] - 22s 945ms/step - loss: 0.0183 - dice_coef: 0.9836 - val_loss: 0.0208 - val_dice_coef: 0.9812
+Epoch 96/1000
+22/22 [==============================] - 22s 957ms/step - loss: 0.0182 - dice_coef: 0.9836 - val_loss: 0.0209 - val_dice_coef: 0.9811
+Epoch 97/1000
+22/22 [==============================] - 22s 989ms/step - loss: 0.0181 - dice_coef: 0.9837 - val_loss: 0.0210 - val_dice_coef: 0.9810
+Epoch 98/1000
+22/22 [==============================] - 22s 968ms/step - loss: 0.0180 - dice_coef: 0.9837 - val_loss: 0.0204 - val_dice_coef: 0.9814
+Epoch 99/1000
+22/22 [==============================] - 22s 970ms/step - loss: 0.0177 - dice_coef: 0.9840 - val_loss: 0.0205 - val_dice_coef: 0.9813
+Epoch 100/1000
+22/22 [==============================] - 22s 954ms/step - loss: 0.0176 - dice_coef: 0.9841 - val_loss: 0.0204 - val_dice_coef: 0.9813
+Epoch 101/1000
+22/22 [==============================] - 22s 955ms/step - loss: 0.0176 - dice_coef: 0.9840 - val_loss: 0.0205 - val_dice_coef: 0.9812
+Epoch 102/1000
+22/22 [==============================] - 21s 942ms/step - loss: 0.0175 - dice_coef: 0.9841 - val_loss: 0.0228 - val_dice_coef: 0.9789
+Epoch 103/1000
+22/22 [==============================] - 22s 966ms/step - loss: 0.0174 - dice_coef: 0.9841 - val_loss: 0.0246 - val_dice_coef: 0.9771
+Epoch 104/1000
+22/22 [==============================] - 21s 929ms/step - loss: 0.0172 - dice_coef: 0.9843 - val_loss: 0.0236 - val_dice_coef: 0.9780
+Epoch 105/1000
+22/22 [==============================] - 22s 955ms/step - loss: 0.0172 - dice_coef: 0.9843 - val_loss: 0.0255 - val_dice_coef: 0.9760
+Epoch 106/1000
+22/22 [==============================] - 22s 974ms/step - loss: 0.0172 - dice_coef: 0.9842 - val_loss: 0.0222 - val_dice_coef: 0.9793
+Epoch 107/1000
+22/22 [==============================] - 22s 953ms/step - loss: 0.0169 - dice_coef: 0.9845 - val_loss: 0.0201 - val_dice_coef: 0.9812
+Epoch 108/1000
+22/22 [==============================] - 22s 954ms/step - loss: 0.0168 - dice_coef: 0.9846 - val_loss: 0.0199 - val_dice_coef: 0.9814
+Epoch 109/1000
+22/22 [==============================] - 22s 963ms/step - loss: 0.0170 - dice_coef: 0.9843 - val_loss: 0.0204 - val_dice_coef: 0.9810
+Epoch 110/1000
+22/22 [==============================] - 22s 964ms/step - loss: 0.0168 - dice_coef: 0.9844 - val_loss: 0.0204 - val_dice_coef: 0.9810
+Epoch 111/1000
+22/22 [==============================] - 22s 970ms/step - loss: 0.0165 - dice_coef: 0.9847 - val_loss: 0.0208 - val_dice_coef: 0.9805
+Epoch 112/1000
+22/22 [==============================] - 22s 988ms/step - loss: 0.0163 - dice_coef: 0.9850 - val_loss: 0.0200 - val_dice_coef: 0.9813
+Epoch 113/1000
+22/22 [==============================] - 22s 955ms/step - loss: 0.0164 - dice_coef: 0.9849 - val_loss: 0.0201 - val_dice_coef: 0.9812
+Epoch 114/1000
+22/22 [==============================] - 22s 955ms/step - loss: 0.0166 - dice_coef: 0.9846 - val_loss: 0.0202 - val_dice_coef: 0.9810
+Epoch 115/1000
+22/22 [==============================] - 22s 991ms/step - loss: 0.0163 - dice_coef: 0.9848 - val_loss: 0.0215 - val_dice_coef: 0.9797
+Epoch 116/1000
+22/22 [==============================] - 22s 965ms/step - loss: 0.0161 - dice_coef: 0.9850 - val_loss: 0.0203 - val_dice_coef: 0.9808
+Epoch 117/1000
+22/22 [==============================] - 22s 984ms/step - loss: 0.0162 - dice_coef: 0.9849 - val_loss: 0.0203 - val_dice_coef: 0.9809
+Epoch 118/1000
+22/22 [==============================] - 22s 958ms/step - loss: 0.0161 - dice_coef: 0.9850 - val_loss: 0.0202 - val_dice_coef: 0.9809
+Epoch 119/1000
+22/22 [==============================] - 22s 960ms/step - loss: 0.0157 - dice_coef: 0.9854 - val_loss: 0.0201 - val_dice_coef: 0.9810
+Epoch 120/1000
+22/22 [==============================] - 21s 935ms/step - loss: 0.0156 - dice_coef: 0.9854 - val_loss: 0.0206 - val_dice_coef: 0.9804
+Epoch 121/1000
+22/22 [==============================] - 21s 941ms/step - loss: 0.0157 - dice_coef: 0.9853 - val_loss: 0.0207 - val_dice_coef: 0.9804
+Epoch 122/1000
+22/22 [==============================] - 22s 948ms/step - loss: 0.0156 - dice_coef: 0.9854 - val_loss: 0.0201 - val_dice_coef: 0.9810
+Epoch 123/1000
+22/22 [==============================] - 22s 950ms/step - loss: 0.0154 - dice_coef: 0.9856 - val_loss: 0.0206 - val_dice_coef: 0.9804
+Epoch 124/1000
+22/22 [==============================] - 22s 974ms/step - loss: 0.0154 - dice_coef: 0.9856 - val_loss: 0.0199 - val_dice_coef: 0.9810
+Epoch 125/1000
+22/22 [==============================] - 21s 943ms/step - loss: 0.0151 - dice_coef: 0.9858 - val_loss: 0.0197 - val_dice_coef: 0.9812
+Epoch 126/1000
+22/22 [==============================] - 22s 947ms/step - loss: 0.0152 - dice_coef: 0.9857 - val_loss: 0.0199 - val_dice_coef: 0.9811
+Epoch 127/1000
+22/22 [==============================] - 21s 941ms/step - loss: 0.0153 - dice_coef: 0.9856 - val_loss: 0.0230 - val_dice_coef: 0.9779
+Epoch 128/1000
+22/22 [==============================] - 22s 977ms/step - loss: 0.0152 - dice_coef: 0.9857 - val_loss: 0.0221 - val_dice_coef: 0.9789
+Epoch 129/1000
+22/22 [==============================] - 22s 982ms/step - loss: 0.0150 - dice_coef: 0.9859 - val_loss: 0.0295 - val_dice_coef: 0.9715
+Epoch 130/1000
+22/22 [==============================] - 22s 961ms/step - loss: 0.0150 - dice_coef: 0.9859 - val_loss: 0.0309 - val_dice_coef: 0.9701
+Epoch 131/1000
+22/22 [==============================] - 22s 954ms/step - loss: 0.0149 - dice_coef: 0.9859 - val_loss: 0.0238 - val_dice_coef: 0.9771
+Epoch 132/1000
+22/22 [==============================] - 22s 963ms/step - loss: 0.0148 - dice_coef: 0.9860 - val_loss: 0.0197 - val_dice_coef: 0.9812
+Epoch 133/1000
+22/22 [==============================] - 22s 980ms/step - loss: 0.0146 - dice_coef: 0.9862 - val_loss: 0.0203 - val_dice_coef: 0.9805
+Epoch 134/1000
+22/22 [==============================] - 22s 978ms/step - loss: 0.0145 - dice_coef: 0.9863 - val_loss: 0.0199 - val_dice_coef: 0.9809
+Epoch 135/1000
+22/22 [==============================] - 22s 983ms/step - loss: 0.0163 - dice_coef: 0.9845 - val_loss: 0.0237 - val_dice_coef: 0.9771
+Epoch 136/1000
+22/22 [==============================] - 22s 947ms/step - loss: 0.0193 - dice_coef: 0.9816 - val_loss: 0.2535 - val_dice_coef: 0.7502
+Epoch 137/1000
+22/22 [==============================] - 22s 984ms/step - loss: 0.0194 - dice_coef: 0.9814 - val_loss: 0.0792 - val_dice_coef: 0.9224
+Epoch 138/1000
+22/22 [==============================] - 22s 953ms/step - loss: 0.0182 - dice_coef: 0.9825 - val_loss: 0.2417 - val_dice_coef: 0.7604
+Epoch 139/1000
+22/22 [==============================] - 22s 957ms/step - loss: 0.0170 - dice_coef: 0.9838 - val_loss: 0.1084 - val_dice_coef: 0.8928
+Epoch 140/1000
+22/22 [==============================] - 22s 961ms/step - loss: 0.0164 - dice_coef: 0.9844 - val_loss: 0.0216 - val_dice_coef: 0.9791
+Epoch 141/1000
+22/22 [==============================] - 22s 963ms/step - loss: 0.0160 - dice_coef: 0.9847 - val_loss: 0.0210 - val_dice_coef: 0.9797
+Epoch 142/1000
+22/22 [==============================] - 22s 966ms/step - loss: 0.0158 - dice_coef: 0.9849 - val_loss: 0.0213 - val_dice_coef: 0.9794
+Epoch 143/1000
+22/22 [==============================] - 22s 972ms/step - loss: 0.0153 - dice_coef: 0.9854 - val_loss: 0.0205 - val_dice_coef: 0.9802
+Epoch 144/1000
+22/22 [==============================] - 21s 936ms/step - loss: 0.0152 - dice_coef: 0.9855 - val_loss: 0.0199 - val_dice_coef: 0.9807
+Epoch 145/1000
+22/22 [==============================] - 22s 968ms/step - loss: 0.0149 - dice_coef: 0.9857 - val_loss: 0.0200 - val_dice_coef: 0.9807
+Epoch 146/1000
+22/22 [==============================] - 22s 963ms/step - loss: 0.0148 - dice_coef: 0.9858 - val_loss: 0.0197 - val_dice_coef: 0.9809
+Epoch 147/1000
+22/22 [==============================] - 22s 958ms/step - loss: 0.0146 - dice_coef: 0.9861 - val_loss: 0.0207 - val_dice_coef: 0.9799
+Epoch 148/1000
+22/22 [==============================] - 22s 965ms/step - loss: 0.0144 - dice_coef: 0.9862 - val_loss: 0.0209 - val_dice_coef: 0.9798
+Epoch 149/1000
+22/22 [==============================] - 21s 945ms/step - loss: 0.0143 - dice_coef: 0.9863 - val_loss: 0.0198 - val_dice_coef: 0.9808
+Epoch 150/1000
+22/22 [==============================] - 22s 971ms/step - loss: 0.0143 - dice_coef: 0.9862 - val_loss: 0.0199 - val_dice_coef: 0.9807
+Epoch 151/1000
+22/22 [==============================] - 21s 943ms/step - loss: 0.0143 - dice_coef: 0.9863 - val_loss: 0.0202 - val_dice_coef: 0.9804
+Epoch 152/1000
+22/22 [==============================] - 21s 943ms/step - loss: 0.0142 - dice_coef: 0.9864 - val_loss: 0.0205 - val_dice_coef: 0.9801
+Epoch 153/1000
+22/22 [==============================] - 22s 967ms/step - loss: 0.0140 - dice_coef: 0.9866 - val_loss: 0.0197 - val_dice_coef: 0.9808
+Epoch 154/1000
+22/22 [==============================] - 23s 1s/step - loss: 0.0141 - dice_coef: 0.9865 - val_loss: 0.0220 - val_dice_coef: 0.9786
+Epoch 155/1000
+22/22 [==============================] - 22s 984ms/step - loss: 0.0139 - dice_coef: 0.9866 - val_loss: 0.0207 - val_dice_coef: 0.9799
+Epoch 156/1000
+22/22 [==============================] - 22s 949ms/step - loss: 0.0140 - dice_coef: 0.9866 - val_loss: 0.0195 - val_dice_coef: 0.9810
+Epoch 157/1000
+22/22 [==============================] - 22s 987ms/step - loss: 0.0138 - dice_coef: 0.9867 - val_loss: 0.0196 - val_dice_coef: 0.9810
+Epoch 158/1000
+22/22 [==============================] - 22s 957ms/step - loss: 0.0136 - dice_coef: 0.9869 - val_loss: 0.0196 - val_dice_coef: 0.9810
+Epoch 159/1000
+22/22 [==============================] - 22s 989ms/step - loss: 0.0135 - dice_coef: 0.9870 - val_loss: 0.0193 - val_dice_coef: 0.9812
+Epoch 160/1000
+22/22 [==============================] - 22s 957ms/step - loss: 0.0136 - dice_coef: 0.9869 - val_loss: 0.0193 - val_dice_coef: 0.9812
+Epoch 161/1000
+22/22 [==============================] - 22s 959ms/step - loss: 0.0137 - dice_coef: 0.9868 - val_loss: 0.0197 - val_dice_coef: 0.9808
+Epoch 162/1000
+22/22 [==============================] - 22s 969ms/step - loss: 0.0136 - dice_coef: 0.9869 - val_loss: 0.0199 - val_dice_coef: 0.9806
+Epoch 163/1000
+22/22 [==============================] - 21s 927ms/step - loss: 0.0138 - dice_coef: 0.9867 - val_loss: 0.0210 - val_dice_coef: 0.9795
+Epoch 164/1000
+22/22 [==============================] - 22s 953ms/step - loss: 0.0134 - dice_coef: 0.9871 - val_loss: 0.0195 - val_dice_coef: 0.9809
+Epoch 165/1000
+22/22 [==============================] - 21s 929ms/step - loss: 0.0134 - dice_coef: 0.9871 - val_loss: 0.0195 - val_dice_coef: 0.9809
+Epoch 166/1000
+22/22 [==============================] - 21s 945ms/step - loss: 0.0134 - dice_coef: 0.9871 - val_loss: 0.0197 - val_dice_coef: 0.9807
+Epoch 167/1000
+22/22 [==============================] - 22s 949ms/step - loss: 0.0132 - dice_coef: 0.9873 - val_loss: 0.0206 - val_dice_coef: 0.9798
+Epoch 168/1000
+22/22 [==============================] - 21s 938ms/step - loss: 0.0132 - dice_coef: 0.9872 - val_loss: 0.0198 - val_dice_coef: 0.9806
+Epoch 169/1000
+22/22 [==============================] - 21s 938ms/step - loss: 0.0130 - dice_coef: 0.9874 - val_loss: 0.0197 - val_dice_coef: 0.9808
+Epoch 170/1000
+22/22 [==============================] - 21s 945ms/step - loss: 0.0130 - dice_coef: 0.9874 - val_loss: 0.0205 - val_dice_coef: 0.9799
+Epoch 171/1000
+22/22 [==============================] - 21s 935ms/step - loss: 0.0131 - dice_coef: 0.9873 - val_loss: 0.0199 - val_dice_coef: 0.9805
+Epoch 172/1000
+22/22 [==============================] - 22s 956ms/step - loss: 0.0129 - dice_coef: 0.9875 - val_loss: 0.0199 - val_dice_coef: 0.9805
+Epoch 173/1000
+22/22 [==============================] - 22s 958ms/step - loss: 0.0129 - dice_coef: 0.9875 - val_loss: 0.0198 - val_dice_coef: 0.9806
+Epoch 174/1000
+22/22 [==============================] - 21s 939ms/step - loss: 0.0130 - dice_coef: 0.9874 - val_loss: 0.0194 - val_dice_coef: 0.9810
+Epoch 175/1000
+22/22 [==============================] - 22s 956ms/step - loss: 0.0128 - dice_coef: 0.9876 - val_loss: 0.0200 - val_dice_coef: 0.9804
+Epoch 176/1000
+22/22 [==============================] - 21s 942ms/step - loss: 0.0128 - dice_coef: 0.9876 - val_loss: 0.0201 - val_dice_coef: 0.9803
+Epoch 177/1000
+22/22 [==============================] - 22s 952ms/step - loss: 0.0127 - dice_coef: 0.9876 - val_loss: 0.0199 - val_dice_coef: 0.9805
+Epoch 178/1000
+22/22 [==============================] - 22s 992ms/step - loss: 0.0126 - dice_coef: 0.9878 - val_loss: 0.0190 - val_dice_coef: 0.9813
+Epoch 179/1000
+22/22 [==============================] - 21s 934ms/step - loss: 0.0127 - dice_coef: 0.9876 - val_loss: 0.0207 - val_dice_coef: 0.9797
+Epoch 180/1000
+22/22 [==============================] - 22s 971ms/step - loss: 0.0131 - dice_coef: 0.9873 - val_loss: 0.0199 - val_dice_coef: 0.9804
+Epoch 181/1000
+22/22 [==============================] - 22s 952ms/step - loss: 0.0129 - dice_coef: 0.9874 - val_loss: 0.0198 - val_dice_coef: 0.9806
+Epoch 182/1000
+22/22 [==============================] - 21s 946ms/step - loss: 0.0126 - dice_coef: 0.9877 - val_loss: 0.0190 - val_dice_coef: 0.9813
+Epoch 183/1000
+22/22 [==============================] - 21s 944ms/step - loss: 0.0124 - dice_coef: 0.9880 - val_loss: 0.0191 - val_dice_coef: 0.9813
+Epoch 184/1000
+22/22 [==============================] - 22s 990ms/step - loss: 0.0124 - dice_coef: 0.9879 - val_loss: 0.0201 - val_dice_coef: 0.9803
+Epoch 185/1000
+22/22 [==============================] - 22s 965ms/step - loss: 0.0124 - dice_coef: 0.9879 - val_loss: 0.0202 - val_dice_coef: 0.9801
+Epoch 186/1000
+22/22 [==============================] - 21s 939ms/step - loss: 0.0124 - dice_coef: 0.9880 - val_loss: 0.0202 - val_dice_coef: 0.9801
+Epoch 187/1000
+22/22 [==============================] - 22s 984ms/step - loss: 0.0123 - dice_coef: 0.9880 - val_loss: 0.0193 - val_dice_coef: 0.9810
+Epoch 188/1000
+22/22 [==============================] - 21s 953ms/step - loss: 0.0122 - dice_coef: 0.9881 - val_loss: 0.0195 - val_dice_coef: 0.9809
+Epoch 189/1000
+22/22 [==============================] - 22s 971ms/step - loss: 0.0122 - dice_coef: 0.9882 - val_loss: 0.0193 - val_dice_coef: 0.9810
+Epoch 190/1000
+22/22 [==============================] - 22s 974ms/step - loss: 0.0122 - dice_coef: 0.9881 - val_loss: 0.0193 - val_dice_coef: 0.9811
+Epoch 191/1000
+22/22 [==============================] - 23s 1s/step - loss: 0.0122 - dice_coef: 0.9882 - val_loss: 0.0193 - val_dice_coef: 0.9810
+Epoch 192/1000
+22/22 [==============================] - 22s 981ms/step - loss: 0.0122 - dice_coef: 0.9881 - val_loss: 0.0199 - val_dice_coef: 0.9804
+Epoch 193/1000
+22/22 [==============================] - 23s 998ms/step - loss: 0.0121 - dice_coef: 0.9882 - val_loss: 0.0194 - val_dice_coef: 0.9809
+Epoch 194/1000
+22/22 [==============================] - 22s 979ms/step - loss: 0.0121 - dice_coef: 0.9882 - val_loss: 0.0191 - val_dice_coef: 0.9812
+Epoch 195/1000
+22/22 [==============================] - 22s 956ms/step - loss: 0.0123 - dice_coef: 0.9880 - val_loss: 0.0197 - val_dice_coef: 0.9806
+Epoch 196/1000
+22/22 [==============================] - 23s 1s/step - loss: 0.0123 - dice_coef: 0.9880 - val_loss: 0.0211 - val_dice_coef: 0.9792
+Epoch 197/1000
+22/22 [==============================] - 22s 949ms/step - loss: 0.0122 - dice_coef: 0.9881 - val_loss: 0.0197 - val_dice_coef: 0.9806
+Epoch 198/1000
+22/22 [==============================] - 22s 951ms/step - loss: 0.0120 - dice_coef: 0.9883 - val_loss: 0.0194 - val_dice_coef: 0.9809
+Epoch 199/1000
+22/22 [==============================] - 22s 969ms/step - loss: 0.0121 - dice_coef: 0.9882 - val_loss: 0.0209 - val_dice_coef: 0.9794
+Epoch 200/1000
+22/22 [==============================] - 22s 969ms/step - loss: 0.0118 - dice_coef: 0.9885 - val_loss: 0.0196 - val_dice_coef: 0.9807
+Epoch 201/1000
+22/22 [==============================] - 22s 955ms/step - loss: 0.0120 - dice_coef: 0.9883 - val_loss: 0.0200 - val_dice_coef: 0.9802
+Epoch 202/1000
+22/22 [==============================] - 22s 958ms/step - loss: 0.0120 - dice_coef: 0.9883 - val_loss: 0.0197 - val_dice_coef: 0.9806
+Epoch 203/1000
+22/22 [==============================] - 21s 947ms/step - loss: 0.0120 - dice_coef: 0.9883 - val_loss: 0.0192 - val_dice_coef: 0.9811
+Epoch 204/1000
+22/22 [==============================] - 22s 970ms/step - loss: 0.0121 - dice_coef: 0.9881 - val_loss: 0.0202 - val_dice_coef: 0.9801
+Epoch 205/1000
+22/22 [==============================] - 22s 978ms/step - loss: 0.0117 - dice_coef: 0.9886 - val_loss: 0.0201 - val_dice_coef: 0.9801
+Epoch 206/1000
+22/22 [==============================] - 22s 954ms/step - loss: 0.0116 - dice_coef: 0.9887 - val_loss: 0.0225 - val_dice_coef: 0.9778
+Epoch 207/1000
+22/22 [==============================] - 21s 942ms/step - loss: 0.0116 - dice_coef: 0.9887 - val_loss: 0.0205 - val_dice_coef: 0.9798
+Epoch 208/1000
+22/22 [==============================] - 22s 958ms/step - loss: 0.0115 - dice_coef: 0.9888 - val_loss: 0.0196 - val_dice_coef: 0.9806
+Epoch 209/1000
+22/22 [==============================] - 22s 972ms/step - loss: 0.0116 - dice_coef: 0.9886 - val_loss: 0.0209 - val_dice_coef: 0.9794
+Epoch 210/1000
+22/22 [==============================] - 22s 973ms/step - loss: 0.0119 - dice_coef: 0.9883 - val_loss: 0.0213 - val_dice_coef: 0.9789
+Epoch 211/1000
+22/22 [==============================] - 22s 964ms/step - loss: 0.0118 - dice_coef: 0.9884 - val_loss: 0.0228 - val_dice_coef: 0.9775
+Epoch 212/1000
+22/22 [==============================] - 21s 929ms/step - loss: 0.0119 - dice_coef: 0.9883 - val_loss: 0.0235 - val_dice_coef: 0.9768
+Epoch 213/1000
+22/22 [==============================] - 22s 959ms/step - loss: 0.0119 - dice_coef: 0.9883 - val_loss: 0.0208 - val_dice_coef: 0.9794
+Epoch 214/1000
+22/22 [==============================] - 22s 969ms/step - loss: 0.0117 - dice_coef: 0.9885 - val_loss: 0.0211 - val_dice_coef: 0.9791
+Epoch 215/1000
+22/22 [==============================] - 23s 999ms/step - loss: 0.0114 - dice_coef: 0.9888 - val_loss: 0.0266 - val_dice_coef: 0.9736
+Epoch 216/1000
+22/22 [==============================] - 22s 968ms/step - loss: 0.0114 - dice_coef: 0.9888 - val_loss: 0.0208 - val_dice_coef: 0.9794
+Epoch 217/1000
+22/22 [==============================] - 22s 963ms/step - loss: 0.0113 - dice_coef: 0.9889 - val_loss: 0.0212 - val_dice_coef: 0.9790
+Epoch 218/1000
+22/22 [==============================] - 22s 981ms/step - loss: 0.0113 - dice_coef: 0.9889 - val_loss: 0.0220 - val_dice_coef: 0.9783
+Epoch 219/1000
+22/22 [==============================] - 21s 941ms/step - loss: 0.0113 - dice_coef: 0.9889 - val_loss: 0.0191 - val_dice_coef: 0.9812
+Epoch 220/1000
+22/22 [==============================] - 22s 954ms/step - loss: 0.0113 - dice_coef: 0.9889 - val_loss: 0.0196 - val_dice_coef: 0.9806
+Epoch 221/1000
+22/22 [==============================] - 22s 957ms/step - loss: 0.0114 - dice_coef: 0.9888 - val_loss: 0.0198 - val_dice_coef: 0.9804
+Epoch 222/1000
+22/22 [==============================] - 22s 955ms/step - loss: 0.0112 - dice_coef: 0.9890 - val_loss: 0.0196 - val_dice_coef: 0.9807
+Epoch 223/1000
+22/22 [==============================] - 21s 944ms/step - loss: 0.0111 - dice_coef: 0.9891 - val_loss: 0.0197 - val_dice_coef: 0.9805
+Epoch 224/1000
+22/22 [==============================] - 22s 977ms/step - loss: 0.0111 - dice_coef: 0.9891 - val_loss: 0.0193 - val_dice_coef: 0.9809
+Epoch 225/1000
+22/22 [==============================] - 22s 967ms/step - loss: 0.0111 - dice_coef: 0.9891 - val_loss: 0.0191 - val_dice_coef: 0.9811
+Epoch 226/1000
+22/22 [==============================] - 21s 946ms/step - loss: 0.0111 - dice_coef: 0.9891 - val_loss: 0.0221 - val_dice_coef: 0.9781
+Epoch 227/1000
+22/22 [==============================] - 22s 973ms/step - loss: 0.0110 - dice_coef: 0.9892 - val_loss: 0.0245 - val_dice_coef: 0.9758
+Epoch 228/1000
+22/22 [==============================] - 22s 951ms/step - loss: 0.0109 - dice_coef: 0.9893 - val_loss: 0.0221 - val_dice_coef: 0.9781
+Epoch 229/1000
+22/22 [==============================] - 22s 952ms/step - loss: 0.0110 - dice_coef: 0.9892 - val_loss: 0.0202 - val_dice_coef: 0.9800
+Epoch 230/1000
+22/22 [==============================] - 22s 981ms/step - loss: 0.0109 - dice_coef: 0.9893 - val_loss: 0.0209 - val_dice_coef: 0.9793
+Epoch 231/1000
+22/22 [==============================] - 22s 968ms/step - loss: 0.0110 - dice_coef: 0.9892 - val_loss: 0.0193 - val_dice_coef: 0.9809
+Epoch 232/1000
+22/22 [==============================] - 21s 925ms/step - loss: 0.0111 - dice_coef: 0.9891 - val_loss: 0.0194 - val_dice_coef: 0.9808
+Epoch 233/1000
+22/22 [==============================] - 21s 946ms/step - loss: 0.0111 - dice_coef: 0.9891 - val_loss: 0.0195 - val_dice_coef: 0.9807
+Epoch 234/1000
+22/22 [==============================] - 22s 951ms/step - loss: 0.0109 - dice_coef: 0.9893 - val_loss: 0.0188 - val_dice_coef: 0.9813
+Epoch 235/1000
+22/22 [==============================] - 22s 959ms/step - loss: 0.0109 - dice_coef: 0.9892 - val_loss: 0.0196 - val_dice_coef: 0.9806
+Epoch 236/1000
+22/22 [==============================] - 22s 959ms/step - loss: 0.0110 - dice_coef: 0.9892 - val_loss: 0.0193 - val_dice_coef: 0.9809
+Epoch 237/1000
+22/22 [==============================] - 22s 953ms/step - loss: 0.0110 - dice_coef: 0.9892 - val_loss: 0.0196 - val_dice_coef: 0.9806
+Epoch 238/1000
+22/22 [==============================] - 21s 950ms/step - loss: 0.0108 - dice_coef: 0.9893 - val_loss: 0.0196 - val_dice_coef: 0.9805
+Epoch 239/1000
+22/22 [==============================] - 21s 947ms/step - loss: 0.0109 - dice_coef: 0.9893 - val_loss: 0.0198 - val_dice_coef: 0.9804
+Epoch 240/1000
+22/22 [==============================] - 22s 953ms/step - loss: 0.0108 - dice_coef: 0.9894 - val_loss: 0.0198 - val_dice_coef: 0.9803
+Epoch 241/1000
+22/22 [==============================] - 22s 965ms/step - loss: 0.0108 - dice_coef: 0.9894 - val_loss: 0.0198 - val_dice_coef: 0.9803
+Epoch 242/1000
+22/22 [==============================] - 21s 941ms/step - loss: 0.0107 - dice_coef: 0.9894 - val_loss: 0.0194 - val_dice_coef: 0.9808
+Epoch 243/1000
+ 6/22 [=======>......................] - ETA: 12s - loss: 0.0106 - dice_coef: 0.9895^CTraceback (most recent call last):
+  File "run.py", line 4, in <module>
+    main()
+  File "/home/bruno/mouse-image-registration/oct_segmenter/__main__.py", line 208, in main
+    train(args)
+  File "/home/bruno/mouse-image-registration/oct_segmenter/commands/train.py", line 32, in train
+    training.train_model(
+  File "/home/bruno/mouse-image-registration/unet/model/training.py", line 303, in train_model
+    train_network(
+  File "/home/bruno/mouse-image-registration/unet/model/training.py", line 215, in train_network
+    model_info = model.fit_generator(generator=train_gen,
+  File "/usr/local/lib/python3.8/dist-packages/keras/engine/training.py", line 2016, in fit_generator
+    return self.fit(
+  File "/usr/local/lib/python3.8/dist-packages/keras/utils/traceback_utils.py", line 64, in error_handler
+    return fn(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/keras/engine/training.py", line 1221, in fit
+    callbacks.on_train_batch_end(end_step, logs)
+  File "/usr/local/lib/python3.8/dist-packages/keras/callbacks.py", line 436, in on_train_batch_end
+    self._call_batch_hook(ModeKeys.TRAIN, 'end', batch, logs=logs)
+  File "/usr/local/lib/python3.8/dist-packages/keras/callbacks.py", line 295, in _call_batch_hook
+    self._call_batch_end_hook(mode, batch, logs)
+  File "/usr/local/lib/python3.8/dist-packages/keras/callbacks.py", line 316, in _call_batch_end_hook
+    self._call_batch_hook_helper(hook_name, batch, logs)
+  File "/usr/local/lib/python3.8/dist-packages/keras/callbacks.py", line 354, in _call_batch_hook_helper
+    hook(batch, logs)
+  File "/usr/local/lib/python3.8/dist-packages/keras/callbacks.py", line 1032, in on_train_batch_end
+    self._batch_update_progbar(batch, logs)
+  File "/usr/local/lib/python3.8/dist-packages/keras/callbacks.py", line 1104, in _batch_update_progbar
+    logs = tf_utils.sync_to_numpy_or_python_type(logs)
+  File "/usr/local/lib/python3.8/dist-packages/keras/utils/tf_utils.py", line 554, in sync_to_numpy_or_python_type
+    return tf.nest.map_structure(_to_single_numpy_or_python_type, tensors)
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/util/nest.py", line 869, in map_structure
+    structure[0], [func(*x) for x in entries],
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/util/nest.py", line 869, in <listcomp>
+    structure[0], [func(*x) for x in entries],
+  File "/usr/local/lib/python3.8/dist-packages/keras/utils/tf_utils.py", line 550, in _to_single_numpy_or_python_type
+    x = t.numpy()
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/framework/ops.py", line 1149, in numpy
+    maybe_arr = self._numpy()  # pylint: disable=protected-access
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/framework/ops.py", line 1115, in _numpy
+    return self._numpy_internal()
+KeyboardInterrupt
+
