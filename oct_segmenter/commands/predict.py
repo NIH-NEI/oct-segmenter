@@ -92,7 +92,7 @@ def predict(args):
         raw_labels=True,
         temp_extra=True,
         boundary_maps=True,
-        area_maps=True,
+        area_maps=False,
         comb_area_maps=True,
         seg_plot=True
     )
