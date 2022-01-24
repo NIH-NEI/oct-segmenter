@@ -6,6 +6,7 @@ import logging
 
 from oct_segmenter import DEFAULT_MODEL_INDEX, DEFAULT_TEST_PARTITION, DEFAULT_TRAINING_PARTITION,\
     DEFAULT_TEST_PARTITION, DEFAULT_VALIDATION_PARTITION
+from oct_segmenter.commands.evaluate import evaluate
 from oct_segmenter.commands.generate import generate_training_dataset, generate_test_dataset
 from oct_segmenter.commands.list import list_models
 from oct_segmenter.commands.partition import partition
@@ -29,9 +30,9 @@ def main():
     # Generate test dataset
     gen_test_parser = generate_subparser.add_parser("test")
     gen_test_parser.add_argument(
-        "-t",
+        "-i",
         "--test-input-dir",
-        help="path to the directory containing test images",
+        help="Path to the directory containing test images",
         required=True,
     )
 
@@ -46,7 +47,7 @@ def main():
     gen_test_parser.add_argument(
         "-o",
         "--output-dir",
-        help="name of the output name file",
+        help="Name of the output name file",
         default=".",
     )
 
@@ -54,15 +55,15 @@ def main():
     gen_train_parser = generate_subparser.add_parser("training")
     gen_train_parser.add_argument(
         "--training-input-dir",
-        "-t",
-        help="path to the directory containing training images",
+        "-i",
+        help="Path to the directory containing training images",
         required=True,
     )
 
     gen_train_parser.add_argument(
         "-v",
         "--validation-input-dir",
-        help="path to the directory containing validation images",
+        help="Path to the directory containing validation images",
         required=True,
     )
 
@@ -77,7 +78,7 @@ def main():
     gen_train_parser.add_argument(
         "-o",
         "--output-dir",
-        help="name of the output name file",
+        help="Name of the output name file",
         default="."
     )
 
@@ -86,20 +87,20 @@ def main():
     train_subparser.add_argument(
         "-i",
         "--input",
-        help="input training dataset (hdf5 file)",
+        help="Input training dataset (hdf5 file)",
         required=True,
     )
     train_subparser.add_argument(
         "-o",
         "--output-dir",
-        help="name of the output directory to save model",
+        help="Name of the output directory to save model",
         required=True,
     )
 
     train_subparser.add_argument(
         "-c",
         "--config",
-        help="path to JSON config file",
+        help="Path to JSON config file",
         required=False,
     )
 
@@ -112,14 +113,14 @@ def main():
     partition_subparser.add_argument(
         "-i",
         "--input-dir",
-        help="input directory with images and csvs",
+        help="Input directory with images and CSVs",
         required=True,
     )
 
     partition_subparser.add_argument(
         "-o",
         "--output-dir",
-        help="name of the output directory to save the training, validation and test images",
+        help="Name of the output directory to save the training, validation and test images",
         required=True,
     )
 
@@ -172,20 +173,52 @@ def main():
     predict_subparser.add_argument("-c",
         default=False,
         action="store_true",
-        help="label complete PNG image instead of left/right regions"
+        help="Label complete PNG image instead of left/right regions"
     )
 
     predict_subparser.add_argument(
         "--label-png",
         "-l",
-        help="output segmentation map PNG file"
+        help="Output segmentation map PNG file"
     )
 
     predict_subparser.add_argument(
-        "--output",
+        "--output-dir",
         "-o",
-        help="output file or directory (if it ends with .csv it is "
-        "recognized as file, else as directory)",
+        help="Output directory",
+    )
+
+    # Evaluate
+    evaluate_subparser = cmd_subparser.add_parser("evaluate")
+
+    evaluate_subparser.add_argument(
+        "--input",
+        "-i",
+        required=True,
+        help="input test dataset HDF5 file"
+    )
+
+    evaluate_model_group = evaluate_subparser.add_mutually_exclusive_group(required=False)
+    evaluate_model_group.add_argument(
+        "--model-index",
+        "-n",
+        default=DEFAULT_MODEL_INDEX,
+        type=int,
+        help="Model to use for evaluation. Run 'oct-segmenter list' to see full list.",
+    )
+
+    evaluate_model_group.add_argument(
+        "--model-path",
+        "-m",
+        help="Path to model to use for evaluation (HDF5 file).",
+        type=str,
+    )
+
+    evaluate_subparser.add_argument(
+        "--output-dir",
+        "-o",
+        default=".",
+        help="Output directory",
     )
 
     # List Models
@@ -209,6 +242,8 @@ def main():
         partition(args)
     elif args.command == "predict":
         predict(args)
+    elif args.command == "evaluate":
+        evaluate(args)
     elif args.command == "list":
         list_models()
     elif args.command == "train":

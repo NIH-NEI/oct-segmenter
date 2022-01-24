@@ -113,7 +113,7 @@ indentical.
 
 #### Example
 
-`oct-segmenter generate test -t <path/to/test/dir> -o <directory/to/place/the/test_hdf5_file>`
+`oct-segmenter generate test -i <path/to/test/dir> -o <directory/to/place/the/test_hdf5_file>`
 
 ### Listing and selecting available models
 `oct-segmenter` is packaged with trained models. Currently the included models are:
@@ -144,6 +144,28 @@ oct-segmenter predict -i myimage.tiff -o myoutput
 oct-segmenter predict -d testing_images
 ```
 
+### Evaluation
+
+To evaluate the model with a test dataset use the `oct-segmenter evaluate` subcommand. It requires
+a test dataset (HDF5 file) as an input which can be generated using the `generate test` subcommand.
+[See above](#generating-test-dataset-hdf5-file)
+In addition to generating plots with labels, `evaluate` will create a `results.csv` and
+`results.hdf5` that contain the following model's performance statistics:
+- `Mean absolute errors`
+- `Mean errors`
+- `Median absolute errors`
+- `SD abs errors`
+- `SD errors`
+- `Mean dices`
+- `SD dices`
+
+
+#### Example
+
+```
+oct-segmenter evaluate -i current/wayne_state_test_dataset.hdf5  -o current/test-results/
+```
+
 ### Advanced Usage
 ### Training
 
@@ -165,8 +187,8 @@ oct-segmenter train -i <path/to/training/dataset/hdf5/file> -o <path/to/output> 
 ```
 
 ### Training Configurable Parameters
-- batch_size
-- epochs
+- `batch_size`
+- `epochs`
 
 ## Post-processing (Currently not supported, to be implemented)
 
@@ -182,9 +204,23 @@ For example:
 # Other Information
 
 ## No package installation usage
-To run `oct-segmenter` from repo without installing packages
 
-`python3 run.py`
+1. Create a conda or virtual environment and activate it:
+```
+conda create -n oct-env python=3.9
+conda activate oct-env
+```
+
+2. Install packages using `pip`:
+```
+pip install -r requirements.txt
+```
+
+3. To run `oct-segmenter` from repo without installing packages:
+
+```
+python3 run.py <subcommand> [options]
+```
 
 #### Example
 
