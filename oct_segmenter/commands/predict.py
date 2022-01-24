@@ -59,8 +59,8 @@ def predict(args):
     pred_images_names = []
     output_paths = []
     for input_path in input_paths:
-        if args.output:
-            output = Path(args.output)
+        if args.output_dir:
+            output = Path(args.output_dir)
         else:
             output = input_path.parent
 
@@ -113,6 +113,7 @@ def predict(args):
         comb_pred=False,
         recalc_errors=False,
         boundaries=True,
+        boundary_errors=False,
         trim_maps=False,
         trim_ref_ind=0,
         trim_window=(0, 0),
