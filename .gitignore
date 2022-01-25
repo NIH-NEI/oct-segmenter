@@ -12,3 +12,7 @@ construct_hdf5/*
 *.pyc
 *.tiff
 .DS_Store
+*.sif
+*.err
+*.out
+*.whl

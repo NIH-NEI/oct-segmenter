@@ -250,3 +250,104 @@ To build the `oct-segmenter` wheel package, from the root directory do
 ```
 ./build.sh
 ```
+
+## Running in an HPC environment
+
+These instructions are intended for use on Biowulf, but the process should be
+similar for any HPC environment using Slurm and Singularity. 
+
+### Building oct-segmenter with Singularity
+
+
+Although it's possible to build some Singularity images on Biowulf, it is
+recommended to build the oct-segmenter image on another system. For instance,
+you can easily install Singularity on a VM and build the oct-segmenter there,
+which can then be transferred to Biowulf.
+
+To begin, copy the wheel files into the `singularity` directory like this:
+
+```
+cp dist/oct_segmenter-0.3.0-py2.py3-none-any.whl singularity/
+cp unet-mod/dist/oct_unet-0.3.0-py2.py3-none-any.whl singularity/
+```
+
+Change into the `singularity` directory and build a singularity image from the
+`oct-segmenter.def` file like this:
+
+```
+cd singularity
+sudo singularity build oct-segmenter.sif oct-segmenter.def
+```
+
+Now copy the `oct-segmenter.sif` file to Biowulf using scp, globus, or rsync.
+For example:
+
+```
+scp oct-segmenter.sif username@biowulf.nih.gov:/data/username
+```
+
+Connect to biowulf and make the Singularity image executable:
+
+```
+cd /data/$USER
+chmod u+x oct-segmenter.sif
+```
+
+### Running the oct-segmenter with Singularity on Biowulf
+
+On Biowulf, load the Singularity module:
+
+```
+module load singularity
+```
+
+You can run the Singularity image like this:
+
+```
+./oct-segmenter.sif
+```
+
+You can pass arguments as you normally would with the oct-segmenter CLI tool.
+For example:
+
+```
+./oct-segmenter.sif list
+```
+
+### Submitting a job to Slurm
+
+Jobs on Biowulf are scheduled via Slurm. A sample Slurm script is included in
+the `slurm/oct-segmenter.sh`.
+
+You will need to specify the path to your `oct-segmenter.sif` file
+(`SIF_PATH`), input directory (`INPUT_DIR`), and output directory
+(`OUTPUT_DIR`). Depending on what command you are running, you might find it
+helpful to add additional variables.
+
+The script is configured to partition, so if you are using it for anything
+else, you will need to change this command as well:
+
+```
+$SIF_PATH partition -i $INPUT_DIR -o $OUTPUT_DIR --training 0.3 --validation 0.5 --test 0.2
+```
+
+You may want to change the SBATCH commands as well, particularly the time,
+cpus, and memory. Set your time to be slightly more than your
+maximum expected run time. For instance, if your jobs usually take about an
+hour but never exceed an hour and half, then you could set your time like this:
+
+```
+#SBATCH --time=01:30:00
+```
+
+Once you have made all the necessary changes to the Slurm script, run the
+following command:
+
+```
+sbatch ./slurm/oct-segmenter.sh
+```
+
+Type `sjobs` to check the status of the job. You should receive an email when
+it completes. Output and error logs will be created in the directory from which
+you ran the sbatch command. If your job fails, be sure to check these to debug
+the issue.

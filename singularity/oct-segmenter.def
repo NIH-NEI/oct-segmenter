@@ -1,0 +1,17 @@
+Bootstrap: docker
+
+From: continuumio/miniconda3
+
+%files
+    oct_segmenter-0.3.0-py2.py3-none-any.whl
+    oct_unet-0.3.0-py2.py3-none-any.whl
+
+%post
+    /opt/conda/bin/conda create --name oct-segmenter-env python=3.9
+    /opt/conda/envs/oct-segmenter-env/bin/pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org oct_segmenter-0.3.0-py2.py3-none-any.whl oct_unet-0.3.0-py2.py3-none-any.whl
+
+%environment
+    export PATH=/opt/conda/envs/oct-segmenter-env/bin/:$PATH
+
+%runscript
+    exec /opt/conda/envs/oct-segmenter-env/bin/oct-segmenter "$@"
