@@ -7,6 +7,11 @@ import numpy as np
 from pathlib import Path
 
 
+def copy_json(i, image_paths, permutation, dst_path):
+    name = image_paths[permutation[i]].name
+    shutil.copyfile(image_paths[permutation[i]], dst_path / name)
+
+
 def copy_images_and_csvs(i, image_paths, permutation, dst_path):
     stem = image_paths[permutation[i]].stem
     name = image_paths[permutation[i]].name
@@ -47,10 +52,14 @@ def partition(args):
         print("Output directory doesn't exist")
         exit(1)
 
+    extension = ".tiff"
+    if args.j:
+        extension = ".json"
+
     image_paths = []
     for subdir, dirs, files in os.walk(input_dir):
         for file in files:
-            if (file.endswith(".tiff") or file.endswith(".TIFF")) and not file.startswith("."):
+            if (file.endswith(extension) or file.endswith(extension.upper())) and not file.startswith("."):
                 image_paths.append(Path(os.path.join(subdir, file)))
 
     logging.info(f"Found {len(image_paths)} images")
@@ -79,10 +88,19 @@ def partition(args):
     logging.info(f"Test Images: {test_images}")
 
     for i in range(test_images):
-        copy_images_and_csvs(i, image_paths, permutation, test_path)
+        if args.j:
+            copy_json(i, image_paths, permutation, test_path)
+        else:
+            copy_images_and_csvs(i, image_paths, permutation, test_path)
 
     for i in range(test_images, test_images + validation_images):
-        copy_images_and_csvs(i, image_paths, permutation, validation_path)
+        if args.j:
+            copy_json(i, image_paths, permutation, validation_path)
+        else:
+            copy_images_and_csvs(i, image_paths, permutation, validation_path)
 
     for i in range(test_images + validation_images, len(image_paths)):
-        copy_images_and_csvs(i, image_paths, permutation, training_path)
+        if args.j:
+            copy_json(i, image_paths, permutation, training_path)
+        else:
+            copy_images_and_csvs(i, image_paths, permutation, training_path)
