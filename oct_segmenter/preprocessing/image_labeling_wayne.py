@@ -125,15 +125,7 @@ def generate_image_label_wayne(image_path, output_dir, save_file=True):
             log.error(err_msg)
             exit(1)
 
-    if img.mode == "RGBA" or img.mode == "RGB":
-        img = img.convert("L")
-    elif img.mode == "I;16":
-        img = img.point(lambda i : i*(1./256)).convert("L")
-    elif img.mode == "L":
-        pass
-    else:
-        print(f"Unexpected mode: {img.mode}")
-        exit(1)
+    img = utils.convert_to_grayscale(img)
 
     img_path = Path(output_dir + "/" + image_path.stem + ".json")
 

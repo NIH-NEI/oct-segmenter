@@ -36,12 +36,22 @@ def main():
         required=True,
     )
 
-    gen_test_parser.add_argument(
+    gen_test_csv_format_group = gen_test_parser.add_mutually_exclusive_group(required=False)
+
+    gen_test_csv_format_group.add_argument(
         "-w",
         "--wayne-state-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the Wayne state format (vs. visual function core format)",
+        help="Generate dataset using the Wayne state format (vs. Visual Function Core or 'labelme' format)",
+    )
+
+    gen_test_csv_format_group.add_argument(
+        "-l",
+        "--labelme-format",
+        default=False,
+        action="store_true",
+        help="Generate dataset using the 'labelme' format (vs. Visual Function Core or Wayne State format)",
     )
 
     gen_test_parser.add_argument(
@@ -67,12 +77,22 @@ def main():
         required=True,
     )
 
-    gen_train_parser.add_argument(
+    gen_train_csv_format_group = gen_train_parser.add_mutually_exclusive_group(required=False)
+
+    gen_train_csv_format_group.add_argument(
         "-w",
         "--wayne-state-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the Wayne state format (vs. visual function core format)",
+        help="Generate dataset using the Wayne state format (vs. Visual Function Core or 'labelme' format)",
+    )
+
+    gen_train_csv_format_group.add_argument(
+        "-l",
+        "--labelme-format",
+        default=False,
+        action="store_true",
+        help="Generate dataset using the 'labelme' format (vs. Visual Function Core or Wayne State format)",
     )
 
     gen_train_parser.add_argument(
@@ -148,9 +168,15 @@ def main():
     # Predict
     predict_subparser = cmd_subparser.add_parser("predict")
     predict_input_group = predict_subparser.add_mutually_exclusive_group(required=True)
-    predict_input_group.add_argument("--input", "-i", help="input file image to segment")
     predict_input_group.add_argument(
-        "--input-dir", "-d", help="input directory containing .tiff images to be segmented."
+        "--input",
+        "-i",
+        help="input file image to segment"
+    )
+    predict_input_group.add_argument(
+        "--input-dir",
+        "-d",
+        help="input directory containing .tiff images to be segmented."
     )
 
     predict_model_group = predict_subparser.add_mutually_exclusive_group(required=False)

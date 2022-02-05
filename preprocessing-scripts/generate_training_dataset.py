@@ -25,7 +25,7 @@ if __name__ == "__main__":
         train_input_dir,
         validation_input_dir,
         output_file,
-        wayne_format=True
+        input_format="wayne"
     )
 
     training_dataset.close()
