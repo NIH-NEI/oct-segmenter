@@ -2,6 +2,7 @@ import os
 import sys
 
 import json
+import logging as log
 import numpy as np
 from pathlib import Path
 import PIL.Image
@@ -10,8 +11,9 @@ from oct_segmenter.preprocessing import VISUAL_CORE_BOUND_X_LEFT_START,\
     VISUAL_CORE_BOUND_X_LEFT_END, VISUAL_CORE_BOUND_X_RIGHT_START, VISUAL_CORE_BOUND_X_RIGHT_END
 from oct_segmenter.preprocessing import utils
 
+VISUAL_CORE_LAYER_DATA_POINTS = 20
 
-'''
+"""
 The images and labels recieved from the Visual Core group are labeled in the following manner:
 - Each image has a correspoing CSV file. The CSV file contain six rows where:
     - The CSV values are 1-index based since they are generated from MATLAB
@@ -39,7 +41,7 @@ The images and labels recieved from the Visual Core group are labeled in the fol
 
 - Finally the image is converted into a segmentation map: A 2D-matrix where each element represents the class
 the pixel belongs to.
-'''
+"""
 
 
 def image_to_label(labelme_img_json):
@@ -257,10 +259,27 @@ def generate_image_label_wayne(image_path, output_dir, save_file=True):
     with open(csv_path, "r") as f:
         annotations = []
         for line in f.readlines():
-            annotations.append([int(x) for x in line.rstrip("\n").split(",")])
-
+            try:
+                annotations.append([int(x) for x in line.replace(" ", "").rstrip("\n").split(",")])
+            except ValueError:
+                err_msg = " ".join(("Failed to parse CSV line. Make sure to pass the '-w' if you",
+                    "are using the Wayne State Format"))
+                log.error(err_msg)
+                log.error(f"Conflicting line in {csv_path}: {line}")
+                exit(1)
 
     img = PIL.Image.open(image_path, "r")
+
+    for x_coords in annotations:
+        if len(x_coords) != img.width:
+            err_msg = " ".join((
+                "The number of data points has to be equal to the image width:",
+                f"{img.width}. Found line in CSV file: {csv_path} with length {len(x_coords)}.",
+                "Please check CSV"
+            ))
+            log.error(err_msg)
+            exit(1)
+
     if img.mode == "RGBA" or img.mode == "RGB":
         img = img.convert("L")
     elif img.mode == "I;16":
@@ -306,7 +325,22 @@ def generate_image_label(image_path: Path, output_dir, save_file=True):
     with open(csv_path, "r") as f:
         annotations = []
         for line in f.readlines():
-            annotations.append([int(x) for x in line.rstrip(' ,\n').split(" ,")])
+            try:
+                layer_x_coords = [int(x) for x in line.replace(" ", "").rstrip(',\n').split(",")]
+                if len(layer_x_coords) != VISUAL_CORE_LAYER_DATA_POINTS:
+                    err_msg = " ".join((
+                        f"Found {len(layer_x_coords)} points for a given layer in file: {csv_path}.",
+                        f"Expected: {VISUAL_CORE_LAYER_DATA_POINTS}. Make sure to pass the '-w'",
+                        f"if you are using the Wayne State Format"))
+                    log.error(err_msg)
+                    exit(1)
+                annotations.append(layer_x_coords)
+            except ValueError:
+                err_msg = " ".join(("Failed to parse CSV line. Make sure to pass the '-w' if you",
+                    "are using the Wayne State Format"))
+                log.error(err_msg)
+                log.error(f"Conflicting line in {csv_path}: {line}")
+                exit(1)
 
     '''
     The original image provided by NIH is a TIFF file with a pixel depth of 16-bit.
