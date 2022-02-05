@@ -89,7 +89,8 @@ def process_annotations(annotations, left_margin, right_margin, top_margin):
 
         for i in range(1, len(annot) - 1):
             if annot[i] == 0:
-                annot[i] = int(round((annot[i-1] + annot[i+1]) / 2.0))
+                log.error("Found inner column equal to 0. Exiting...")
+                exit(1)
 
     return [[x - top_margin  for x in annot[left_margin:-right_margin]] for annot in annotations]
 
