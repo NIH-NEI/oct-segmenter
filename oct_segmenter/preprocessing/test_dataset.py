@@ -10,12 +10,12 @@ from oct_segmenter.preprocessing import generic_dataset as generator
 def generate_test_dataset(
     test_input_dir: Path,
     output_file: Path,
-    wayne_format: bool=False
+    input_format: str="none"
 ) -> h5py.File:
     test_hdf5_file = generator.generate_generic_dataset(
         test_input_dir,
         output_file,
-        wayne_format
+        input_format,
     )
 
     test_hdf5_file["test_images"] = test_hdf5_file["xhat"]

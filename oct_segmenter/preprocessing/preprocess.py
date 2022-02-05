@@ -57,15 +57,7 @@ def generate_input_image(image_path: Path) -> np.array:
         The numpy matrices that can be fed to Unet for prediction.
     """
     img = PIL.Image.open(image_path, "r")
-    if img.mode == "RGBA" or img.mode == "RGB":
-        img = img.convert("L")
-    elif img.mode == "I;16":
-        img = img.point(lambda i : i*(1./256)).convert("L")
-    elif img.mode == "L":
-        pass
-    else:
-        print(f"Unexpected mode: {img.mode}")
-        exit(1)
+    img = utils.convert_to_grayscale(img)
 
     # U-net architecture requires images with dimensions that are multiple of 16
     cropped_img, _, _ = utils.make_img_size_multiple(img, 16)

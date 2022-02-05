@@ -20,5 +20,5 @@ if __name__ == '__main__':
     generate_generic_dataset(
         input_dir,
         hdf5_file_name,
-        wayne_format=True,
+        input_format="wayne",
     )

@@ -4,6 +4,7 @@ import math
 import os.path as osp
 import uuid
 
+import logging as log
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
@@ -20,6 +21,12 @@ def img_data_to_arr(img_data):
     img_pil = img_data_to_pil(img_data)
     img_arr = np.array(img_pil)
     return img_arr
+
+
+def img_b64_to_pil(img_b64):
+    img_data = base64.b64decode(img_b64)
+    img_pil = img_data_to_pil(img_data)
+    return img_pil
 
 
 def img_b64_to_arr(img_b64):
@@ -150,12 +157,18 @@ def make_img_size_multiple(img, multiple=16) -> PIL.Image:
 def convert_to_grayscale(img: PIL.Image) -> PIL.Image:
     if img.mode == "RGBA" or img.mode == "RGB":
         img = img.convert("L")
+    elif img.mode == "I":
+        img_arr = np.asarray(img)
+        # Normalise to range 0..255
+        norm = (img_arr.astype(np.float)-img_arr.min())*255.0 / (img_arr.max()-img_arr.min())
+        img = PIL.Image.fromarray(norm.astype(np.uint8))
+        img = img.convert("L")
     elif img.mode == "I;16":
         img = img.point(lambda i : i*(1./256)).convert("L")
     elif img.mode == "L":
         pass
     else:
-        print(f"Unexpected mode: {img.mode}")
+        log.error(f"Input image has unexpected mode: '{img.mode}'. Exiting...")
         exit(1)
 
     return img
