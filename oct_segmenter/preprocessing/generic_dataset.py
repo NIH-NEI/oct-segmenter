@@ -4,7 +4,8 @@ import sys
 import h5py
 from pathlib import Path
 
-from oct_segmenter.preprocessing.image_labeling import generate_image_label_visual_core, generate_image_label_wayne
+from oct_segmenter.preprocessing.image_labeling_visual_core import generate_image_label_visual_core
+from oct_segmenter.preprocessing.image_labeling_wayne import generate_image_label_wayne
 
 
 def process_directory(input_dir, output_dir, save_file=False):
