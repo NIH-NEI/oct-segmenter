@@ -131,6 +131,13 @@ def main():
     )
 
     partition_subparser.add_argument(
+        "-j",
+        default=False,
+        action="store_true",
+        help="json",
+    )
+
+    partition_subparser.add_argument(
         "-i",
         "--input-dir",
         help="Input directory with images and CSVs",
