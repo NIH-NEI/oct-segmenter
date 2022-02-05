@@ -4,7 +4,7 @@ import sys
 import h5py
 from pathlib import Path
 
-from oct_segmenter.preprocessing.image_labeling import generate_image_label, generate_image_label_wayne
+from oct_segmenter.preprocessing.image_labeling import generate_image_label_visual_core, generate_image_label_wayne
 
 
 def process_directory(input_dir, output_dir, save_file=False):
@@ -18,7 +18,7 @@ def process_directory(input_dir, output_dir, save_file=False):
             if file.endswith(".tiff") or file.endswith(".TIFF") and not file.startswith("."):
                 image_file = Path(os.path.join(subdir, file))
                 print(f"Processing file from Visual Core: {image_file}")
-                img_name_left, img_array_left, seg_map_left, segs_left, img_name_right, img_array_right, seg_map_right, segs_right = generate_image_label(image_file, output_dir, save_file)
+                img_name_left, img_array_left, seg_map_left, segs_left, img_name_right, img_array_right, seg_map_right, segs_right = generate_image_label_visual_core(image_file, output_dir, save_file)
                 if img_file_data:
                     if img_file_data[0].shape == img_array.shape:
                         img_file_names.extend([[img_name_left, "left".encode("ascii")], [img_name_right, "right".encode("ascii")]])

@@ -316,7 +316,7 @@ def generate_image_label_wayne(image_path, output_dir, save_file=True):
     return str(image_path).encode("ascii"), img, label_img, segs
 
 
-def generate_image_label(image_path: Path, output_dir, save_file=True):
+def generate_image_label_visual_core(image_path: Path, output_dir, save_file=True):
     if save_file and not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
