@@ -52,19 +52,12 @@ def process_directory_wayne(input_dir, output_dir, save_file=False):
                 image_file = Path(os.path.join(subdir, file))
                 print(f"Processing file from wayne: {image_file}")
                 img_name, img_array, seg_map, segs = generate_image_label_wayne(image_file, output_dir, save_file)
-                if img_file_data:
-                    if img_file_data[0].shape == img_array.shape:
-                        img_file_names.extend([img_name])
-                        img_file_data.extend([img_array])
-                        labeled_file_data.extend([seg_map])
-                        segments_data.extend([segs])
-                    else:
-                        print(f"WARNING: Image {img_name} has size {img_array.shape}. Different from other dataset samples of size: {img_file_data[0].shape}.")
-                else:
-                    img_file_names.extend([img_name])
-                    img_file_data.extend([img_array])
-                    labeled_file_data.extend([seg_map])
-                    segments_data.extend([segs])
+                img_file_names.extend([img_name])
+                img_file_data.extend([img_array])
+                labeled_file_data.extend([seg_map])
+                segments_data.extend([segs])
+
+    crop_images_to_same_size(img_file_data, segments_data, labeled_file_data)
 
     return img_file_names, img_file_data, segments_data, labeled_file_data
 
@@ -110,7 +103,7 @@ def crop_images_to_same_size(img_file_data, segments_data, labeled_file_data):
 
     """
     Recall that the function "generate_image_label()" transposes the original images to make it
-    compatible with what the u-net model expects. Thus, height of original image is "num_colums"
+    compatible with what the u-net model expects. Thus, height of original image is "num_columns"
     and width is "num_rows"
     """
     log.info(f"Smallest image width: {min_rows}")
