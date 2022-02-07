@@ -26,9 +26,12 @@ def train(args):
     log.info(f"Training Parameter: Epochs: {epochs}")
     log.info(f"Training Parameter: Batch Size: {batch_size}")
 
+    initial_model = Path(args.model) if args.model else None
+
     t_params = TrainingParams(
         training_dataset_path=Path(args.input).absolute(),
         training_dataset_name=Path(args.input).stem,
+        initial_model=initial_model,
         results_location=args.output_dir,
         opt_con=optimizers.Adam,
         opt_params = {},
