@@ -124,6 +124,14 @@ def main():
         required=False,
     )
 
+    train_subparser.add_argument(
+        "-m",
+        "--model",
+        default=None,
+        help="Path to original model for retraining",
+        required=False,
+    )
+
     # Partition
     partition_subparser = cmd_subparser.add_parser(
         "partition",
