@@ -32,9 +32,11 @@ def generate_side_region_input_image(image_path: Path) -> tuple[np.array]:
 
 
     img_left = img.crop((VISUAL_CORE_BOUND_X_LEFT_START, 0, VISUAL_CORE_BOUND_X_LEFT_END, img.height))
+    img_left = utils.make_height_multiple(img_left, cut_bottom=True)
     img_left = np.transpose(utils.pil_to_array(img_left))
     img_left = img_left[..., np.newaxis]
     img_right = img.crop((VISUAL_CORE_BOUND_X_RIGHT_START, 0, VISUAL_CORE_BOUND_X_RIGHT_END, img.height))
+    img_right = utils.make_height_multiple(img_right, cut_bottom=True)
     img_right = np.transpose(utils.pil_to_array(img_right))
     img_right = img_right[..., np.newaxis]
 

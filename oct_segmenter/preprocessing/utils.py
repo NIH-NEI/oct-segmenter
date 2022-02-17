@@ -154,6 +154,18 @@ def make_img_size_multiple(img, multiple=16) -> PIL.Image:
     return img.crop((left_margin, top_margin, right_margin, bottom_margin)), left_margin, top_margin
 
 
+def make_height_multiple(img, multiple=16, cut_bottom=False) -> PIL.Image:
+        """
+        cut_bottom tells whether the cropping should be centered: removing half the pixels from top
+        and half from bottom. Or it should remove all the pixels from the bottom of the image
+        """
+        new_height = (int) (img.height // multiple) * multiple
+        top_margin = 0 if cut_bottom else (int) ((img.height - new_height)/2)
+        bottom_margin = (int) (top_margin + new_height)
+
+        return img.crop((0, top_margin, img.width, bottom_margin))
+
+
 def convert_to_grayscale(img: PIL.Image) -> PIL.Image:
     if img.mode == "RGBA" or img.mode == "RGB":
         img = img.convert("L")
