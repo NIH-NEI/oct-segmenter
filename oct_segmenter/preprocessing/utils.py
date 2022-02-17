@@ -170,15 +170,14 @@ def convert_to_grayscale(img: PIL.Image) -> PIL.Image:
     if img.mode == "RGBA" or img.mode == "RGB":
         img = img.convert("L")
     elif img.mode == "I":
-        img_arr = np.asarray(img)
-        # Normalise to range 0..255
-        norm = (img_arr.astype(np.float)-img_arr.min())*255.0 / (img_arr.max()-img_arr.min())
-        img = PIL.Image.fromarray(norm.astype(np.uint8))
-        img = img.convert("L")
+        img = img.point(lambda i : i*(1./256)).convert("L")
     elif img.mode == "I;16":
         img = img.point(lambda i : i*(1./256)).convert("L")
     elif img.mode == "L":
         pass
+    elif img.mode == "I;16B":
+        array = np.uint8(np.rint(np.array(img) / 256.0))
+        img = PIL.Image.fromarray(array)
     else:
         log.error(f"Input image has unexpected mode: '{img.mode}'. Exiting...")
         exit(1)
