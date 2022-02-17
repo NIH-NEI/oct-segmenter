@@ -23,19 +23,12 @@ def process_directory(input_dir, output_dir, save_file=False):
                 image_file = Path(os.path.join(subdir, file))
                 print(f"Processing file from Visual Core: {image_file}")
                 img_name_left, img_array_left, seg_map_left, segs_left, img_name_right, img_array_right, seg_map_right, segs_right = generate_image_label_visual_core(image_file, output_dir, save_file)
-                if img_file_data:
-                    if img_file_data[0].shape == img_array.shape:
-                        img_file_names.extend([[img_name_left, "left".encode("ascii")], [img_name_right, "right".encode("ascii")]])
-                        img_file_data.extend([img_array_left, img_array_right])
-                        labeled_file_data.extend([seg_map_left, seg_map_right])
-                        segments_data.extend([segs_left, segs_right])
-                    else:
-                        print(f"WARNING: Image {img_name} has size {img_array.shape}. Different from other dataset samples of size: {img_file_data[0].shape}.")
-                else:
-                    img_file_names.extend([[img_name_left, "left".encode("ascii")], [img_name_right, "right".encode("ascii")]])
-                    img_file_data.extend([img_array_left, img_array_right])
-                    labeled_file_data.extend([seg_map_left, seg_map_right])
-                    segments_data.extend([segs_left, segs_right])
+                img_file_names.extend([[img_name_left, "left".encode("ascii")], [img_name_right, "right".encode("ascii")]])
+                img_file_data.extend([img_array_left, img_array_right])
+                labeled_file_data.extend([seg_map_left, seg_map_right])
+                segments_data.extend([segs_left, segs_right])
+
+    crop_images_to_same_size(img_file_data, segments_data, labeled_file_data)
 
     return img_file_names, img_file_data, segments_data, labeled_file_data
 
