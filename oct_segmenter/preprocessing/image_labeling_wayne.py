@@ -92,7 +92,8 @@ def process_annotations(annotations, left_margin, right_margin, top_margin):
                 log.error("Found inner column equal to 0. Exiting...")
                 exit(1)
 
-    return [[x - top_margin  for x in annot[left_margin:-right_margin]] for annot in annotations]
+    width = len(annotations[0])
+    return [[x - top_margin  for x in annot[left_margin:width-right_margin]] for annot in annotations]
 
 
 def generate_image_label_wayne(image_path, output_dir, save_file=True):
