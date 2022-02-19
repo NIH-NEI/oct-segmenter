@@ -240,7 +240,7 @@ Usage:
 `python preprocess.py </path/to/image> </path/to/output/dir>`
 
 Note: The script assumes that given the path to an input image, a corresponding CSV files with the labels for each layer will
-be present in the ◊same directory.
+be present in the same directory.
 
 
 ## Building Python Wheel Package
@@ -250,3 +250,114 @@ To build the `oct-segmenter` wheel package, from the root directory do
 ```
 ./build.sh
 ```
+
+## Running in an HPC environment
+
+These instructions are intended for use on Biowulf, but the process should be
+similar for any HPC environment using Slurm and Singularity. 
+
+### Building oct-segmenter with Singularity
+
+To begin, copy the Singularity definition file into a new directory. Note:
+don't build the Singularity image within your repo.
+
+```
+cd ~
+mkdir oct-segmenter-sif
+cp path-to-repo/singularity/oct-segmenter.def oct-segmenter-sif/
+```
+
+Start an interactive session. Then change into the `oct-segmenter-sif`
+directory and build a singularity image from the `oct-segmenter.def` file like
+this:
+
+```
+sinteractive --constraint=gpuk80 --gres=gpu:k80:1 --mem=32GB
+cd oct-segmenter-sif
+module load singularity
+singularity build --remote --sandbox oct-segmenter/ oct-segmenter.def
+```
+
+Now that the sandbox environment is done building, drop into an interactive
+shell within the Singularity image, copy the repo into the image, and set
+permissions.
+
+```
+singularity shell --writable oct-segmenter/
+cp path-to-repo/ /opt/
+chmod -R 577 /opt/path-to-repo
+exit
+```
+
+Now you need to convert the sandbox into a SIF file.
+
+```
+singularity build oct-segmenter-0.3.0.sif oct-segmenter/
+```
+
+### Running the oct-segmenter with Singularity on Biowulf
+
+You only need to build the image once, but you will need to enter an
+interactive session, load the Singularity module, and set your Singularity
+bindpaths everytime you use the tool. If you're continuing immediately from the
+build step, you can skip the first two commands and just run the third.
+Otherwise, run all three commands:
+
+```
+sinteractive --constraint=gpuk80 --gres=gpu:k80:1 --mem=32GB
+module load singularity
+. /usr/local/current/singularity/app_conf/sing_binds
+```
+
+Simply type the following command to run the CLI tool:
+
+```
+singularity run --nv oct-segmenter-0.3.0.sif
+```
+
+You can pass additional command and arguments as you normally would with the
+CLI tool.  For example, to run the `list` command, do the following:
+
+```
+singularity run --nv oct-segmenter-0.3.0.sif list
+```
+
+### Submitting a job to Slurm
+
+Jobs on Biowulf are scheduled via Slurm. A sample Slurm script is included in
+the `slurm/oct-segmenter.sh`.
+
+You will need to specify the path to your `oct-segmenter-0.3.0.sif` file
+(`SIF_PATH`) and input directory. Optionally, you may also want to change the
+other directories.
+
+The script is configured to partition, generate training, and train, so if you
+are using it for anything else, you will need to change these commands as well:
+
+```
+$SIF_PATH partition -i $INPUT_DIR -o $PARTITION_DIR --training 0.3 --validation 0.5 --test 0.2
+$SIF_PATH generate training --training-input-dir $TRAINING_INPUT_DIR --validation-input-dir $VALIDATION_INPUT_DIR -w -o $TRAINING_HDF5_DIR
+$SIF_PATH train -i $TRAINING_HDF5_DIR/training_dataset.hdf5 -o $TRAINING_OUTPUT_DIR -c training-config.json
+```
+
+You may want to change the SBATCH commands too, particularly the time, gpus,
+and memory. Set your time to be slightly more than your maximum expected run
+time. For instance, if your jobs usually take about an hour but never exceed an
+hour and half, then you could set your time like this:
+
+```
+#SBATCH --time=01:30:00
+```
+
+Once you have made all the necessary changes to the Slurm script, run the
+following commands:
+
+```
+cd path-to-repo/slurm
+sbatch oct-segmenter.sh
+```
+
+Type `sjobs` to check the status of the job. You should receive an email when
+it completes. Output and error logs will be created in the directory from which
+you ran the sbatch command. If your job fails, be sure to check these to debug
+the issue.
