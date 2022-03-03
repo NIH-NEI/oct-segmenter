@@ -5,7 +5,7 @@ file = Path(__file__).resolve()
 package_root_directory = file.parents[1]
 sys.path.append(str(package_root_directory))
 
-from oct_segmenter.preprocessing.image_labeling import generate_image_label_wayne
+from oct_segmenter.preprocessing.image_labeling_visual_core import generate_image_label_visual_core
 
 """
 python3 preprocessing-scripts/generate_image_label.py wayne-images/image1.tiff .
@@ -16,4 +16,4 @@ if __name__ == "__main__":
         exit(1)
 
     image_path = Path(sys.argv[1])
-    generate_image_label_wayne(image_path, sys.argv[2])
+    generate_image_label_visual_core(image_path, sys.argv[2])

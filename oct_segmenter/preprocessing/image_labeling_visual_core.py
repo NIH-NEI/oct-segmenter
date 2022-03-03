@@ -176,12 +176,16 @@ def generate_image_label_visual_core(image_path: Path, output_dir, save_file=Tru
     label_img_right = create_label_image(lebelme_img_right_json, output_dir + "/" + image_path.stem + "_right_label.png", save_file)
     segs_right = generate_boundary(label_img_right)
 
-    '''
+    """
     The images need to be transposed because the `model` expects
     and array of shape (image_width, image_height) and recall that
     in an array (rows x columns) the rows are the height and columns
     are the width.
-    '''
+    """
+    if save_file:
+        np.savetxt(output_dir + "/" + image_path.stem + "_left_matrix.txt", utils.pil_to_array(label_img_left), fmt="%d")
+        np.savetxt(output_dir + "/" + image_path.stem + "_right_matrix.txt", utils.pil_to_array(label_img_right), fmt="%d")
+
     img_left = np.transpose(utils.pil_to_array(img_left))
     img_left = img_left[..., np.newaxis]
     img_right = np.transpose(utils.pil_to_array(img_right))
