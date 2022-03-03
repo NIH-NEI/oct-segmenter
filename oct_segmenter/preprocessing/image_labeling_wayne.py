@@ -71,25 +71,25 @@ def process_annotations(annotations, left_margin, right_margin, top_margin):
     """
     CSVs from Wayne State University might contain 0s in some columns. This function:
     - Outer loop loops through layers.
-    - First inner loop replaces 0s from the left side with the first non-zero value from the left
-    - Second inner loop replaces 0s from the right side with the first non-zero value from the right
+    - First inner loop replaces < 0s from the left side with the first non-zero value from the left
+    - Second inner loop replaces < 0s from the right side with the first non-zero value from the right
     """
     for annot in annotations:
         for i in range(len(annot)):
-            if annot[i] == 0:
+            if annot[i] <= 0:
                 annot[i] = next(x for x in annot[i+1:] if x > 0)
             else:
                 break
 
         for i in range(len(annot) -1, 0, -1):
-            if annot[i] == 0:
+            if annot[i] <= 0:
                 annot[i] = next(x for x in annot[::-1] if x > 0)
             else:
                 break
 
         for i in range(1, len(annot) - 1):
-            if annot[i] == 0:
-                log.error("Found inner column equal to 0. Exiting...")
+            if annot[i] <= 0:
+                log.error("Found inner column less or equal to 0. Exiting...")
                 exit(1)
 
     width = len(annotations[0])
