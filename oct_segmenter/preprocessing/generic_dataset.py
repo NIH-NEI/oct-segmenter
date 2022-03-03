@@ -43,7 +43,7 @@ def process_directory_wayne(input_dir, output_dir, save_file=False):
         for file in files:
             if (file.endswith(".tiff") or file.endswith(".TIFF")) and not file.startswith("."):
                 image_file = Path(os.path.join(subdir, file))
-                print(f"Processing file from wayne: {image_file}")
+                print(f"Processing file from Wayne State University format: {image_file}")
                 img_name, img_array, seg_map, segs = generate_image_label_wayne(image_file, output_dir, save_file)
                 img_file_names.extend([img_name])
                 img_file_data.extend([img_array])
