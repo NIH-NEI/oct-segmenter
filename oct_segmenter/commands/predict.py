@@ -36,11 +36,12 @@ def predict(args):
 
     input_paths = []
     if args.input:
-        path = Path(args.input)
-        if not path.is_file():
+        input_path = Path(args.input)
+        input_dir = input_path.parent
+        if not input_path.is_file():
             print("oct-segmenter: Input file not found. Exiting...")
             exit(1)
-        input_paths.append(path)
+        input_paths.append(input_path)
     elif args.input_dir:
         input_dir = Path(args.input_dir)
         if not input_dir.is_dir():
@@ -55,12 +56,17 @@ def predict(args):
         print("oct-segmenter: No input image file or directory were provided. Exiting...")
         exit(1)
 
+    if args.output_dir:
+        root_output_dir = Path(args.output_dir)
+    else:
+        root_output_dir = input_dir
+
     pred_images = []
     pred_images_names = []
     output_paths = []
     for input_path in input_paths:
         if args.output_dir:
-            output = Path(args.output_dir)
+            output = root_output_dir / input_path.parent.relative_to(input_dir)
         else:
             output = input_path.parent
 
@@ -86,6 +92,11 @@ def predict(args):
         output_paths,
     )
 
+    # Create output dirs
+    for output_path in output_paths:
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+
     save_params = SaveParameters(
         pngimages=True,
         raw_image=True,
@@ -102,7 +113,7 @@ def predict(args):
         prediction_dataset=pred_dataset,
         is_evaluate=False,
         col_error_range=None,
-        save_foldername=output_paths[0].absolute(), # TODO: FIX
+        save_foldername=root_output_dir,
         eval_mode="both",
         aug_fn_arg=(aug.no_aug, {}),
         save_params=save_params,
