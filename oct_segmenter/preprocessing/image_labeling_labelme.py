@@ -1,3 +1,5 @@
+import os
+
 import json
 import math
 import numpy as np
@@ -194,7 +196,6 @@ def generate_image_label_labelme(img_path: Path, output_dir, save_file=True):
     order_label_lines_from_left_to_right(data["shapes"])
 
     left_margin, right_margin = get_vertical_margins(data["shapes"]) # (int, int)
-
     labeled_region_width = right_margin - left_margin
     if labeled_region_width < MIN_WIDTH_THRESHOLD:
         warn_msg = " ".join((f"Labeled region of file {img_path} is {labeled_region_width}.",
@@ -220,7 +221,10 @@ def generate_image_label_labelme(img_path: Path, output_dir, save_file=True):
     )
 
     # Generate image segmentation map
-    segmentation_map_img = create_label_image(labelme_img_json, output_dir, save_file)
+    segmentation_map_img = create_label_image(labelme_img_json, output_dir + img_path.stem + "_label.json" , save_file)
+
+    if save_file:
+        np.savetxt(output_dir + "/" + img_path.stem + "_matrix.txt", utils.pil_to_array(segmentation_map_img), fmt="%d")
 
     # Generate boundaries out of the segmentation map image
     boundaries = generate_boundary(segmentation_map_img)
