@@ -176,7 +176,8 @@ User can configure training parameters by providing a JSON formatted configurati
 ```
 {
   "epochs": 1000,
-  "batch_size": 3
+  "batch_size": 3,
+  "augment": true
 }
 ```
 
@@ -187,8 +188,9 @@ oct-segmenter train -i <path/to/training/dataset/hdf5/file> -o <path/to/output> 
 ```
 
 ### Training Configurable Parameters
-- `batch_size`
-- `epochs`
+- `batch_size`: int
+- `epochs`: int
+- `augment`: bool: If true, images are augmented by flipping left-right
 
 ## Post-processing (Currently not supported, to be implemented)
 
