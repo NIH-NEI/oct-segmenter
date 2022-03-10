@@ -11,20 +11,26 @@ from unet.model.training_parameters import TrainingParams
 
 DEFAULT_EPOCHS = 1000
 DEFAULT_BATCH_SIZE = 2
+DEFAULT_AUGMENTATION_MODE = "none"
 
 def train(args):
 
     epochs = DEFAULT_EPOCHS
     batch_size = DEFAULT_BATCH_SIZE
+    aug_mode = DEFAULT_AUGMENTATION_MODE
 
     if args.config:
         with open(args.config, 'r') as f:
             config_data = json.load(f)
             batch_size = config_data.get("batch_size", DEFAULT_BATCH_SIZE)
             epochs = config_data.get("epochs", DEFAULT_EPOCHS)
+            augment = config_data.get("augment")
+            if augment:
+                aug_mode = "all"
 
     log.info(f"Training Parameter: Epochs: {epochs}")
     log.info(f"Training Parameter: Batch Size: {batch_size}")
+    log.info(f"Training Parameter: Augmentation: {aug_mode}")
 
     initial_model = Path(args.model) if args.model else None
 
@@ -40,7 +46,7 @@ def train(args):
         epochs=epochs,
         batch_size=batch_size,
         aug_fn_args=[(aug.no_aug, {}), (aug.flip_aug, {"flip_type": "left-right"})],
-        aug_mode="one",
+        aug_mode=aug_mode,
         aug_probs=(0.5, 0.5),
         aug_val=False,
         aug_fly=True,
