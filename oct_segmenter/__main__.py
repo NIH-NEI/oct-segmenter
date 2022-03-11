@@ -218,9 +218,11 @@ def main():
     )
 
     predict_subparser.add_argument(
-        "--label-png",
-        "-l",
-        help="Output segmentation map PNG file"
+        "--flip-top-bottom",
+        "-f",
+        default=False,
+        action="store_true",
+        help="Flip images w.r.t. the horizontal axis before prediction"
     )
 
     predict_subparser.add_argument(

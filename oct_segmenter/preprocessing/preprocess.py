@@ -13,7 +13,7 @@ from oct_segmenter.preprocessing import VISUAL_CORE_BOUND_X_LEFT_START,\
 from oct_segmenter.preprocessing import utils
 
 
-def generate_side_region_input_image(image_path: Path) -> tuple[np.array]:
+def generate_side_region_input_image(image_path: Path, flip_top_bottom: bool) -> tuple[np.array]:
     """Generates the numpy matrices that can be fed to the Unet model
     for prediction. It crops the input image (left and right sections), 
     performing dimension expansion and transpose.
@@ -29,7 +29,8 @@ def generate_side_region_input_image(image_path: Path) -> tuple[np.array]:
         The numpy matrices that can be fed to Unet for prediction.
     """
     img = utils.convert_to_grayscale(PIL.Image.open(image_path, "r"))
-
+    if flip_top_bottom:
+        img = img.transpose(PIL.Image.FLIP_TOP_BOTTOM)
 
     img_left = img.crop((VISUAL_CORE_BOUND_X_LEFT_START, 0, VISUAL_CORE_BOUND_X_LEFT_END, img.height))
     img_left = utils.make_height_multiple(img_left, cut_bottom=True)
@@ -43,7 +44,7 @@ def generate_side_region_input_image(image_path: Path) -> tuple[np.array]:
     return img_left, img_right
 
 
-def generate_input_image(image_path: Path) -> np.array:
+def generate_input_image(image_path: Path, flip_top_bottom: bool=False) -> np.array:
     """
     Generates the numpy matrix that can be fed to the Unet model
     for prediction. It performs dimension expansion and transpose.
@@ -59,6 +60,8 @@ def generate_input_image(image_path: Path) -> np.array:
         The numpy matrices that can be fed to Unet for prediction.
     """
     img = PIL.Image.open(image_path, "r")
+    if flip_top_bottom:
+        img = img.transpose(PIL.Image.FLIP_TOP_BOTTOM)
     img = utils.convert_to_grayscale(img)
 
     # U-net architecture requires images with dimensions that are multiple of 16
