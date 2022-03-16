@@ -72,21 +72,27 @@ def predict(args):
 
         if args.c:
             img = preprocess.generate_input_image(input_path, args.flip_top_bottom)
-            pred_images.append(img)
-            pred_images_names.append(Path(input_path.stem + "_labeled" + input_path.suffix))
-            output_paths.append(output)
+            if not img is None:
+                pred_images.append(img)
+                pred_images_names.append(Path(input_path.stem + "_labeled" + input_path.suffix))
+                output_paths.append(output)
         else:
             img_left, img_right = preprocess.generate_side_region_input_image(
                 input_path,
                 args.flip_top_bottom
             )
-            pred_images.append(img_left)
-            pred_images.append(img_right)
-            img_left_path = Path(input_path.stem + "_left" + input_path.suffix)
-            pred_images_names.append(img_left_path)
-            img_right_path = Path(input_path.stem + "_right" + input_path.suffix)
-            pred_images_names.append(img_right_path)
-            output_paths.extend([output, output])
+            if not img_left is None:
+                pred_images.append(img_left)
+                pred_images.append(img_right)
+                img_left_path = Path(input_path.stem + "_left" + input_path.suffix)
+                pred_images_names.append(img_left_path)
+                img_right_path = Path(input_path.stem + "_right" + input_path.suffix)
+                pred_images_names.append(img_right_path)
+                output_paths.extend([output, output])
+
+    if len(pred_images) == 0:
+        log.info("No images were processed successfully. Exiting...")
+        exit(1)
 
     pred_images = np.array(pred_images)
     pred_dataset = PredictionDataset(

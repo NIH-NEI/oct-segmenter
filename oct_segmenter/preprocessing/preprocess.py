@@ -4,12 +4,14 @@ import os
 import sys
 
 import json
+import logging as log
 import numpy as np
 from pathlib import Path
 import PIL.Image
 
 from oct_segmenter.preprocessing import VISUAL_CORE_BOUND_X_LEFT_START,\
-    VISUAL_CORE_BOUND_X_LEFT_END, VISUAL_CORE_BOUND_X_RIGHT_START, VISUAL_CORE_BOUND_X_RIGHT_END
+    VISUAL_CORE_BOUND_X_LEFT_END, VISUAL_CORE_BOUND_X_RIGHT_START, VISUAL_CORE_BOUND_X_RIGHT_END,\
+    UNET_IMAGE_DIMENSION_MULTIPLICITY
 from oct_segmenter.preprocessing import utils
 
 
@@ -29,6 +31,14 @@ def generate_side_region_input_image(image_path: Path, flip_top_bottom: bool) ->
         The numpy matrices that can be fed to Unet for prediction.
     """
     img = utils.convert_to_grayscale(PIL.Image.open(image_path, "r"))
+
+    if img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0 \
+        or img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0:
+        warn_msg = " ".join((f"Image dimensions need to be a multiple of 16",
+            f"Image: {image_path} is {img.width} by {img.height}. Skipping..."))
+        log.warn(warn_msg)
+        return None, None
+
     if flip_top_bottom:
         img = img.transpose(PIL.Image.FLIP_TOP_BOTTOM)
 
@@ -60,6 +70,14 @@ def generate_input_image(image_path: Path, flip_top_bottom: bool=False) -> np.ar
         The numpy matrices that can be fed to Unet for prediction.
     """
     img = PIL.Image.open(image_path, "r")
+
+    if img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0 \
+        or img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0:
+        warn_msg = " ".join((f"Image dimensions need to be a multiple of 16",
+            f"Image: {image_path} is {img.width} by {img.height}. Skipping..."))
+        log.warn(warn_msg)
+        return None
+
     if flip_top_bottom:
         img = img.transpose(PIL.Image.FLIP_TOP_BOTTOM)
     img = utils.convert_to_grayscale(img)
