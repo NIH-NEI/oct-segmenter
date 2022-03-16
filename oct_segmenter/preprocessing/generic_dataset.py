@@ -23,12 +23,24 @@ def process_directory(input_dir, output_dir, save_file=False):
                 image_file = Path(os.path.join(subdir, file))
                 print(f"Processing file from Visual Core: {image_file}")
                 img_name_left, img_array_left, seg_map_left, segs_left, img_name_right, img_array_right, seg_map_right, segs_right = generate_image_label_visual_core(image_file, output_dir, save_file)
-                img_file_names.extend([[img_name_left, "left".encode("ascii")], [img_name_right, "right".encode("ascii")]])
-                img_file_data.extend([img_array_left, img_array_right])
-                labeled_file_data.extend([seg_map_left, seg_map_right])
-                segments_data.extend([segs_left, segs_right])
+                if img_name_left:
+                    img_file_names.extend([[img_name_left, "left".encode("ascii")], [img_name_right, "right".encode("ascii")]])
+                    img_file_data.extend([img_array_left, img_array_right])
+                    labeled_file_data.extend([seg_map_left, seg_map_right])
+                    segments_data.extend([segs_left, segs_right])
 
-    crop_images_to_same_size(img_file_data, segments_data, labeled_file_data)
+    if len(img_file_data) == 0:
+        log.info("No images were processed successfully. Exiting...")
+        exit(1)
+
+    # Images a transposed so dim 0 is image width
+    if not all(x.shape[0] == img_file_data[0].shape[0] for x in img_file_data):
+        log.error("Images contain different widths. All images should have same width. Exiting...")
+        exit(1)
+
+    if not all(x.shape[1] == img_file_data[0].shape[1] for x in img_file_data):
+        log.error("Images contain different heights. All images should have same height. Exiting...")
+        exit(1)
 
     return img_file_names, img_file_data, segments_data, labeled_file_data
 
@@ -45,12 +57,24 @@ def process_directory_wayne(input_dir, output_dir, save_file=False):
                 image_file = Path(os.path.join(subdir, file))
                 print(f"Processing file from Wayne State University format: {image_file}")
                 img_name, img_array, seg_map, segs = generate_image_label_wayne(image_file, output_dir, save_file)
-                img_file_names.extend([img_name])
-                img_file_data.extend([img_array])
-                labeled_file_data.extend([seg_map])
-                segments_data.extend([segs])
+                if img_name:
+                    img_file_names.extend([img_name])
+                    img_file_data.extend([img_array])
+                    labeled_file_data.extend([seg_map])
+                    segments_data.extend([segs])
 
-    crop_images_to_same_size(img_file_data, segments_data, labeled_file_data)
+    if len(img_file_data) == 0:
+        log.info("No images were processed successfully. Exiting...")
+        exit(1)
+
+    # Images a transposed so dim 0 is image width
+    if not all(x.shape[0] == img_file_data[0].shape[0] for x in img_file_data):
+        log.error("Images contain different widths. All images should have same width. Exiting...")
+        exit(1)
+
+    if not all(x.shape[1] == img_file_data[0].shape[1] for x in img_file_data):
+        log.error("Images contain different heights. All images should have same height. Exiting...")
+        exit(1)
 
     return img_file_names, img_file_data, segments_data, labeled_file_data
 
@@ -74,7 +98,18 @@ def process_directory_labelme(input_dir, output_dir, save_file=False):
                     labeled_file_data.extend([seg_map])
                     segments_data.extend([segs])
 
-    crop_images_to_same_size(img_file_data, segments_data, labeled_file_data)
+    if len(img_file_data) == 0:
+        log.info("No images were processed successfully. Exiting...")
+        exit(1)
+
+    # Images a transposed so dim 0 is image width
+    if not all(x.shape[0] == img_file_data[0].shape[0] for x in img_file_data):
+        log.error("Images contain different widths. All images should have same width. Exiting...")
+        exit(1)
+
+    if not all(x.shape[1] == img_file_data[0].shape[1] for x in img_file_data):
+        log.error("Images contain different heights. All images should have same height. Exiting...")
+        exit(1)
 
     return img_file_names, img_file_data, segments_data, labeled_file_data
 

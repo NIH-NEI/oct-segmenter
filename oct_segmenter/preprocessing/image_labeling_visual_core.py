@@ -8,7 +8,8 @@ from pathlib import Path
 import PIL.Image
 
 from oct_segmenter.preprocessing import VISUAL_CORE_BOUND_X_LEFT_START,\
-    VISUAL_CORE_BOUND_X_LEFT_END, VISUAL_CORE_BOUND_X_RIGHT_START, VISUAL_CORE_BOUND_X_RIGHT_END
+    VISUAL_CORE_BOUND_X_LEFT_END, VISUAL_CORE_BOUND_X_RIGHT_START, VISUAL_CORE_BOUND_X_RIGHT_END,\
+    UNET_IMAGE_DIMENSION_MULTIPLICITY
 from oct_segmenter.preprocessing import utils
 from oct_segmenter.preprocessing.image_labeling_common import create_label_image, generate_boundary
 
@@ -161,6 +162,13 @@ def generate_image_label_visual_core(image_path: Path, output_dir, save_file=Tru
 
     '''
     img = utils.convert_to_grayscale(PIL.Image.open(image_path, "r"))
+
+    if img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0 \
+        or img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0:
+        warn_msg = " ".join((f"Image dimensions need to be a multiple of 16",
+            f"Image: {image_path} is {img.width} by {img.height}. Skipping..."))
+        log.warn(warn_msg)
+        return None, None, None, None, None, None, None, None
 
     img_left_path = Path(output_dir + "/" + image_path.stem + "_left.json")
     img_right_path = Path(output_dir + "/" + image_path.stem + "_right.json")

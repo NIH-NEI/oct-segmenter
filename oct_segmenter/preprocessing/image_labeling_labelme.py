@@ -11,6 +11,7 @@ LAYER_NAMES = ["ILM", "ELM", "RPE"]
 
 MIN_WIDTH_THRESHOLD = 780
 
+from oct_segmenter.preprocessing import UNET_IMAGE_DIMENSION_MULTIPLICITY
 from oct_segmenter.preprocessing import utils
 from oct_segmenter.preprocessing.image_labeling_common import create_label_image, generate_boundary
 
@@ -205,6 +206,14 @@ def generate_image_label_labelme(img_path: Path, output_dir, save_file=True):
 
     bottom_margin = get_bottom_margin(data["imageHeight"])
     img = utils.img_b64_to_pil(data["imageData"])
+
+    if img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0 \
+        or img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0:
+        warn_msg = " ".join((f"Image dimensions need to be a multiple of 16",
+            f"Image: {img_path} is {img.width} by {img.height}. Skipping..."))
+        log.warn(warn_msg)
+        return None, None, None, None
+
     img = utils.convert_to_grayscale(img)
 
     img = img.crop((left_margin, 0, right_margin, bottom_margin))
