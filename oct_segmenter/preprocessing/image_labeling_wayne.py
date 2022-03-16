@@ -7,6 +7,7 @@ import numpy as np
 from pathlib import Path
 import PIL.Image
 
+from oct_segmenter.preprocessing import UNET_IMAGE_DIMENSION_MULTIPLICITY
 from oct_segmenter.preprocessing import utils
 from oct_segmenter.preprocessing.image_labeling_common import create_label_image, generate_boundary
 
@@ -116,6 +117,13 @@ def generate_image_label_wayne(image_path, output_dir, save_file=True):
 
     img = PIL.Image.open(image_path, "r")
 
+    if img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0 \
+        or img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0:
+        warn_msg = " ".join((f"Image dimensions need to be a multiple of 16",
+            f"Image: {image_path} is {img.width} by {img.height}. Skipping..."))
+        log.warn(warn_msg)
+        return None, None, None, None
+
     for x_coords in annotations:
         if len(x_coords) != img.width:
             err_msg = " ".join((
@@ -139,6 +147,9 @@ def generate_image_label_wayne(image_path, output_dir, save_file=True):
     new_height = (int) (img.height // 16) * 16
     top_margin = (int) ((img.height - new_height)/2)
     bottom_margin = (int) (top_margin + new_height)
+
+    assert(new_width == img.width)
+    assert(new_height == img.height)
 
     img = img.crop((left_margin, top_margin, right_margin, bottom_margin))
     annotations = process_annotations(annotations, left_margin, right_margin_width, top_margin)
