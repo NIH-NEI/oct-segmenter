@@ -54,6 +54,14 @@ def main():
         help="Generate dataset using the 'labelme' format (vs. Visual Function Core or Wayne State format)",
     )
 
+    gen_test_csv_format_group.add_argument(
+        "-m",
+        "--mask-format",
+        default=False,
+        action="store_true",
+        help="Generate dataset using the 'mask' format (vs. Visual Function Core or Wayne State format)",
+    )
+
     gen_test_parser.add_argument(
         "-o",
         "--output-dir",
@@ -93,6 +101,14 @@ def main():
         default=False,
         action="store_true",
         help="Generate dataset using the 'labelme' format (vs. Visual Function Core or Wayne State format)",
+    )
+
+    gen_train_csv_format_group.add_argument(
+        "-m",
+        "--mask-format",
+        default=False,
+        action="store_true",
+        help="Generate dataset using the mask format (vs. Visual Function Core or Wayne State format)",
     )
 
     gen_train_parser.add_argument(

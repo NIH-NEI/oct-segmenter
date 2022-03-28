@@ -38,7 +38,7 @@ def image_to_label(labelme_img_json):
     return lbl
 
 
-def create_label_image(labelme_img_json, output_name, save_file=True):
+def create_label_image(labelme_img_json, output_name, save_file=True) -> np.array:
     label_arr = image_to_label(labelme_img_json)
 
     # labelme creates the segmentation map (label.png) using [1, 2, 3, 4, ...] and we want [0, 1, 2, 3, ...]

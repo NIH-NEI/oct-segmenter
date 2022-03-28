@@ -158,7 +158,7 @@ def generate_image_label_wayne(image_path, output_dir, save_file=True):
     segs = generate_boundary(label_img)
 
     if save_file:
-        np.savetxt(output_dir + "/" + image_path.stem + "_matrix.txt", utils.pil_to_array(label_img), fmt="%d")
+        np.savetxt(output_dir + "/" + image_path.stem + "_matrix.txt", label_img, fmt="%d")
 
     img = np.transpose(utils.pil_to_array(img))
     img = img[..., np.newaxis]

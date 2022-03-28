@@ -7,6 +7,8 @@ def format_flags_to_string(args) -> str:
         return "wayne"
     elif args.labelme_format:
         return "labelme"
+    elif args.mask_format:
+        return "mask"
     else:
         return "none"
 
