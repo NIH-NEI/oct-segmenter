@@ -75,6 +75,16 @@ def process_annotations(annotations, left_margin, right_margin, top_margin):
     - First inner loop replaces < 0s from the left side with the first non-zero value from the left
     - Second inner loop replaces < 0s from the right side with the first non-zero value from the right
     """
+
+    """
+    Since the convention is that the boundary is the first line of the 'next' layer when traversing
+    the image from top to bottom and we will be building the labelme file from botton to top we need
+    to first substract 1 from all annotations.
+    """
+    for annot in annotations:
+        for i in range(len(annot)):
+            annot[i] -= 1
+
     for annot in annotations:
         for i in range(len(annot)):
             if annot[i] <= 0:
@@ -159,6 +169,7 @@ def generate_image_label_wayne(image_path, output_dir, save_file=True):
 
     if save_file:
         np.savetxt(output_dir + "/" + image_path.stem + "_matrix.txt", label_img, fmt="%d")
+        np.savetxt(output_dir + "/" + image_path.stem + "_segs.csv", segs, fmt="%d", delimiter=",")
 
     img = np.transpose(utils.pil_to_array(img))
     img = img[..., np.newaxis]

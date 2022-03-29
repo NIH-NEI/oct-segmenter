@@ -62,6 +62,7 @@ def generate_image_label_mask(image_path, output_dir, save_file=True):
     if save_file:
         utils.lblsave(output_dir + "/" + image_path.stem + "_label.png", mask)
         np.savetxt(output_dir + "/" + image_path.stem + "_matrix.txt", mask, fmt="%d")
+        np.savetxt(output_dir + "/" + image_path.stem + "_segs.csv", segs, fmt="%d", delimiter=",")
 
     img = np.transpose(utils.pil_to_array(img))
     img = img[..., np.newaxis]
