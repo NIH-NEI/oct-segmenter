@@ -6,7 +6,7 @@ from pathlib import Path
 
 from unet.model import augmentation as aug
 from unet.model import evaluation
-from unet.model.evaluation_parameters import EvaluationParameters, PredictionDataset
+from unet.model.evaluation_parameters import EvaluationParameters, Dataset
 from unet.model.save_parameters import SaveParameters
 
 from oct_segmenter import MODELS_TABLE, MODELS_INDEX_MAP
@@ -95,10 +95,11 @@ def predict(args):
         exit(1)
 
     pred_images = np.array(pred_images)
-    pred_dataset = PredictionDataset(
-        pred_images,
-        pred_images_names,
-        output_paths,
+    dataset = Dataset(
+        images=pred_images,
+        images_masks=None,
+        images_names=pred_images_names,
+        images_output_dirs=output_paths,
     )
 
     # Create output dirs
@@ -119,7 +120,7 @@ def predict(args):
 
     eval_params = EvaluationParameters(
         model_file_path=model_path,
-        prediction_dataset=pred_dataset,
+        dataset=dataset,
         is_evaluate=False,
         col_error_range=None,
         save_foldername=root_output_dir,
