@@ -1,12 +1,14 @@
 import os
 
+import h5py
 import logging as log
 import numpy as np
 from pathlib import Path
 
 from unet.model import augmentation as aug
+from unet.model import dataset_loader as dl
 from unet.model import evaluation
-from unet.model.evaluation_parameters import EvaluationParameters, PredictionDataset
+from unet.model.evaluation_parameters import EvaluationParameters, Dataset
 from unet.model.save_parameters import SaveParameters
 
 from oct_segmenter import MODELS_TABLE, MODELS_INDEX_MAP
@@ -34,6 +36,7 @@ def evaluate(args):
     log.info(f"Using model: {model_name}")
 
     test_dataset_path = Path(args.input)
+
     if not test_dataset_path.is_file():
         print("oct-segmenter: Input file not found. Exiting...")
         exit(1)
@@ -42,6 +45,22 @@ def evaluate(args):
     if not output_dir.is_dir():
         print("oct-segmenter: Output directory not found. Exiting...")
         exit(1)
+
+    test_dataset_file = h5py.File(test_dataset_path, 'r')
+
+    test_images, test_labels, test_segments, test_image_names = dl.load_testing_data(
+        test_dataset_file
+    )
+
+    output_paths = [Path(output_dir)] * len(test_images)
+
+    test_images = np.array(test_images)
+    test_dataset = Dataset(
+        images=test_images,
+        images_masks=test_labels,
+        images_names=test_image_names,
+        images_output_dirs=output_paths,
+    )
 
     save_params = SaveParameters(
         pngimages=True,
@@ -56,7 +75,7 @@ def evaluate(args):
 
     eval_params = EvaluationParameters(
         model_file_path=model_path,
-        prediction_dataset=test_dataset_path,
+        dataset=test_dataset,
         is_evaluate=True,
         col_error_range=None,
         save_foldername=output_dir.absolute(),
