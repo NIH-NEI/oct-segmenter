@@ -48,7 +48,7 @@ def evaluate(args):
 
     test_dataset_file = h5py.File(test_dataset_path, 'r')
 
-    test_images, test_labels, test_segments, test_image_names = dl.load_testing_data(
+    test_images, test_labels, test_image_names = dl.load_testing_data(
         test_dataset_file
     )
 
