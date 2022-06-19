@@ -3,18 +3,19 @@ import logging as log
 from pathlib import Path
 from tensorflow.keras import optimizers
 
+from unet.common.mlflow_parameters import MLflowParameters
 from unet.model import augmentation as aug
 from unet.model import custom_losses
 from unet.model import custom_metrics
 from unet.model import training
 from unet.model.training_parameters import TrainingParams
 
-DEFAULT_EPOCHS = 1000
-DEFAULT_BATCH_SIZE = 2
 DEFAULT_AUGMENTATION_MODE = "none"
+DEFAULT_BATCH_SIZE = 2
+DEFAULT_EPOCHS = 1000
+
 
 def train(args):
-
     epochs = DEFAULT_EPOCHS
     batch_size = DEFAULT_BATCH_SIZE
     aug_mode = DEFAULT_AUGMENTATION_MODE
@@ -27,6 +28,10 @@ def train(args):
             augment = config_data.get("augment")
             if augment:
                 aug_mode = "all"
+            mlflow_experiment_name = config_data.get("experiment")
+            mlflow_tracking_uri = config_data.get("tracking_uri")
+            mlflow_tracking_username = config_data.get("username")
+            mlflow_tracking_password = config_data.get("password")
 
     log.info(f"Training Parameter: Epochs: {epochs}")
     log.info(f"Training Parameter: Batch Size: {batch_size}")
@@ -53,6 +58,14 @@ def train(args):
         model_save_best=True,
     )
 
+    mlflow_params = MLflowParameters(
+        mlflow_tracking_uri,
+        username=mlflow_tracking_username,
+        password=mlflow_tracking_password,
+        experiment=mlflow_experiment_name,
+    )
+
     training.train_model(
         t_params,
+        mlflow_params,
     )
