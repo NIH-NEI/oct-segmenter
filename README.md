@@ -177,7 +177,11 @@ User can configure training parameters by providing a JSON formatted configurati
 {
   "epochs": 1000,
   "batch_size": 3,
-  "augment": true
+  "augment": true,
+  "experiment": "my-experiment",
+  "tracking_uri": "mlruns",
+  "username": "balvisio",
+  "password": "changeme" # Not recommended in JSON
 }
 ```
 
@@ -187,10 +191,33 @@ User can configure training parameters by providing a JSON formatted configurati
 oct-segmenter train -i <path/to/training/dataset/hdf5/file> -o <path/to/output> -c training-config.json
 ```
 
+### MLflow Support
+
+The `oct-segmenter` supports logging runs using the MLflow library. Runs can be saved locally by
+default and can also be saved to a remote tracking server by setting the `tracking_uri` in the
+config file. [See Training Configurable Parameters](#training-configurable-parameters)
+
+For instructions on how to setup a remote MLflow tracking server visit:
+
+https://gist.github.com/balvisio/2cd02a4f403872893d0f3fd8de1f6fba
+
+To run the MLflow server locally run: `mlflow ui`.
+
+MacOS Note: By default, MLflow runs in port 5000. However, in MacOS Monterey the `ControlCenter`
+process, which is a native macOS application, uses port 5000. Thus, you can make the MLflow server
+listen in another port by running: `mlflow ui --port <port>`
+
+
 ### Training Configurable Parameters
 - `batch_size`: int
 - `epochs`: int
 - `augment`: bool: If true, images are augmented by flipping left-right
+- `experiment`: string: Name of the experiment under which the run will be logged using MLflow
+- `tracking_uri`: string: Tracking URI for logging the run. The URI can either be a HTTP/HTTPS URI
+for a MLflow remote server, a database connection string, or a local path to log data to a
+directory. The URI defaults to `mlruns`.
+- `username`:
+- `password`:
 
 ## Post-processing (Currently not supported, to be implemented)
 
