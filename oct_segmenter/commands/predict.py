@@ -4,10 +4,9 @@ import logging as log
 import numpy as np
 from pathlib import Path
 
-from unet.model import augmentation as aug
-from unet.model import evaluation
-from unet.model.evaluation_parameters import EvaluationParameters, Dataset
-from unet.model.save_parameters import SaveParameters
+from unet.common.dataset import Dataset
+from unet.prediction import prediction
+from unet.prediction.prediction_parameters import PredictionParams, PredictionSaveParams
 
 from oct_segmenter import MODELS_TABLE, MODELS_INDEX_MAP
 from oct_segmenter.preprocessing import preprocess
@@ -74,8 +73,8 @@ def predict(args):
             img = preprocess.generate_input_image(input_path, args.flip_top_bottom)
             if not img is None:
                 pred_images.append(img)
-                pred_images_names.append(Path(input_path.stem + "_labeled" + input_path.suffix))
-                output_paths.append(output)
+                pred_images_names.append(Path(input_path.name))
+                output_paths.append(output / Path(input_path.stem + "_labeled"))
         else:
             img_left, img_right = preprocess.generate_side_region_input_image(
                 input_path,
@@ -88,7 +87,7 @@ def predict(args):
                 pred_images_names.append(img_left_path)
                 img_right_path = Path(input_path.stem + "_right" + input_path.suffix)
                 pred_images_names.append(img_right_path)
-                output_paths.extend([output, output])
+                output_paths.extend([output / Path(input_path.stem + "_left"), output / Path(input_path.stem + "_right")])
 
     if len(pred_images) == 0:
         log.info("No images were processed successfully. Exiting...")
@@ -107,49 +106,29 @@ def predict(args):
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
-    save_params = SaveParameters(
-        pngimages=True,
-        raw_image=True,
-        raw_labels=True,
-        temp_extra=True,
+    save_params = PredictionSaveParams(
+        predicted_labels=True,
+        categorical_pred=False,
+        png_images=True,
         boundary_maps=True,
-        area_maps=False,
-        comb_area_maps=True,
-        seg_plot=True
+        individual_raw_boundary_pngs=False,
+        individual_seg_plots=False,
     )
 
-    eval_params = EvaluationParameters(
-        model_file_path=model_path,
+    predict_params = PredictionParams(
+        model_path=model_path,
         dataset=dataset,
-        is_evaluate=False,
-        col_error_range=None,
-        save_foldername=root_output_dir,
-        eval_mode="both",
-        aug_fn_arg=(aug.no_aug, {}),
+        config_output_dir=root_output_dir,
         save_params=save_params,
-        verbosity=3,
-        gsgrad=1,
-        transpose=False,
-        normalise_input=True,
-        comb_pred=False,
-        recalc_errors=False,
-        boundaries=True,
-        boundary_errors=False,
-        trim_maps=False,
-        trim_ref_ind=0,
-        trim_window=(0, 0),
-        dice_errors=True,
         flatten_image=False,
         flatten_ind=0,
         flatten_poly=False,
-        binarize=True,
-        binarize_after=True,
-        bg_ilm=True,
-        bg_csi=False,
         flatten_pred_edges=False,
         flat_marg=0,
-        use_thresh=False,
-        thresh=0.5,
+        trim_maps=False,
+        trim_ref_ind=0,
+        trim_window=(0, 0),
+        col_error_range=None,
     )
 
-    evaluation.evaluate_model(eval_params)
+    prediction.predict(predict_params)
