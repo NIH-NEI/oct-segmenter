@@ -1,5 +1,4 @@
 import os
-import sys
 
 import h5py
 import logging as log
