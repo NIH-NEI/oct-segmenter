@@ -1,6 +1,6 @@
 import numpy as np
 
-from oct_segmenter.preprocessing import utils
+from oct_segmenter.common import utils
 
 
 def generate_boundary(img_array):

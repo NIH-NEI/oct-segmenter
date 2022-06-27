@@ -1,5 +1,6 @@
 import os
 
+import json
 import logging as log
 import numpy as np
 from pathlib import Path
@@ -10,7 +11,7 @@ from unet.prediction.prediction_parameters import PredictionParams, PredictionSa
 
 from oct_segmenter import MODELS_TABLE, MODELS_INDEX_MAP
 from oct_segmenter.preprocessing import preprocess
-
+from oct_segmenter.postprocessing.postprocessing import create_labelme_file_from_boundaries
 
 def predict(args):
 
@@ -131,4 +132,16 @@ def predict(args):
         col_error_range=None,
     )
 
-    prediction.predict(predict_params)
+    prediction_outputs = prediction.predict(predict_params)
+
+    for prediction_output in prediction_outputs:
+        image_name = prediction_output.image_name
+        labelme_data = create_labelme_file_from_boundaries(
+            # Image is in "batch" format and transposed for model processing. Reverting it.
+            img_arr=np.transpose(np.squeeze(prediction_output.image)),
+            image_name=image_name,
+            boundaries=prediction_output.delineations,
+        )
+
+        with open(prediction_output.image_output_dir / Path(image_name.stem + ".json"), "w") as file:
+            json.dump(labelme_data, file)
