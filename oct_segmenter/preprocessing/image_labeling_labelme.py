@@ -1,6 +1,7 @@
 import os
 
 import json
+import logging as log
 import math
 import numpy as np
 from pathlib import Path
@@ -11,8 +12,8 @@ LAYER_NAMES = ["ILM", "ELM", "RPE"]
 
 MIN_WIDTH_THRESHOLD = 780
 
+from oct_segmenter.common import utils
 from oct_segmenter.preprocessing import UNET_IMAGE_DIMENSION_MULTIPLICITY
-from oct_segmenter.preprocessing import utils
 from oct_segmenter.preprocessing.image_labeling_common import create_label_image, generate_boundary
 
 
@@ -26,7 +27,7 @@ def order_label_lines_from_left_to_right(shapes):
             shape["points"].reverse()
 
 
-def get_vertical_margins(shapes) -> (int, int):
+def get_vertical_margins(shapes) -> tuple[int, int]:
     left_margin = float("-inf")
     for shape in shapes:
         left_margin = left_margin if left_margin > shape["points"][0][0] else shape["points"][0][0]

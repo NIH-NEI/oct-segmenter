@@ -5,8 +5,8 @@ import numpy as np
 from pathlib import Path
 import PIL.Image
 
+from oct_segmenter.common import utils
 from oct_segmenter.preprocessing import UNET_IMAGE_DIMENSION_MULTIPLICITY
-from oct_segmenter.preprocessing import utils
 from oct_segmenter.preprocessing.image_labeling_common import generate_boundary
 
 
