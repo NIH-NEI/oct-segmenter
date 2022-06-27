@@ -1,18 +1,14 @@
 from __future__ import annotations
 
-import os
-import sys
-
-import json
 import logging as log
 import numpy as np
 from pathlib import Path
 import PIL.Image
 
+from oct_segmenter.common import utils
 from oct_segmenter.preprocessing import VISUAL_CORE_BOUND_X_LEFT_START,\
     VISUAL_CORE_BOUND_X_LEFT_END, VISUAL_CORE_BOUND_X_RIGHT_START, VISUAL_CORE_BOUND_X_RIGHT_END,\
     UNET_IMAGE_DIMENSION_MULTIPLICITY
-from oct_segmenter.preprocessing import utils
 
 
 def generate_side_region_input_image(image_path: Path, flip_top_bottom: bool) -> tuple[np.array]:

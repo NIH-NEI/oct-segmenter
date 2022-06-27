@@ -6,7 +6,7 @@ file = Path(__file__).resolve()
 package_root_directory = file.parents[1]
 sys.path.append(str(package_root_directory))
 
-from oct_segmenter.preprocessing import utils
+from oct_segmenter.common import utils
 
 
 if __name__ == '__main__':

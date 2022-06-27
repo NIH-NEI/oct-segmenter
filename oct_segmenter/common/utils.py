@@ -8,6 +8,7 @@ import logging as log
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
+from typeguard import typechecked
 
 
 def img_data_to_pil(img_data):
@@ -62,6 +63,19 @@ def pil_to_data(img):
 def pil_to_array(img_pil):
     img_arr = np.array(img_pil)
     return img_arr
+
+
+@typechecked
+def img_arr_to_b64(img_arr: np.array):
+    img_pil = PIL.Image.fromarray(img_arr)
+    f = io.BytesIO()
+    img_pil.save(f, format='PNG')
+    img_bin = f.getvalue()
+    if hasattr(base64, 'encodebytes'):
+        img_b64 = base64.encodebytes(img_bin)
+    else:
+        img_b64 = base64.encodestring(img_bin)
+    return img_b64
 
 
 def shapes_to_label(img_shape, shapes, label_name_to_value):
