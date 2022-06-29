@@ -2,7 +2,7 @@ import os
 
 import argparse
 import art
-import logging
+import logging as log
 
 from oct_segmenter import DEFAULT_MODEL_INDEX, DEFAULT_TEST_PARTITION, DEFAULT_TRAINING_PARTITION,\
     DEFAULT_TEST_PARTITION, DEFAULT_VALIDATION_PARTITION
@@ -17,8 +17,8 @@ def main():
     print(art.text2art("oct-segmenter"))
 
     # Set logging
-    logging.basicConfig()
-    logging.getLogger().setLevel(logging.INFO)
+    log.basicConfig()
+    log.getLogger().setLevel(log.INFO)
 
     # Create args-parser
     parser = argparse.ArgumentParser()
@@ -36,14 +36,22 @@ def main():
         required=True,
     )
 
-    gen_test_csv_format_group = gen_test_parser.add_mutually_exclusive_group(required=False)
+    gen_test_csv_format_group = gen_test_parser.add_mutually_exclusive_group(required=True)
+
+    gen_test_csv_format_group.add_argument(
+        "-f",
+        "--visual-function-core-format",
+        default=False,
+        action="store_true",
+        help="Generate dataset using the Wayne State University format. (.tiff + 3 layer .csv)",
+    )
 
     gen_test_csv_format_group.add_argument(
         "-w",
         "--wayne-state-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the Wayne state format (vs. Visual Function Core or 'labelme' format)",
+        help="Generate dataset using the Wayne state format. (.tiff + 6 layer .csv)",
     )
 
     gen_test_csv_format_group.add_argument(
@@ -51,7 +59,7 @@ def main():
         "--labelme-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the 'labelme' format (vs. Visual Function Core or Wayne State format)",
+        help="Generate dataset using the 'labelme' format. ('labelme' compatible .json file)",
     )
 
     gen_test_csv_format_group.add_argument(
@@ -59,7 +67,13 @@ def main():
         "--mask-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the 'mask' format (vs. Visual Function Core or Wayne State format)",
+        help="Generate dataset using the 'mask' format. (.tiff + matrix mask .csv file)",
+    )
+
+    gen_test_parser.add_argument(
+        "--layers-format",
+        choices=["visual-function-core", "wayne-state"],
+        help="Required when using '-l' flag. Visual Function Core layers: ['ILM', 'ELM', 'RPE']. Wayne State Layers: ['RNFL-vitreous', 'GCL-RNFL', 'INL-IPL', 'ONL-OPL', 'ELM', 'RPE']",
     )
 
     gen_test_parser.add_argument(
@@ -72,8 +86,8 @@ def main():
     # Generate training dataset
     gen_train_parser = generate_subparser.add_parser("training")
     gen_train_parser.add_argument(
-        "--training-input-dir",
         "-i",
+        "--training-input-dir",
         help="Path to the directory containing training images",
         required=True,
     )
@@ -85,14 +99,22 @@ def main():
         required=True,
     )
 
-    gen_train_csv_format_group = gen_train_parser.add_mutually_exclusive_group(required=False)
+    gen_train_csv_format_group = gen_train_parser.add_mutually_exclusive_group(required=True)
+
+    gen_train_csv_format_group.add_argument(
+        "-f",
+        "--visual-function-core-format",
+        default=False,
+        action="store_true",
+        help="Generate dataset using the Wayne State University format. (.tiff + 3 layer .csv)",
+    )
 
     gen_train_csv_format_group.add_argument(
         "-w",
         "--wayne-state-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the Wayne state format (vs. Visual Function Core or 'labelme' format)",
+        help="Generate dataset using the Wayne State University format. (.tiff + 6 layer .csv)",
     )
 
     gen_train_csv_format_group.add_argument(
@@ -100,7 +122,7 @@ def main():
         "--labelme-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the 'labelme' format (vs. Visual Function Core or Wayne State format)",
+        help="Generate dataset using the 'labelme' format. ('labelme' compatible .json file)",
     )
 
     gen_train_csv_format_group.add_argument(
@@ -108,7 +130,13 @@ def main():
         "--mask-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the mask format (vs. Visual Function Core or Wayne State format)",
+        help="Generate dataset using the mask format. (.tiff + matrix mask .csv file)",
+    )
+
+    gen_train_parser.add_argument(
+        "--layers-format",
+        choices=["visual-function-core", "wayne-state"],
+        help="Required when using '-l' flag. Visual Function Core layers: ['ILM', 'ELM', 'RPE']. Wayne State Layers: ['RNFL-vitreous', 'GCL-RNFL', 'INL-IPL', 'ONL-OPL', 'ELM', 'RPE']",
     )
 
     gen_train_parser.add_argument(
@@ -286,6 +314,9 @@ def main():
     args = parser.parse_args()
 
     if args.command == "generate":
+        if args.labelme_format and args.layers_format is None:
+            log.error("If generating images from 'labelme' files specify the layer format with the '--layers-format' flag")
+            exit(1)
         if args.generate == "test":
             generate_test_dataset(args)
         elif args.generate == "training":

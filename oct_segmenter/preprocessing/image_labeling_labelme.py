@@ -6,9 +6,8 @@ import math
 import numpy as np
 from pathlib import Path
 from PIL import Image
+from typeguard import typechecked
 
-# Layers from bottom to top
-LAYER_NAMES = ["ILM", "ELM", "RPE"]
 
 MIN_WIDTH_THRESHOLD = 780
 
@@ -27,6 +26,16 @@ def order_label_lines_from_left_to_right(shapes):
             shape["points"].reverse()
 
 
+@typechecked
+def order_layers_from_top_to_bottom(shapes: list[dict]) -> list[str]:
+    layers_height = {}
+    for shape in shapes:
+        layers_height[shape["label"]] = shape["points"][0][1]
+
+    bottom_to_top_layers = [key for key, _ in sorted(layers_height.items(), key=lambda item: item[1])]
+    return bottom_to_top_layers
+
+
 def get_vertical_margins(shapes) -> tuple[int, int]:
     left_margin = float("-inf")
     for shape in shapes:
@@ -39,17 +48,24 @@ def get_vertical_margins(shapes) -> tuple[int, int]:
     # The margins here can be floats since they can come from using shapes
     left_margin = math.ceil(left_margin)
     right_margin = int(right_margin)
+    """
+    The current U-net is being used requires the dimensions of the images to be a multiple of 16
+    because it has 4 pooling layers that reduce the size of the image by half each time
 
-    # The current U-net is being used requires the dimensions of the images to be a multiple of 16
-    # because it has 4 pooling layers that reduce the size of the image by half each time
-    pixels_to_remove = (right_margin - left_margin) % 16
+    For example: In this case the left most point is at 0 and right-most at 15; total width is 16.
+    We shouldn't remove any pixel. Thus:
+    right_margin == 15
+    left_margin == 0
+    pixels_to_remove = (15 - 0 + 1) % 16 = 0
+    """
+    pixels_to_remove = (right_margin - left_margin + 1) % UNET_IMAGE_DIMENSION_MULTIPLICITY
     pixels_to_remove_left = pixels_to_remove // 2
     pixels_to_remove_right = math.ceil(pixels_to_remove / 2)
 
     return left_margin + pixels_to_remove_left, right_margin - pixels_to_remove_right
 
 
-def get_bottom_margin(img_height):
+def get_multiplicity_height(img_height):
     return img_height - img_height % 16
 
 
@@ -126,11 +142,21 @@ def adjust_and_shift_layer(shape, shift, img_width):
     return new_points
 
 
-def create_labelme_file(img: Image, shapes, shift, original_file_path, out_file_name, save_file):
+@typechecked
+def create_labelme_file(
+    img: Image,
+    shapes: list[dict],
+    shift: int,
+    layer_names: list[str],
+    original_file_path: str,
+    out_file_name: Path,
+    save_file: bool,
+):
     file = {}
+    layer_names.insert(0, "background")
     img_data = utils.pil_to_data(img)
     file['imageData'] = str(utils.img_data_to_img_b64(img_data), "utf-8")
-    file["imagePath"] = str(original_file_path)
+    file["imagePath"] = original_file_path
     file["version"] = "4.5.9"
     file["flags"] = {}
 
@@ -139,9 +165,9 @@ def create_labelme_file(img: Image, shapes, shift, original_file_path, out_file_
     for shape in shapes:
         shapes_dict[shape["label"]] = shape
 
-    layer_points = [[0, img.height-1], [img.width-1, img.height-1]]
-    for i in range(len(LAYER_NAMES)):
-        shape = shapes_dict[LAYER_NAMES[i]]
+    layer_points = [[0, 0], [img.width - 1, 0]]
+    for i in range(1, len(layer_names)):
+        shape = shapes_dict[layer_names[i]]
         extra_points = layer_points
         extra_points.reverse()
         layer_points = adjust_and_shift_layer(shape, shift, img.width)
@@ -149,15 +175,16 @@ def create_labelme_file(img: Image, shapes, shift, original_file_path, out_file_
         polygon.extend(extra_points)
         shape["shape_type"] = "polygon"
         shape["points"] = polygon
+        shape["label"] = layer_names[i - 1]
 
-    # Upper polygon
+    # Lower polygon
     extra_points = layer_points
     extra_points.reverse()
-    polygon = [[0, 0], [img.width - 1, 0]]
+    polygon = [[0, img.height-1], [img.width-1, img.height-1]]
     polygon.extend(extra_points)
     shape = {}
     shape["points"] = polygon
-    shape["label"] = "background"
+    shape["label"] = layer_names[i]
     shape["group_id"] = None
     shape["shape_type"] = "polygon"
     shape["flags"] = {}
@@ -175,7 +202,13 @@ def create_labelme_file(img: Image, shapes, shift, original_file_path, out_file_
     return file
 
 
-def generate_image_label_labelme(img_path: Path, output_dir, save_file=True):
+@typechecked
+def generate_image_label_labelme(
+    img_path: Path,
+    output_dir: Path,
+    layer_names: list[str],
+    save_file: bool=True,
+):
     if save_file and not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
@@ -183,7 +216,7 @@ def generate_image_label_labelme(img_path: Path, output_dir, save_file=True):
         data = json.load(f)
 
     img_layers = len(data["shapes"])
-    if img_layers != len(LAYER_NAMES):
+    if img_layers != len(layer_names):
         log.warn(f"Labelme file {img_path} has unexpected {img_layers} layers. Skipping...")
         return None, None, None, None
 
@@ -191,11 +224,13 @@ def generate_image_label_labelme(img_path: Path, output_dir, save_file=True):
     for layer in data["shapes"]:
         layer_set.add(layer["label"])
 
-    if len(layer_set) != len(LAYER_NAMES):
+    if len(layer_set) != len(layer_names):
         log.warn(f"Labelme file {img_path} has missing layers. Skipping...")
         return None, None, None, None
 
     order_label_lines_from_left_to_right(data["shapes"])
+
+    top_to_bottom_layers = order_layers_from_top_to_bottom(data["shapes"])
 
     left_margin, right_margin = get_vertical_margins(data["shapes"]) # (int, int)
     labeled_region_width = right_margin - left_margin
@@ -205,7 +240,7 @@ def generate_image_label_labelme(img_path: Path, output_dir, save_file=True):
         log.warn(warn_msg)
         return None, None, None, None
 
-    bottom_margin = get_bottom_margin(data["imageHeight"])
+    multiplicty_height = get_multiplicity_height(data["imageHeight"])
     img = utils.img_b64_to_pil(data["imageData"])
 
     if img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0 \
@@ -217,24 +252,30 @@ def generate_image_label_labelme(img_path: Path, output_dir, save_file=True):
 
     img = utils.convert_to_grayscale(img)
 
-    img = img.crop((left_margin, 0, right_margin, bottom_margin))
+    # Since margins are 0-indexed we need to add 1 to the margin to get right width
+    img = img.crop((left_margin, 0, right_margin + 1, multiplicty_height))
+
+    assert(img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY == 0)
+    assert(img.height % UNET_IMAGE_DIMENSION_MULTIPLICITY == 0)
 
     # Create cropped/shifted labelme file
-    output_img_path = Path(output_dir + "/" + img_path.stem + "_cropped.json")
+    output_img_path = output_dir / Path(img_path.stem + "_cropped.json")
+
     labelme_img_json = create_labelme_file(
         img,
         data["shapes"],
         left_margin,
+        top_to_bottom_layers,
         data["imagePath"],
         output_img_path,
-        save_file
+        save_file,
     )
 
     # Generate image segmentation map
-    segmentation_map_img = create_label_image(labelme_img_json, output_dir + img_path.stem + "_label.json" , save_file)
+    segmentation_map_img = create_label_image(labelme_img_json, output_dir / Path(img_path.stem + "_label.json"), save_file)
 
     if save_file:
-        np.savetxt(output_dir + "/" + img_path.stem + "_matrix.txt", utils.pil_to_array(segmentation_map_img), fmt="%d")
+        np.savetxt(output_dir / Path(img_path.stem + "_matrix.txt"), utils.pil_to_array(segmentation_map_img), fmt="%d", delimiter=",")
 
     # Generate boundaries out of the segmentation map image
     boundaries = generate_boundary(segmentation_map_img)

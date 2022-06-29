@@ -4,6 +4,7 @@ import h5py
 import logging as log
 import math
 from pathlib import Path
+from typeguard import typechecked
 
 from oct_segmenter.preprocessing.image_labeling_labelme import generate_image_label_labelme
 from oct_segmenter.preprocessing.image_labeling_mask import generate_image_label_mask
@@ -113,7 +114,13 @@ def process_directory_mask(input_dir, output_dir, save_file=False):
     return img_file_names, img_file_data, segments_data, labeled_file_data
 
 
-def process_directory_labelme(input_dir, output_dir, save_file=False):
+@typechecked
+def process_directory_labelme(
+    input_dir: Path,
+    output_dir: Path,
+    layer_names: list[str],
+    save_file: bool=False,
+):
     img_file_names = []
     img_file_data = [] # Original image (xhat)
     labeled_file_data = [] # Segmenation map (yhat)
@@ -124,7 +131,12 @@ def process_directory_labelme(input_dir, output_dir, save_file=False):
             if file.endswith(".json") and not file.startswith("."):
                 image_file = Path(os.path.join(subdir, file))
                 print(f"Processing file: {image_file}")
-                img_name, img_array, seg_map, segs = generate_image_label_labelme(image_file, output_dir, save_file)
+                img_name, img_array, seg_map, segs = generate_image_label_labelme(
+                    image_file,
+                    output_dir,
+                    layer_names,
+                    save_file,
+                )
 
                 if img_name:
                     img_file_names.extend([img_name])
@@ -185,10 +197,12 @@ def crop_images_to_same_size(img_file_data, segments_data, labeled_file_data):
         labeled_file_data[i] = label_img[upper_rows_to_remove:label_img.shape[0] - lower_rows_to_remove, :min_columns,:]
 
 
+@typechecked
 def generate_generic_dataset(
     input_dir: Path,
     file_name: Path,
     input_format: str,
+    layer_names: list[str] | None,
     backing_store: bool=True,
 ) -> h5py.File:
     if not os.path.isdir(file_name.parent):
@@ -201,11 +215,11 @@ def generate_generic_dataset(
             process_directory_wayne(input_dir, str(file_name.parent), save_file=False)
     elif input_format == "labelme":
         img_file_names, img_file_data, segments_data, labeled_file_data = \
-            process_directory_labelme(input_dir, str(file_name.parent), save_file=False)
+            process_directory_labelme(input_dir, file_name.parent, layer_names, save_file=False)
     elif input_format == "mask":
         img_file_names, img_file_data, segments_data, labeled_file_data = \
             process_directory_mask(input_dir, str(file_name.parent), save_file=False)
-    elif input_format == "none":
+    elif input_format == "visual":
         img_file_names, img_file_data, segments_data, labeled_file_data = \
             process_directory(input_dir, str(file_name.parent), save_file=False)
     else:

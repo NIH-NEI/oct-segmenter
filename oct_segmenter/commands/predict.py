@@ -13,8 +13,8 @@ from oct_segmenter import MODELS_TABLE, MODELS_INDEX_MAP
 from oct_segmenter.preprocessing import preprocess
 from oct_segmenter.postprocessing.postprocessing import create_labelme_file_from_boundaries
 
-def predict(args):
 
+def predict(args):
     if args.model_path:
         model_path = Path(args.model_path)
         model_name = model_path

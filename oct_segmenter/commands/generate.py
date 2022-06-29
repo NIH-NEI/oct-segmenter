@@ -1,16 +1,32 @@
+import logging as log
 from pathlib import Path
 
+from oct_segmenter import VISUAL_FUNCTION_CORE_LAYER_NAMES, WAYNE_STATE_LAYER_NAMES
 from oct_segmenter.preprocessing import test_dataset, training_dataset
 
+
 def format_flags_to_string(args) -> str:
-    if args.wayne_state_format:
+    if args.visual_function_core_format:
+        return "visual"
+    elif args.wayne_state_format:
         return "wayne"
     elif args.labelme_format:
         return "labelme"
     elif args.mask_format:
         return "mask"
     else:
-        return "none"
+        log.error("Input format option not found. Confirm that one of '-f', '-w', '-m' or '-l' flags was provided")
+        exit(1)
+
+
+def get_layer_list_from_layer_format_flag(format_flag: str) -> list[str]:
+    if format_flag == "visual-function-core":
+        return VISUAL_FUNCTION_CORE_LAYER_NAMES
+    elif format_flag == "wayne-state":
+        return WAYNE_STATE_LAYER_NAMES
+    else:
+        log.error(f"Unrecognized layer format option: {format_flag}")
+        exit(1)
 
 
 def generate_training_dataset(args):
@@ -34,6 +50,7 @@ def generate_training_dataset(args):
         validation_input_dir=validation_input_dir,
         output_file=output_dir / Path("training_dataset.hdf5"),
         input_format=format_flags_to_string(args),
+        layer_names=get_layer_list_from_layer_format_flag(args.layers_format)
     )
     dataset.close()
 
@@ -53,6 +70,7 @@ def generate_test_dataset(args):
         test_input_dir=test_input_dir,
         output_file=output_dir / Path("test_dataset.hdf5"),
         input_format=format_flags_to_string(args),
+        layer_names=get_layer_list_from_layer_format_flag(args.layers_format)
     )
 
     dataset.close()
