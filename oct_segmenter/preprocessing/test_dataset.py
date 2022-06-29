@@ -1,21 +1,22 @@
-import os
-import sys
-
 import h5py
 from pathlib import Path
+from typeguard import typechecked
 
 from oct_segmenter.preprocessing import generic_dataset as generator
 
 
+@typechecked
 def generate_test_dataset(
     test_input_dir: Path,
     output_file: Path,
-    input_format: str="none"
+    input_format: str,
+    layer_names: list[str] | None,
 ) -> h5py.File:
     test_hdf5_file = generator.generate_generic_dataset(
         test_input_dir,
         output_file,
         input_format,
+        layer_names,
     )
 
     test_hdf5_file["test_images"] = test_hdf5_file["xhat"]

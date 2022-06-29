@@ -1,7 +1,9 @@
+import logging as log
 import numpy as np
 from pathlib import Path
 from typeguard import typechecked
 
+from oct_segmenter import VISUAL_FUNCTION_CORE_LAYER_NAMES, WAYNE_STATE_LAYER_NAMES
 from oct_segmenter.common import utils
 
 
@@ -9,10 +11,18 @@ from oct_segmenter.common import utils
 def create_labelme_file_from_boundaries(
     img_arr: np.array,
     image_name: Path,
-    boundaries: np.array
+    boundaries: np.array,
 ):
-    LAYER_NAMES = ["RNFL-vitreous", "GCL-RNFL", "INL-IPL", "ONL-OPL", "ELM", "RPE"]
     SPACING = 20
+
+    num_boundaries = boundaries.shape[0]
+    if num_boundaries == 3:
+        layer_names = VISUAL_FUNCTION_CORE_LAYER_NAMES
+    elif num_boundaries == 6:
+        layer_names = WAYNE_STATE_LAYER_NAMES
+    else:
+        log.error(f"Unrecognized number of layers: {num_boundaries}")
+        exit(1)
 
     image_height, image_width = img_arr.shape
 
@@ -24,7 +34,7 @@ def create_labelme_file_from_boundaries(
 
     shapes = []
 
-    for layer_name, boundary in zip(LAYER_NAMES, boundaries):
+    for layer_name, boundary in zip(layer_names, boundaries):
         shape = {}
         shape["label"] = layer_name
         shape["points"] = []
