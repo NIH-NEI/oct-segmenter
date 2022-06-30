@@ -14,7 +14,7 @@ def package_files(directory):
 
 
 def get_install_requires():
-    return ["art", "imgviz", "oct_unet==0.6.0", "pillow==9.0.1", "prettytable", "typeguard"]
+    return ["art", "imgviz", "oct_unet==0.7.0", "pillow==9.0.1", "prettytable", "typeguard"]
 
 
 def get_long_description():
