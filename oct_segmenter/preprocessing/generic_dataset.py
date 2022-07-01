@@ -46,13 +46,14 @@ def process_directory(input_dir, output_dir, save_file=False):
     return img_file_names, img_file_data, segments_data, labeled_file_data
 
 
-def process_directory_wayne(input_dir, output_dir, save_file=False):
+@typechecked
+def process_directory_wayne(input_dir: Path, output_dir: Path, save_file: bool=False):
     img_file_names = []
     img_file_data = [] # Original image (xhat)
     labeled_file_data = [] # Segmenation map (yhat)
     segments_data = [] # Contains the boundaries
 
-    for subdir, dirs, files in os.walk(input_dir):
+    for subdir, _, files in os.walk(input_dir):
         for file in files:
             if (file.endswith(".tiff") or file.endswith(".TIFF")) and not file.startswith("."):
                 image_file = Path(os.path.join(subdir, file))
@@ -212,7 +213,7 @@ def generate_generic_dataset(
 
     if input_format == "wayne":
         img_file_names, img_file_data, segments_data, labeled_file_data = \
-            process_directory_wayne(input_dir, str(file_name.parent), save_file=False)
+            process_directory_wayne(input_dir, file_name.parent, save_file=False)
     elif input_format == "labelme":
         img_file_names, img_file_data, segments_data, labeled_file_data = \
             process_directory_labelme(input_dir, file_name.parent, layer_names, save_file=False)

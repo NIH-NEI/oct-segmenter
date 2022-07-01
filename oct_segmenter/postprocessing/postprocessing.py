@@ -12,8 +12,14 @@ def create_labelme_file_from_boundaries(
     img_arr: np.array,
     image_name: Path,
     boundaries: np.array,
-):
+) -> dict | None:
     SPACING = 20
+
+    image_width = img_arr.shape[1]
+    boundaries_width = boundaries.shape[1]
+    if image_width != boundaries_width:
+        log.warn(f"Image width: {image_width} is not equal to boundaries width: {boundaries_width}. Skipping...")
+        return None
 
     num_boundaries = boundaries.shape[0]
     if num_boundaries == 3:

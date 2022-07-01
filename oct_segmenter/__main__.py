@@ -1,5 +1,3 @@
-import os
-
 import argparse
 import art
 import logging as log
@@ -8,6 +6,7 @@ from oct_segmenter import DEFAULT_MODEL_INDEX, DEFAULT_TEST_PARTITION, DEFAULT_T
     DEFAULT_TEST_PARTITION, DEFAULT_VALIDATION_PARTITION
 from oct_segmenter.commands.evaluate import evaluate
 from oct_segmenter.commands.generate import generate_training_dataset, generate_test_dataset
+from oct_segmenter.commands.label import label
 from oct_segmenter.commands.list import list_models
 from oct_segmenter.commands.partition import partition
 from oct_segmenter.commands.predict import predict
@@ -309,7 +308,28 @@ def main():
     )
 
     # List Models
-    list_subparser = cmd_subparser.add_parser("list")
+    cmd_subparser.add_parser("list")
+
+    # Generate labelme files from raw image and boundaries CSV file
+    label_subparser = cmd_subparser.add_parser("label")
+    label_input_group = label_subparser.add_mutually_exclusive_group(required=True)
+    label_input_group.add_argument(
+        "--input",
+        "-i",
+        help="input file image to label"
+    )
+    label_input_group.add_argument(
+        "--input-dir",
+        "-d",
+        help="input directory containing .tiff images to be labeled."
+    )
+
+    label_subparser.add_argument(
+        "--output-dir",
+        "-o",
+        required=True,
+        help="Output directory",
+    )
 
     args = parser.parse_args()
 
@@ -334,6 +354,8 @@ def main():
         predict(args)
     elif args.command == "evaluate":
         evaluate(args)
+    elif args.command == "label":
+        label(args)
     elif args.command == "list":
         list_models()
     elif args.command == "train":

@@ -11,7 +11,7 @@ def generate_training_dataset(
     validation_input_dir: Path,
     output_file: Path,
     input_format: str,
-    layer_names: list[str],
+    layer_names: list[str] | None,
 ) -> h5py.File:
     training_dataset = generator.generate_generic_dataset(
         train_input_dir,

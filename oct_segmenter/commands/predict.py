@@ -58,6 +58,9 @@ def predict(args):
 
     if args.output_dir:
         root_output_dir = Path(args.output_dir)
+        if not root_output_dir.is_dir():
+            print("oct-segmenter: Output directory not found. Exiting...")
+            exit(1)
     else:
         root_output_dir = input_dir
 

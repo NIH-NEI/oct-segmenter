@@ -45,12 +45,15 @@ def generate_training_dataset(args):
         print("oct-segmenter: Output directory not found. Exiting...")
         exit(1)
 
+    input_format = format_flags_to_string(args)
+    layer_names = get_layer_list_from_layer_format_flag(args.layers_format) if input_format == "labelme" else None
+
     dataset = training_dataset.generate_training_dataset(
         train_input_dir=train_input_dir,
         validation_input_dir=validation_input_dir,
         output_file=output_dir / Path("training_dataset.hdf5"),
-        input_format=format_flags_to_string(args),
-        layer_names=get_layer_list_from_layer_format_flag(args.layers_format)
+        input_format=input_format,
+        layer_names=layer_names,
     )
     dataset.close()
 
@@ -66,11 +69,14 @@ def generate_test_dataset(args):
         print("oct-segmenter: Output directory not found. Exiting...")
         exit(1)
 
+    input_format = format_flags_to_string(args)
+    layer_names = get_layer_list_from_layer_format_flag(args.layers_format) if input_format == "labelme" else None
+
     dataset = test_dataset.generate_test_dataset(
         test_input_dir=test_input_dir,
         output_file=output_dir / Path("test_dataset.hdf5"),
-        input_format=format_flags_to_string(args),
-        layer_names=get_layer_list_from_layer_format_flag(args.layers_format)
+        input_format=input_format,
+        layer_names=layer_names,
     )
 
     dataset.close()
