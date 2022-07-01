@@ -5,6 +5,7 @@ import logging as log
 import numpy as np
 from pathlib import Path
 import PIL.Image
+from typeguard import typechecked
 
 from oct_segmenter.common import utils
 from oct_segmenter.preprocessing import UNET_IMAGE_DIMENSION_MULTIPLICITY
@@ -43,8 +44,8 @@ def create_labelme_file_wayne(img, annotations, in_file_name, out_file_name, sav
 
     shapes = []
 
-    # Bottom polygom
-    extra_points = [[img.width-1, img.height-1], [0, img.height-1]]
+    # Top polygon
+    extra_points = [[img.width - 1, 0], [0, 0]]
     shapes.append(create_polygon_wayne(annotations[0], extra_points, "polygon_0", img.height))
 
     for i in range(1, len(annotations)):
@@ -53,7 +54,7 @@ def create_labelme_file_wayne(img, annotations, in_file_name, out_file_name, sav
         extra_points.reverse()
         shapes.append(create_polygon_wayne(annotations[i], extra_points, f"polygon_{i}", img.height))
 
-    extra_points = [[img.width - 1, 0], [0, 0]]
+    extra_points = [[img.width-1, img.height-1], [0, img.height-1]]
     shapes.append(create_polygon_wayne(annotations[len(annotations) - 1], extra_points, "polygon_6", img.height))
 
     file["shapes"] = shapes
@@ -106,8 +107,9 @@ def process_annotations(annotations, left_margin, right_margin, top_margin):
     return [[x - top_margin  for x in annot[left_margin:width-right_margin]] for annot in annotations]
 
 
-def generate_image_label_wayne(image_path, output_dir, save_file=True):
-    if save_file and not os.path.isdir(output_dir):
+@typechecked
+def generate_image_label_wayne(image_path: Path, output_dir: Path, save_file: bool=True):
+    if save_file and not output_dir.isdir():
         os.mkdir(output_dir)
 
     csv_path = image_path.parent / Path(image_path.stem + ".csv")
@@ -145,7 +147,7 @@ def generate_image_label_wayne(image_path, output_dir, save_file=True):
 
     img = utils.convert_to_grayscale(img)
 
-    img_path = Path(output_dir + "/" + image_path.stem + ".json")
+    output_img_path = output_dir / Path(image_path.stem + ".json")
 
     # U-net architecture requires images with dimensions that are multiple of 16
     new_width = (int) (img.width // 16) * 16
@@ -162,13 +164,13 @@ def generate_image_label_wayne(image_path, output_dir, save_file=True):
 
     img = img.crop((left_margin, top_margin, right_margin, bottom_margin))
     annotations = process_annotations(annotations, left_margin, right_margin_width, top_margin)
-    labelme_img_json = create_labelme_file_wayne(img, annotations, image_path, img_path, save_file)
-    label_img = create_label_image(labelme_img_json, output_dir + "/" + image_path.stem + "_label.png", save_file)
+    labelme_img_json = create_labelme_file_wayne(img, annotations, image_path, output_img_path, save_file)
+    label_img = create_label_image(labelme_img_json, output_dir / Path(image_path.stem + "_label.png"), save_file)
     segs = generate_boundary(label_img)
 
     if save_file:
-        np.savetxt(output_dir + "/" + image_path.stem + "_matrix.txt", label_img, fmt="%d")
-        np.savetxt(output_dir + "/" + image_path.stem + "_segs.csv", segs, fmt="%d", delimiter=",")
+        np.savetxt(output_dir / Path(image_path.stem + "_matrix.txt"), label_img, fmt="%d")
+        np.savetxt(output_dir / Path(image_path.stem + "_segs.csv"), segs, fmt="%d", delimiter=",")
 
     img = np.transpose(utils.pil_to_array(img))
     img = img[..., np.newaxis]
