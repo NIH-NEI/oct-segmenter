@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import h5py
 from pathlib import Path
 from typeguard import typechecked
