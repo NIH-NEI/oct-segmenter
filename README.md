@@ -279,3 +279,13 @@ To build the `oct-segmenter` wheel package, from the root directory do
 ```
 ./build.sh
 ```
+
+## Additional Scripts
+The repository contains a collection of scripts that were created for a
+variety of reasons. The following is a list of them:
+- `preprocessing-scripts/custom/trim_upper_and_lower_layers.py`: This script
+  takes as input a directory containing TIFF files and their corresponding
+  CSVs. It trims the upper and lower layers of the images so that the model
+  can focus on al layers. It looks at the whole dataset first to find the image
+  with the shortest top layer and uses that as the constraint to trim all the
+  dataset. The same procedure is used for the bottom layer.
