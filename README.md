@@ -295,6 +295,9 @@ variety of reasons. The following is a list of them:
 - `preprocessing-scripts/custom/check_retina_layers_order.py`: This script
   takes as input a directory containing the mask files (in CSV format) and
   checks that the all the expected retina layers are present and in order.
+- `preprocessing-scripts/custom/map_image_name_to_subject.py`: This script
+  creates a text file that maps an image name provided by VFC or WSU to a
+  subject. The generated map has the format: `<image_name> <subject>`.
 
 # OCT Images Quality Improvement
 
