@@ -298,6 +298,12 @@ variety of reasons. The following is a list of them:
 - `preprocessing-scripts/custom/map_image_name_to_subject.py`: This script
   creates a text file that maps an image name provided by VFC or WSU to a
   subject. The generated map has the format: `<image_name> <subject>`.
+- `preprocessing-scripts/custom/split_images_into_train_val_test.py`: This
+  script takes as input a directory containing TIFF files and their
+  corresponding CSVs and a TSV file that maps image name to subject (see
+  `preprocessing-scripts/custom/map_image_name_to_subject.py`). It splits the
+  images into the training, test and validation datasets making sure that no
+  subject appears in more than one partition.
 
 # OCT Images Quality Improvement
 

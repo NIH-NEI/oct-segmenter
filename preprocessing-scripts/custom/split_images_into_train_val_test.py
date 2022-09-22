@@ -23,9 +23,11 @@ def copy_image_files(input_dir, output_dir, image_paths):
 
 if __name__ == "__main__":
     """
-    This script takes as input a directory containing TIFF files and their corresponding CSVs and a 
-    `filename_to_subject.tsv` file. It splits the images into the training, test and validation
-    datasets making sure that no subject appears in more than one partition.
+    This script takes as input a directory containing TIFF files and their \
+    corresponding CSVs and a TSV file that maps image name to subject (see
+    `preprocessing-scripts/custom/map_image_name_to_subject.py`). It splits \
+    the images into the training, test and validation datasets making sure \
+    that no subject appears in more than one partition.
 
     Example:
     python preprocessing-scripts/custom/split_images_into_train_val_test.py \
@@ -36,10 +38,11 @@ if __name__ == "__main__":
     log.getLogger().setLevel(log.INFO)
 
     log.info(
-        f"Targets: Train: {TRAINING_PARTITION}, Test: {TEST_PARTITION}, Validation: "
-        f"{VALIDATION_PARTITION}"
+        (
+            f"Targets: Train: {TRAINING_PARTITION}, Test: {TEST_PARTITION}, "
+            f"Validation: {VALIDATION_PARTITION}"
+        )
     )
-
     filename_to_subject_filepath = Path(sys.argv[1])
     input_dir = Path(sys.argv[2])
 
