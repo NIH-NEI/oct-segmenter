@@ -211,16 +211,19 @@ listen in another port by running: `mlflow ui --port <port>`
 ### Training Configurable Parameters
 - `batch_size`: int
 - `epochs`: int
-- `augment`: bool: If true, images are augmented by flipping left-right
-- `experiment`: string: Name of the experiment under which the run will be logged using MLflow
-- `tracking_uri`: string: Tracking URI for logging the run. The URI can either be a HTTP/HTTPS URI
-for a MLflow remote server, a database connection string, or a local path to log data to a
-directory. The URI defaults to `mlruns`.
-- `username`:
-- `password`:
+- `early_stopping`: bool: If ``True`` training will stop when the validation
+  dice coefficient stops improving after 5 epochs. Overrides `epochs`
+  parameter.
+- `augment`: bool: If ``True``, images are augmented by flipping left-right.
+- `experiment`: string: Name of the experiment under which the run will be
+  logged using MLflow.
+- `tracking_uri`: string: Tracking URI for logging the run. The URI can either
+  be a HTTP/HTTPS URI for a MLflow remote server, a database connection string,
+  or a local path to log data to a directory. The URI defaults to `mlruns`.
+- `username`: string: MLFlow server username.
+- `password`: string: MLFlow server password.
 
 ## Post-processing (Currently not supported, to be implemented)
-
 The script `merge_images.py` merges the original image withe the segmentation plots from the model evaluation/prediction. Usage:
 
 `python3 merge_image.py <path/to/original/image> <path/to/left/segment/plot> <path/to/right/segment/plot> <path/to/output_file>`
