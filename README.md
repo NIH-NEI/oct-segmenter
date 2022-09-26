@@ -295,3 +295,23 @@ variety of reasons. The following is a list of them:
 - `preprocessing-scripts/custom/check_retina_layers_order.py`: This script
   takes as input a directory containing the mask files (in CSV format) and
   checks that the all the expected retina layers are present and in order.
+
+# OCT Images Quality Improvement
+
+As part of the development of the `oct-segmenter` and the analysis of OCT
+images, the algorithms proposed in the paper "Girard MJ, Strouthidis NG,
+Ethier CR, Mari JM. Shadow removal and contrast enhancement in optical
+coherence tomography images of the human optic nerve head. Invest Ophthalmol
+Vis Sci. 2011;52(10):7738-7748. Published 2011 Sep 29.
+doi:10.1167/iovs.10-6925" were implemented in MATLAB. These are the descrete
+forms of the algorithm described in the appendix of the paper:
+- `preprocessing-scripts/oct-image-quality-improvement/comp_exp.m`: Applies
+  compensation and then exponentation.
+- `preprocessing-scripts/oct-image-quality-improvement/exp_comp.m`: Applies
+  exponentiation and then compensation.
+- `preprocessing-scripts/oct-image-quality-improvement/comp_only.m`: Applies
+  compensation only.
+
+These scripts take a path to a TIFF file as input and save the converted
+TIFF in a file name as the input image and the `_comp_exp.tiff`,
+`_exp_comp.tiff` and `_comp_only.tiff` suffix respectively.
