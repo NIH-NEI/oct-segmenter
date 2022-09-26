@@ -304,6 +304,10 @@ variety of reasons. The following is a list of them:
   `preprocessing-scripts/custom/map_image_name_to_subject.py`). It splits the
   images into the training, test and validation datasets making sure that no
   subject appears in more than one partition.
+- `preprocessing-scripts/custom/calculate_class_imbalance.py`: This script
+  takes as input a directory containing the mask files (in CSV format) and
+  calculates the class fractions of each image. It then prints the average
+  class fractions across all the images.
 
 # OCT Images Quality Improvement
 
