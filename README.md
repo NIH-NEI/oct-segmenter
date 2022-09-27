@@ -289,9 +289,9 @@ variety of reasons. The following is a list of them:
 - `preprocessing-scripts/custom/trim_upper_and_lower_layers.py`: This script
   takes as input a directory containing TIFF files and their corresponding
   CSVs. It trims the upper and lower layers of the images so that the model
-  can focus on al layers. It looks at the whole dataset first to find the image
-  with the shortest top layer and uses that as the constraint to trim all the
-  dataset. The same procedure is used for the bottom layer.
+  can focus on all layers. It looks at the whole dataset first to find the
+  image with the shortest top layer and uses that as the constraint to trim all
+  the dataset. The same procedure is used for the bottom layer.
 - `preprocessing-scripts/custom/check_retina_layers_order.py`: This script
   takes as input a directory containing the mask files (in CSV format) and
   checks that the all the expected retina layers are present and in order.

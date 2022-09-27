@@ -44,5 +44,5 @@ if __name__ == "__main__":
                 mask = np.loadtxt(
                     Path(root) / Path(filename), delimiter=",", dtype=int
                 )
-                check_class_order_in_column(filename, mask, 0)
-                check_class_order_in_column(filename, mask, mask.shape[1] - 1)
+                for column in range(mask.shape[1]):
+                    check_class_order_in_column(filename, mask, column)
