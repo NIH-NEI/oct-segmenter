@@ -6,7 +6,7 @@ import numpy as np
 from pathlib import Path
 from PIL import Image
 
-MARGIN = 30
+MARGIN = 10
 UNET_IMAGE_DIMENSION_MULTIPLICITY = 32
 
 
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     """
     This script takes as input a directory containing TIFF files and their \
     corresponding CSVs. It trims the upper and lower layers of the images so \
-    that the model can focus on al layers. It looks at the whole dataset \
+    that the model can focus on all layers. It looks at the whole dataset \
     first to find the image with the shortest top layer and uses that as the \
     constraint to trim all the dataset. The same procedure is used for the \
     bottom layer.
