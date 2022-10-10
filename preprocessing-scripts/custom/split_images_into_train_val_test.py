@@ -96,7 +96,7 @@ if __name__ == "__main__":
         f"({round(test_images_count/total_images, 2)})"
     )
     log.info(
-        f"The training dataset has {validation_images_count}. "
+        f"The validation dataset has {validation_images_count}. "
         f"({round(validation_images_count/total_images, 2)})"
     )
 
