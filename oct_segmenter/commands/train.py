@@ -58,6 +58,8 @@ def train(args):
     log.info(f"Training Parameter: Epochs: {epochs}")
     log.info(f"Training Parameter: Batch Size: {batch_size}")
     log.info(f"Training Parameter: Augmentation: {aug_mode}")
+    log.info(f"MLFlow Tracking URI: {mlflow_tracking_uri}")
+    log.info(f"MLFlow Experiment Name: {mlflow_experiment_name}")
 
     initial_model = Path(args.model) if args.model else None
 
