@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image
 
 MARGIN = 10
-UNET_IMAGE_DIMENSION_MULTIPLICITY = 32
+UNET_IMAGE_DIMENSION_MULTIPLICITY = 16
 
 
 if __name__ == "__main__":
@@ -20,8 +20,9 @@ if __name__ == "__main__":
     bottom layer.
 
     Example:
-    python preprocessing-scripts/custom/trim_upper_and_lower_layers.py \
-        data/experiment-10/images/
+    python preprocessing-scripts/trimming/trim_upper_and_lower_layers.py \
+        data/experiment-14/images/ \
+        data/experiment-12/trimmed-images
     """
     log.basicConfig()
     log.getLogger().setLevel(log.INFO)
