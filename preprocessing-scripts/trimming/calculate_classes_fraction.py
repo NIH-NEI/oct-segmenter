@@ -8,11 +8,11 @@ from pathlib import Path
 EXPECTED_NUMBER_OF_CLASSES = 7
 
 
-def calculate_class_imbalance(image: np.array):
+def calculate_classes_fraction(image: np.array):
     _, counts = np.unique(image, return_counts=True)
 
     total_count = np.sum(counts)
-    return counts/total_count
+    return counts / total_count
 
 
 if __name__ == "__main__":
@@ -22,8 +22,8 @@ if __name__ == "__main__":
     the average class fractions across all the images.
 
     Example:
-    python preprocessing-scripts/custom/calculate_class_imbalance.py \
-        data/experiment-10/images/
+    python preprocessing-scripts/trimming/calculate_classes_fraction.py \
+        data/experiment-12/images/
     """
     log.basicConfig()
     log.getLogger().setLevel(log.INFO)
@@ -38,7 +38,9 @@ if __name__ == "__main__":
                 mask = np.loadtxt(
                     Path(root) / Path(filename), delimiter=",", dtype=int
                 )
-                image_class_fractions = np.vstack([image_class_fractions, calculate_class_imbalance(mask)])
+                image_class_fractions = np.vstack(
+                    [image_class_fractions, calculate_classes_fraction(mask)]
+                )
 
     print("Average Class Fractions")
     for i in range(image_class_fractions.shape[1]):
