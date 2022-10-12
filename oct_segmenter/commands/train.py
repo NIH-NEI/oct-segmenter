@@ -25,6 +25,7 @@ def train(args):
     epochs = DEFAULT_EPOCHS
     batch_size = DEFAULT_BATCH_SIZE
     aug_mode = DEFAULT_AUGMENTATION_MODE
+    early_stopping = DEFAULT_EARLY_STOPPING
     mlflow_experiment_name = DEFAULT_MLFLOW_EXPERIMENT_NAME
     mlflow_tracking_uri = DEFAULT_MLFLOW_TRACKING_URI
     mlflow_tracking_username = DEFAULT_MLFLOW_TRACKING_USERNAME
