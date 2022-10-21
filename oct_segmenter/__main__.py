@@ -2,15 +2,23 @@ import argparse
 import art
 import logging as log
 
-from oct_segmenter import DEFAULT_MODEL_INDEX, DEFAULT_TEST_PARTITION, DEFAULT_TRAINING_PARTITION,\
-    DEFAULT_TEST_PARTITION, DEFAULT_VALIDATION_PARTITION
+from oct_segmenter import (
+    DEFAULT_MODEL_INDEX,
+    DEFAULT_TRAINING_PARTITION,
+    DEFAULT_TEST_PARTITION,
+    DEFAULT_VALIDATION_PARTITION,
+)
 from oct_segmenter.commands.evaluate import evaluate
-from oct_segmenter.commands.generate import generate_training_dataset, generate_test_dataset
+from oct_segmenter.commands.generate import (
+    generate_training_dataset,
+    generate_test_dataset,
+)
 from oct_segmenter.commands.label import label
 from oct_segmenter.commands.list import list_models
 from oct_segmenter.commands.partition import partition
 from oct_segmenter.commands.predict import predict
 from oct_segmenter.commands.train import train
+
 
 def main():
     print(art.text2art("oct-segmenter"))
@@ -24,7 +32,9 @@ def main():
     cmd_subparser = parser.add_subparsers(dest="command", required=True)
     generate = cmd_subparser.add_parser("generate")
 
-    generate_subparser = generate.add_subparsers(dest="generate", required=True)
+    generate_subparser = generate.add_subparsers(
+        dest="generate", required=True
+    )
 
     # Generate test dataset
     gen_test_parser = generate_subparser.add_parser("test")
@@ -35,14 +45,19 @@ def main():
         required=True,
     )
 
-    gen_test_csv_format_group = gen_test_parser.add_mutually_exclusive_group(required=True)
+    gen_test_csv_format_group = gen_test_parser.add_mutually_exclusive_group(
+        required=True
+    )
 
     gen_test_csv_format_group.add_argument(
         "-f",
         "--visual-function-core-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the Wayne State University format. (.tiff + 3 layer .csv)",
+        help=(
+            "Generate dataset using the Wayne State University format. "
+            "(.tiff + 3 layer .csv)"
+        ),
     )
 
     gen_test_csv_format_group.add_argument(
@@ -50,7 +65,8 @@ def main():
         "--wayne-state-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the Wayne state format. (.tiff + 6 layer .csv)",
+        help="Generate dataset using the Wayne state format. (.tiff + 6 "
+        "layer .csv)",
     )
 
     gen_test_csv_format_group.add_argument(
@@ -58,7 +74,8 @@ def main():
         "--labelme-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the 'labelme' format. ('labelme' compatible .json file)",
+        help="Generate dataset using the 'labelme' format. ('labelme' "
+        "compatible .json file)",
     )
 
     gen_test_csv_format_group.add_argument(
@@ -66,13 +83,16 @@ def main():
         "--mask-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the 'mask' format. (.tiff + matrix mask .csv file)",
+        help="Generate dataset using the 'mask' format. (.tiff + matrix mask "
+        ".csv file)",
     )
 
     gen_test_parser.add_argument(
         "--layers-format",
         choices=["visual-function-core", "wayne-state"],
-        help="Required when using '-l' flag. Visual Function Core layers: ['ILM', 'ELM', 'RPE']. Wayne State Layers: ['RNFL-vitreous', 'GCL-RNFL', 'INL-IPL', 'ONL-OPL', 'ELM', 'RPE']",
+        help="Required when using '-l' flag. Visual Function Core layers: "
+        "['ILM', 'ELM', 'RPE']. Wayne State Layers: ['RNFL-vitreous', "
+        "'GCL-RNFL', 'INL-IPL', 'ONL-OPL', 'ELM', 'RPE']",
     )
 
     gen_test_parser.add_argument(
@@ -98,14 +118,17 @@ def main():
         required=True,
     )
 
-    gen_train_csv_format_group = gen_train_parser.add_mutually_exclusive_group(required=True)
+    gen_train_csv_format_group = gen_train_parser.add_mutually_exclusive_group(
+        required=True
+    )
 
     gen_train_csv_format_group.add_argument(
         "-f",
         "--visual-function-core-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the Wayne State University format. (.tiff + 3 layer .csv)",
+        help="Generate dataset using the Wayne State University format. "
+        "(.tiff + 3 layer .csv)",
     )
 
     gen_train_csv_format_group.add_argument(
@@ -113,7 +136,8 @@ def main():
         "--wayne-state-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the Wayne State University format. (.tiff + 6 layer .csv)",
+        help="Generate dataset using the Wayne State University format. "
+        "(.tiff + 6 layer .csv)",
     )
 
     gen_train_csv_format_group.add_argument(
@@ -121,7 +145,8 @@ def main():
         "--labelme-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the 'labelme' format. ('labelme' compatible .json file)",
+        help="Generate dataset using the 'labelme' format. ('labelme' "
+        "compatible .json file)",
     )
 
     gen_train_csv_format_group.add_argument(
@@ -129,20 +154,20 @@ def main():
         "--mask-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the mask format. (.tiff + matrix mask .csv file)",
+        help="Generate dataset using the mask format. (.tiff + matrix mask "
+        ".csv file)",
     )
 
     gen_train_parser.add_argument(
         "--layers-format",
         choices=["visual-function-core", "wayne-state"],
-        help="Required when using '-l' flag. Visual Function Core layers: ['ILM', 'ELM', 'RPE']. Wayne State Layers: ['RNFL-vitreous', 'GCL-RNFL', 'INL-IPL', 'ONL-OPL', 'ELM', 'RPE']",
+        help="Required when using '-l' flag. Visual Function Core layers: "
+        "['ILM', 'ELM', 'RPE']. Wayne State Layers: ['RNFL-vitreous', "
+        "'GCL-RNFL', 'INL-IPL', 'ONL-OPL', 'ELM', 'RPE']",
     )
 
     gen_train_parser.add_argument(
-        "-o",
-        "--output-dir",
-        help="Name of the output name file",
-        default="."
+        "-o", "--output-dir", help="Name of the output name file", default="."
     )
 
     # Train
@@ -178,7 +203,8 @@ def main():
     # Partition
     partition_subparser = cmd_subparser.add_parser(
         "partition",
-        help="Given an input directory, partition the images into the training, validation and test datasets"
+        help="Given an input directory, partition the images into the "
+        "training, validation and test datasets",
     )
 
     partition_subparser.add_argument(
@@ -198,7 +224,8 @@ def main():
     partition_subparser.add_argument(
         "-o",
         "--output-dir",
-        help="Name of the output directory to save the training, validation and test images",
+        help="Name of the output directory to save the training, validation "
+        "and test images",
         required=True,
     )
 
@@ -206,45 +233,48 @@ def main():
         "--training",
         help="Fraction of the total images to use for the training dataset",
         type=float,
-        default=DEFAULT_TRAINING_PARTITION
+        default=DEFAULT_TRAINING_PARTITION,
     )
 
     partition_subparser.add_argument(
         "--validation",
         help="Fraction of the total images to use for the validation dataset",
         type=float,
-        default=DEFAULT_VALIDATION_PARTITION
+        default=DEFAULT_VALIDATION_PARTITION,
     )
 
     partition_subparser.add_argument(
         "--test",
         help="Fraction of the total images to use for the test dataset",
         type=float,
-        default=DEFAULT_TEST_PARTITION
+        default=DEFAULT_TEST_PARTITION,
     )
 
     # Predict
     predict_subparser = cmd_subparser.add_parser("predict")
-    predict_input_group = predict_subparser.add_mutually_exclusive_group(required=True)
+    predict_input_group = predict_subparser.add_mutually_exclusive_group(
+        required=True
+    )
     predict_input_group.add_argument(
-        "--input",
-        "-i",
-        help="input file image to segment"
+        "--input", "-i", help="input file image to segment"
     )
     predict_input_group.add_argument(
         "--input-dir",
         "-d",
-        help="input directory containing .tiff images to be segmented."
+        help="input directory containing .tiff images to be segmented.",
     )
 
-    predict_model_group = predict_subparser.add_mutually_exclusive_group(required=False)
+    predict_model_group = predict_subparser.add_mutually_exclusive_group(
+        required=False
+    )
 
     predict_model_group.add_argument(
         "--model-index",
         "-n",
-        help="Model to use for prediction. Run 'oct-segmenter list' to see full list.",
+        help="Model to use for prediction. Run 'oct-segmenter list' to see "
+        "the full list.",
         default=DEFAULT_MODEL_INDEX,
-        type=int
+        type=int,
     )
 
     predict_model_group.add_argument(
@@ -254,10 +284,18 @@ def main():
         type=str,
     )
 
-    predict_subparser.add_argument("-c",
+    predict_model_group.add_argument(
+        "--mlflow-run-uuid",
+        "-r",
+        help="UUID of the run that generated the model",
+        type=str,
+    )
+
+    predict_subparser.add_argument(
+        "-c",
         default=False,
         action="store_true",
-        help="Label complete PNG image instead of left/right regions"
+        help="Label complete PNG image instead of left/right regions",
     )
 
     predict_subparser.add_argument(
@@ -265,7 +303,7 @@ def main():
         "-f",
         default=False,
         action="store_true",
-        help="Flip images w.r.t. the horizontal axis before prediction"
+        help="Flip images w.r.t. the horizontal axis before prediction",
     )
 
     predict_subparser.add_argument(
@@ -278,19 +316,19 @@ def main():
     evaluate_subparser = cmd_subparser.add_parser("evaluate")
 
     evaluate_subparser.add_argument(
-        "--input",
-        "-i",
-        required=True,
-        help="input test dataset HDF5 file"
+        "--input", "-i", required=True, help="input test dataset HDF5 file"
     )
 
-    evaluate_model_group = evaluate_subparser.add_mutually_exclusive_group(required=False)
+    evaluate_model_group = evaluate_subparser.add_mutually_exclusive_group(
+        required=False
+    )
     evaluate_model_group.add_argument(
         "--model-index",
         "-n",
         default=DEFAULT_MODEL_INDEX,
         type=int,
-        help="Model to use for evaluation. Run 'oct-segmenter list' to see full list.",
+        help="Model to use for evaluation. Run 'oct-segmenter list' to see "
+        "the full list.",
     )
 
     evaluate_model_group.add_argument(
@@ -312,16 +350,16 @@ def main():
 
     # Generate labelme files from raw image and boundaries CSV file
     label_subparser = cmd_subparser.add_parser("label")
-    label_input_group = label_subparser.add_mutually_exclusive_group(required=True)
+    label_input_group = label_subparser.add_mutually_exclusive_group(
+        required=True
+    )
     label_input_group.add_argument(
-        "--input",
-        "-i",
-        help="input file image to label"
+        "--input", "-i", help="input file image to label"
     )
     label_input_group.add_argument(
         "--input-dir",
         "-d",
-        help="input directory containing .tiff images to be labeled."
+        help="input directory containing .tiff images to be labeled.",
     )
 
     label_subparser.add_argument(
@@ -335,7 +373,10 @@ def main():
 
     if args.command == "generate":
         if args.labelme_format and args.layers_format is None:
-            log.error("If generating images from 'labelme' files specify the layer format with the '--layers-format' flag")
+            log.error(
+                "If generating images from 'labelme' files specify the layer "
+                "format with the '--layers-format' flag"
+            )
             exit(1)
         if args.generate == "test":
             generate_test_dataset(args)
@@ -343,8 +384,8 @@ def main():
             generate_training_dataset(args)
         else:
             print(
-                "Unrecognized 'generate' option. Type: oct-segmenter \
-                generate -h for help"
+                "Unrecognized 'generate' option. Type: oct-segmenter "
+                "generate -h for help"
             )
             exit(1)
 
