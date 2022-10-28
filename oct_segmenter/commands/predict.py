@@ -138,9 +138,9 @@ def predict(args):
     pred_images = np.array(pred_images)
     dataset = Dataset(
         images=pred_images,
-        images_masks=None,
-        images_names=pred_images_names,
-        images_output_dirs=output_paths,
+        image_masks=None,
+        image_names=pred_images_names,
+        image_output_dirs=output_paths,
     )
 
     # Create output dirs
@@ -153,8 +153,6 @@ def predict(args):
         categorical_pred=False,
         png_images=True,
         boundary_maps=True,
-        individual_raw_boundary_pngs=False,
-        individual_seg_plots=False,
     )
 
     predict_params = PredictionParams(

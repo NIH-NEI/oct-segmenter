@@ -341,7 +341,7 @@ def main():
     evaluate_subparser.add_argument(
         "--output-dir",
         "-o",
-        default=".",
+        required=True,
         help="Output directory",
     )
 
