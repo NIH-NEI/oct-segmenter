@@ -7,8 +7,8 @@ from unet.common.mlflow_parameters import MLflowParameters
 from unet.model import augmentation as aug
 from unet.model import custom_losses
 from unet.model import custom_metrics
-from unet.model import training
-from unet.model.training_parameters import TrainingParams
+from unet.training import training
+from unet.training.training_parameters import TrainingParams
 
 DEFAULT_AUGMENTATION_MODE = "none"
 DEFAULT_BATCH_SIZE = 2
