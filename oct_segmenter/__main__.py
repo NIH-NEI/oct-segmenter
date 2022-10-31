@@ -338,6 +338,13 @@ def main():
         type=str,
     )
 
+    evaluate_model_group.add_argument(
+        "--mlflow-run-uuid",
+        "-r",
+        help="UUID of the run that generated the model",
+        type=str,
+    )
+
     evaluate_subparser.add_argument(
         "--output-dir",
         "-o",

@@ -21,7 +21,8 @@ CONFIG_FILE_PATH = Path.home() / Path(".oct-segmenter/config")
 def load_models_table():
     """
     The conventions in this functions are:
-    1. The name of the model shown is the name of its relative path starting from data/model
+    1. The name of the model shown is the name of its relative path starting
+    from data/model
     2. Each directory must contain at most 1 model
     3. The model name must start with "model*" and end with "*.hdf5"
     """
@@ -30,12 +31,14 @@ def load_models_table():
     for subdir, dirs, files in os.walk(MODELS_DIR):
         for file in files:
             if file.startswith("model") and file.endswith(".hdf5"):
-                models[str(Path(subdir).relative_to(MODELS_DIR))] = Path(os.path.join(subdir, file))
+                models[str(Path(subdir).relative_to(MODELS_DIR))] = Path(
+                    os.path.join(subdir, file)
+                )
 
-    models_ascii = PrettyTable() # Build models ascii table for listing
+    models_ascii = PrettyTable()  # Build models ascii table for listing
     models_ascii.field_names = ["Default", "Selection", "Model Name"]
     default_model_index = None
-    models_index_map = {} # Maps index -> model names
+    models_index_map = {}  # Maps index -> model names
     for i, model_name in enumerate(models.keys()):
         models_index_map[i] = model_name
         if DEFAULT_MODEL_NAME == model_name:
@@ -50,7 +53,7 @@ def load_models_table():
 def write_default_config():
     if not CONFIG_FILE_PATH.is_file():
         config = configparser.ConfigParser()
-        config["DEFAULT"] = { "model_dir": "visual-function-core"}
+        config["DEFAULT"] = {"model_dir": "visual-function-core"}
         config["User"] = {}
 
         os.makedirs(CONFIG_FILE_PATH.parent, exist_ok=True)
@@ -67,13 +70,26 @@ def load_config() -> configparser.ConfigParser:
 write_default_config()
 CONFIG = load_config()
 DEFAULT_MODEL_NAME = CONFIG.get("User", "model_dir")
-MODELS_TABLE, MODELS_TABLE_ASCII, MODELS_INDEX_MAP, DEFAULT_MODEL_INDEX = load_models_table()
+(
+    MODELS_TABLE,
+    MODELS_TABLE_ASCII,
+    MODELS_INDEX_MAP,
+    DEFAULT_MODEL_INDEX,
+) = load_models_table()
 
 DEFAULT_TEST_PARTITION = 0.3
 DEFAULT_TRAINING_PARTITION = round(0.8 * (1 - DEFAULT_TEST_PARTITION), 2)
 DEFAULT_VALIDATION_PARTITION = round(0.2 * (1 - DEFAULT_TEST_PARTITION), 2)
 
+DEFAULT_MLFLOW_TRACKING_URI = None
 
-WAYNE_STATE_LAYER_NAMES = ["RNFL-vitreous", "GCL-RNFL", "INL-IPL", "ONL-OPL", "ELM", "RPE"]
+WAYNE_STATE_LAYER_NAMES = [
+    "RNFL-vitreous",
+    "GCL-RNFL",
+    "INL-IPL",
+    "ONL-OPL",
+    "ELM",
+    "RPE",
+]
 # Layers from bottom to top
 VISUAL_FUNCTION_CORE_LAYER_NAMES = ["ILM", "ELM", "RPE"]
