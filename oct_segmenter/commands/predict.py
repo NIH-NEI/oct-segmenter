@@ -12,13 +12,15 @@ from unet.prediction.prediction_parameters import (
     PredictionSaveParams,
 )
 
-from oct_segmenter import MODELS_TABLE, MODELS_INDEX_MAP
+from oct_segmenter import (
+    DEFAULT_MLFLOW_TRACKING_URI,
+    MODELS_TABLE,
+    MODELS_INDEX_MAP,
+)
 from oct_segmenter.preprocessing import preprocess
 from oct_segmenter.postprocessing.postprocessing import (
     create_labelme_file_from_boundaries,
 )
-
-DEFAULT_MLFLOW_TRACKING_URI = None
 
 
 def predict(args):
@@ -143,11 +145,6 @@ def predict(args):
         image_output_dirs=output_paths,
     )
 
-    # Create output dirs
-    for output_path in output_paths:
-        if not os.path.exists(output_path):
-            os.makedirs(output_path)
-
     save_params = PredictionSaveParams(
         predicted_labels=True,
         categorical_pred=False,
@@ -171,6 +168,11 @@ def predict(args):
         trim_window=(0, 0),
         col_error_range=None,
     )
+
+    # Create output dirs
+    for output_path in output_paths:
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
 
     prediction_outputs = prediction.predict(predict_params)
 

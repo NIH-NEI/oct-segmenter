@@ -12,14 +12,25 @@ from unet.evaluation.evaluation_parameters import (
     Dataset,
 )
 
-from oct_segmenter import MODELS_TABLE, MODELS_INDEX_MAP
+from oct_segmenter import (
+    DEFAULT_MLFLOW_TRACKING_URI,
+    MODELS_TABLE,
+    MODELS_INDEX_MAP,
+)
 
 
 def evaluate(args):
+    mlflow_tracking_uri = DEFAULT_MLFLOW_TRACKING_URI
 
     if args.model_path:
         model_path = Path(args.model_path)
         model_name = model_path
+    elif args.mlflow_run_uuid:
+        model_path = Path(f"runs:/{args.mlflow_run_uuid}/model")
+        mlflow_tracking_uri = Path.home() / Path("mlruns")
+        if os.environ.get("MLFLOW_TRACKING_URI"):
+            mlflow_tracking_uri = os.environ["MLFLOW_TRACKING_URI"]
+        model_name = str(mlflow_tracking_uri) + "/" + str(model_path)
     else:
         # Check selected model is valid
         if args.model_index is None:
@@ -74,11 +85,6 @@ def evaluate(args):
         image_output_dirs=output_paths,
     )
 
-    # Create output dirs
-    for output_path in output_paths:
-        if not os.path.exists(output_path):
-            os.makedirs(output_path)
-
     save_params = EvaluationSaveParams(
         predicted_labels=True,
         categorical_pred=False,
@@ -88,6 +94,7 @@ def evaluate(args):
 
     eval_params = EvaluationParameters(
         model_path=model_path,
+        mlflow_tracking_uri=mlflow_tracking_uri,
         dataset=test_dataset,
         save_foldername=output_dir.absolute(),
         save_params=save_params,
@@ -98,5 +105,10 @@ def evaluate(args):
         bg_ilm=True,
         bg_csi=False,
     )
+
+    # Create output dirs
+    for output_path in output_paths:
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
 
     evaluation.evaluate_model(eval_params)
