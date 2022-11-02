@@ -14,6 +14,8 @@ DEFAULT_AUGMENTATION_MODE = "none"
 DEFAULT_BATCH_SIZE = 2
 DEFAULT_EARLY_STOPPING = True
 DEFAULT_EPOCHS = 1000
+DEFAULT_PATIENCE = 50
+DEFAULT_RESTORE_BEST_WEIGHTS = True
 
 DEFAULT_MLFLOW_EXPERIMENT_NAME = "mice-image-segmentation"
 DEFAULT_MLFLOW_TRACKING_URI = Path.home() / Path("mlruns")
@@ -30,6 +32,8 @@ def train(args):
     mlflow_tracking_uri = DEFAULT_MLFLOW_TRACKING_URI
     mlflow_tracking_username = DEFAULT_MLFLOW_TRACKING_USERNAME
     mlflow_tracking_password = DEFUALT_MLFLOW_TRACKING_PASSWORD
+    patience = DEFAULT_PATIENCE
+    restore_best_weights = DEFAULT_RESTORE_BEST_WEIGHTS
 
     if args.config:
         with open(args.config, "r") as f:
@@ -54,22 +58,28 @@ def train(args):
             mlflow_tracking_password = config_data.get(
                 "password", DEFUALT_MLFLOW_TRACKING_PASSWORD
             )
+            patience = config_data.get("patience", DEFAULT_PATIENCE)
+            restore_best_weights = config_data.get(
+                "restore_best_weights", DEFAULT_RESTORE_BEST_WEIGHTS
+            )
 
     log.info(f"Training Parameter: Early Stopping: {early_stopping}")
     log.info(f"Training Parameter: Epochs: {epochs}")
     log.info(f"Training Parameter: Batch Size: {batch_size}")
     log.info(f"Training Parameter: Augmentation: {aug_mode}")
+    log.info(f"Training Parameter: Patience: {patience}")
+    log.info(
+        f"Training Parameter: Restore Best Weights: {restore_best_weights}"
+    )
     log.info(f"MLFlow Tracking URI: {mlflow_tracking_uri}")
     log.info(f"MLFlow Experiment Name: {mlflow_experiment_name}")
 
     initial_model = Path(args.model) if args.model else None
 
     t_params = TrainingParams(
-        early_stopping=early_stopping,
         training_dataset_path=Path(args.input).absolute(),
-        training_dataset_name=Path(args.input).stem,
         initial_model=initial_model,
-        results_location=args.output_dir,
+        results_location=Path(args.output_dir),
         opt_con=optimizers.Adam,
         opt_params={},
         loss=custom_losses.dice_loss,
@@ -85,6 +95,9 @@ def train(args):
         aug_val=False,
         aug_fly=True,
         model_save_best=True,
+        early_stopping=early_stopping,
+        restore_best_weights=restore_best_weights,
+        patience=patience,
     )
 
     mlflow_params = MLflowParameters(
