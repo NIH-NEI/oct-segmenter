@@ -6,7 +6,7 @@ import numpy as np
 from pathlib import Path
 from PIL import Image
 
-MARGIN = 10
+MARGIN = 5
 UNET_IMAGE_DIMENSION_MULTIPLICITY = 16
 
 
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     Example:
     python preprocessing-scripts/trimming/trim_upper_and_lower_layers.py \
         data/experiment-14/images/ \
-        data/experiment-12/trimmed-images
+        data/experiment-14/trimmed-images
     """
     log.basicConfig()
     log.getLogger().setLevel(log.INFO)
