@@ -1,15 +1,12 @@
 import os
 
-import h5py
 import logging as log
 from pathlib import Path
 
-from unet.common import dataset_loader as dl
 from unet.evaluation import evaluation
 from unet.evaluation.evaluation_parameters import (
     EvaluationParameters,
     EvaluationSaveParams,
-    Dataset,
 )
 
 from oct_segmenter import (
@@ -56,7 +53,7 @@ def evaluate(args):
     test_dataset_path = Path(args.input)
 
     if not test_dataset_path.is_file():
-        print("oct-segmenter: Input file not found. Exiting...")
+        print("oct-segmenter: Test Dataset file not found. Exiting...")
         exit(1)
 
     output_dir = Path(args.output_dir)
@@ -68,23 +65,6 @@ def evaluate(args):
         print("Output directory should be empty. Exiting...")
         exit(1)
 
-    test_dataset_file = h5py.File(test_dataset_path, "r")
-
-    test_images, test_labels, test_image_names = dl.load_testing_data(
-        test_dataset_file
-    )
-
-    output_paths = []
-    for i in range(test_images.shape[0]):
-        output_paths.append(output_dir / Path(f"image_{i}"))
-
-    test_dataset = Dataset(
-        images=test_images,
-        image_masks=test_labels,
-        image_names=test_image_names,
-        image_output_dirs=output_paths,
-    )
-
     save_params = EvaluationSaveParams(
         predicted_labels=True,
         categorical_pred=False,
@@ -95,7 +75,7 @@ def evaluate(args):
     eval_params = EvaluationParameters(
         model_path=model_path,
         mlflow_tracking_uri=mlflow_tracking_uri,
-        dataset=test_dataset,
+        test_dataset_path=test_dataset_path,
         save_foldername=output_dir.absolute(),
         save_params=save_params,
         gsgrad=1,
@@ -105,10 +85,5 @@ def evaluate(args):
         bg_ilm=True,
         bg_csi=False,
     )
-
-    # Create output dirs
-    for output_path in output_paths:
-        if not os.path.exists(output_path):
-            os.makedirs(output_path)
 
     evaluation.evaluate_model(eval_params)
