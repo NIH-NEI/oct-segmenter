@@ -1,0 +1,4 @@
+outs:
+- md5: d5cad561b533e0fb00426331e0cf6570
+  size: 702183799
+  path: trimmed_images.tar.gz

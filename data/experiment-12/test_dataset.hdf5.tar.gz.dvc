@@ -1,4 +1,0 @@
-outs:
-- md5: 2156bc75e689ee1d6ee701a068bf52fe
-  size: 324411783
-  path: test_dataset.hdf5.tar.gz
