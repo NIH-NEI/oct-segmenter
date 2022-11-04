@@ -8,7 +8,6 @@ construct_hdf5/*
 **/__pycache__/*
 *.egg-info
 *.json
-*.hdf5
 *.pyc
 *.tiff
 .DS_Store
