@@ -1,0 +1,4 @@
+outs:
+- md5: 1c4a8a5ef8c4f96b37b80d31435022ef
+  size: 705619694
+  path: half-frame-dataset.tar.gz
