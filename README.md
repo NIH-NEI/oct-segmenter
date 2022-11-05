@@ -318,13 +318,14 @@ coherence tomography images of the human optic nerve head. Invest Ophthalmol
 Vis Sci. 2011;52(10):7738-7748. Published 2011 Sep 29.
 doi:10.1167/iovs.10-6925" were implemented in MATLAB. These are the descrete
 forms of the algorithm described in the appendix of the paper:
-- `preprocessing-scripts/oct-image-quality-improvement/comp_exp.m`: Applies
+- `preprocessing-scripts/oct-image-contrast-enhancement/comp_exp.m`: Applies
   compensation and then exponentation.
-- `preprocessing-scripts/oct-image-quality-improvement/exp_comp.m`: Applies
+- `preprocessing-scripts/oct-image-contrast-enhancementexp_comp.m`: Applies
   exponentiation and then compensation.
-- `preprocessing-scripts/oct-image-quality-improvement/comp_only.m`: Applies
+- `preprocessing-scripts/oct-image-contrast-enhancement/comp_only.m`: Applies
   compensation only.
 
 These scripts take a path to a TIFF file as input and save the converted
-TIFF in a file name as the input image and the `_comp_exp.tiff`,
-`_exp_comp.tiff` and `_comp_only.tiff` suffix respectively.
+TIFF to an output file name. To convert all the 'tiff' images in a directory
+see the script
+`preprocessing-scripts/oct-image-contrast-enhancement/enhance_images_contrast.m`

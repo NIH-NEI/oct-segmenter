@@ -1,4 +1,4 @@
-function exp_comp(path)
+function exp_comp(input_path, output_path)
     %
     % Applies 'exponentiation' and 'compensation' to the TIFF file
 
@@ -11,14 +11,17 @@ function exp_comp(path)
     % Input
     % -----
     % [string]
-    % path:  Path to the input TIFF image.
+    % input_path: Path to the input TIFF image.
     %
-    t = Tiff(path,'r');
+    % [string]
+    % output_path: Path to save the processed TIFF image.
+    %
+    t = Tiff(input_path,'r');
     I = read(t);
     I = double(I);
     I = (I/255).^4;
     I = (I.^2)./ (flipud(cumtrapz(flipud(I.^2)))); % L (Equation A8 - Appendix) 
     I = nthroot(I, 4)*255;
     I = uint8(I);
-    imwrite(I, path(1:end-5) + "_exp_comp.tiff")
+    imwrite(I, output_path)
 end
