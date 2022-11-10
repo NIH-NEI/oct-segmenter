@@ -5,8 +5,6 @@ from tensorflow.keras import optimizers
 
 from unet.common.mlflow_parameters import MLflowParameters
 from unet.model import augmentation as aug
-from unet.model import custom_losses
-from unet.model import custom_metrics
 from unet.training import training
 from unet.training.training_parameters import TrainingParams
 
@@ -14,6 +12,8 @@ DEFAULT_AUGMENTATION_MODE = "none"
 DEFAULT_BATCH_SIZE = 2
 DEFAULT_EARLY_STOPPING = True
 DEFAULT_EPOCHS = 1000
+DEFAULT_LOSS = "dice_loss"
+DEFAULT_METRIC = "dice_coef"
 DEFAULT_PATIENCE = 50
 DEFAULT_RESTORE_BEST_WEIGHTS = True
 
@@ -24,6 +24,8 @@ DEFUALT_MLFLOW_TRACKING_PASSWORD = None
 
 
 def train(args):
+    loss = DEFAULT_LOSS
+    metric = DEFAULT_METRIC
     epochs = DEFAULT_EPOCHS
     batch_size = DEFAULT_BATCH_SIZE
     aug_mode = DEFAULT_AUGMENTATION_MODE
@@ -42,6 +44,8 @@ def train(args):
             early_stopping = config_data.get(
                 "early_stopping", DEFAULT_EARLY_STOPPING
             )
+            loss = config_data.get("loss", DEFAULT_LOSS)
+            metric = config_data.get("metric", DEFAULT_METRIC)
             epochs = config_data.get("epochs", DEFAULT_EPOCHS)
             augment = config_data.get("augment")
             if augment:
@@ -64,6 +68,8 @@ def train(args):
             )
 
     log.info(f"Training Parameter: Early Stopping: {early_stopping}")
+    log.info(f"Training Parameter: Loss: {loss}")
+    log.info(f"Training Parameter: Metric: {metric}")
     log.info(f"Training Parameter: Epochs: {epochs}")
     log.info(f"Training Parameter: Batch Size: {batch_size}")
     log.info(f"Training Parameter: Augmentation: {aug_mode}")
@@ -82,8 +88,8 @@ def train(args):
         results_location=Path(args.output_dir),
         opt_con=optimizers.Adam,
         opt_params={},
-        loss=custom_losses.dice_loss,
-        metric=custom_metrics.dice_coef,
+        loss=loss,
+        metric=metric,
         epochs=epochs,
         batch_size=batch_size,
         aug_fn_args=[
