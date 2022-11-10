@@ -7,14 +7,21 @@ from setuptools import setup
 
 def package_files(directory):
     paths = []
-    for (path, directories, filenames) in os.walk(directory):
+    for (path, _, filenames) in os.walk(directory):
         for filename in filenames:
-            paths.append(os.path.join('..', path, filename))
+            paths.append(os.path.join("..", path, filename))
     return paths
 
 
 def get_install_requires():
-    return ["art", "imgviz", "oct_unet==0.7.0", "pillow==9.0.1", "prettytable", "typeguard"]
+    return [
+        "art",
+        "imgviz",
+        "oct_unet==0.7.0",
+        "pillow==9.0.1",
+        "prettytable",
+        "typeguard",
+    ]
 
 
 def get_long_description():
@@ -66,6 +73,7 @@ def main():
         },
         data_files=[],
     )
+
 
 if __name__ == "__main__":
     main()

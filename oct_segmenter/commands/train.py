@@ -16,6 +16,7 @@ DEFAULT_LOSS = "dice_loss"
 DEFAULT_METRIC = "dice_coef"
 DEFAULT_PATIENCE = 50
 DEFAULT_RESTORE_BEST_WEIGHTS = True
+DEFAULT_CLASS_WEIGHT = None
 
 DEFAULT_MLFLOW_EXPERIMENT_NAME = "mice-image-segmentation"
 DEFAULT_MLFLOW_TRACKING_URI = Path.home() / Path("mlruns")
@@ -26,6 +27,7 @@ DEFUALT_MLFLOW_TRACKING_PASSWORD = None
 def train(args):
     loss = DEFAULT_LOSS
     metric = DEFAULT_METRIC
+    class_weight = DEFAULT_CLASS_WEIGHT
     epochs = DEFAULT_EPOCHS
     batch_size = DEFAULT_BATCH_SIZE
     aug_mode = DEFAULT_AUGMENTATION_MODE
@@ -41,6 +43,9 @@ def train(args):
         with open(args.config, "r") as f:
             config_data = json.load(f)
             batch_size = config_data.get("batch_size", DEFAULT_BATCH_SIZE)
+            class_weight = config_data.get(
+                "class_weight", DEFAULT_CLASS_WEIGHT
+            )
             early_stopping = config_data.get(
                 "early_stopping", DEFAULT_EARLY_STOPPING
             )
@@ -72,6 +77,7 @@ def train(args):
     log.info(f"Training Parameter: Metric: {metric}")
     log.info(f"Training Parameter: Epochs: {epochs}")
     log.info(f"Training Parameter: Batch Size: {batch_size}")
+    log.info(f"Training Parameter: Class Weight: {class_weight}")
     log.info(f"Training Parameter: Augmentation: {aug_mode}")
     log.info(f"Training Parameter: Patience: {patience}")
     log.info(
@@ -101,6 +107,7 @@ def train(args):
         aug_val=False,
         aug_fly=True,
         model_save_best=True,
+        class_weight=class_weight,
         early_stopping=early_stopping,
         restore_best_weights=restore_best_weights,
         patience=patience,
