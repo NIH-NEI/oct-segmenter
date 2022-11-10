@@ -209,19 +209,33 @@ listen in another port by running: `mlflow ui --port <port>`
 
 
 ### Training Configurable Parameters
+- `augment`: bool: If `True`, images are augmented by flipping left-right.
 - `batch_size`: int
+- `class_weight`: "balanced" | list:
+    - "balanced": Calculates classes' weights from the class distribution in
+    the training and validation datasets. It will use the
+    `compute_class_weight` method from the `scikit-learn` library. ([See here](https://scikit-learn.org/stable/modules/generated/sklearn.utils.class_weight.compute_class_weight.html))
+    - list: List of length equal to the number of classes. Each element is a
+    weighting factor for each of the classes.
+- `early_stopping`: bool: Stop training when a monitored metric has stopped
+  improving. ([See EarlyStopping](https://keras.io/api/callbacks/early_stopping/))
 - `epochs`: int
 - `early_stopping`: bool: If ``True`` training will stop when the validation
   dice coefficient stops improving after 5 epochs. Overrides `epochs`
   parameter.
-- `augment`: bool: If ``True``, images are augmented by flipping left-right.
 - `experiment`: string: Name of the experiment under which the run will be
-  logged using MLflow.
+  logged in MLflow.
+- `loss`: string: Loss function to use during training. Currently supported
+functions are: `dice_loss`, `focal_loss`.
+- `metric`: string: Metric to monitor during training. Currently supported
+metrics are: `dice_coef`.
 - `tracking_uri`: string: Tracking URI for logging the run. The URI can either
   be a HTTP/HTTPS URI for a MLflow remote server, a database connection string,
   or a local path to log data to a directory. The URI defaults to `mlruns`.
 - `username`: string: MLFlow server username.
 - `password`: string: MLFlow server password.
+- `patience`: Number of epochs with no improvement after which training will be
+  stopped. (Only applicable when `early_stopping = True`)
 
 ## Post-processing (Currently not supported, to be implemented)
 The script `merge_images.py` merges the original image withe the segmentation plots from the model evaluation/prediction. Usage:
