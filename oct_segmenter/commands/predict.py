@@ -5,9 +5,9 @@ import logging as log
 import numpy as np
 from pathlib import Path
 
-from unet.common.dataset import Dataset
-from unet.prediction import prediction
-from unet.prediction.prediction_parameters import (
+from oct_image_segmentation_models.common.dataset import Dataset
+from oct_image_segmentation_models.prediction import prediction
+from oct_image_segmentation_models.prediction.prediction_parameters import (
     PredictionParams,
     PredictionSaveParams,
 )

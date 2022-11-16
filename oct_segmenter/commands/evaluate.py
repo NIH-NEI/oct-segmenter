@@ -3,8 +3,8 @@ import os
 import logging as log
 from pathlib import Path
 
-from unet.evaluation import evaluation
-from unet.evaluation.evaluation_parameters import (
+from oct_image_segmentation_models.evaluation import evaluation
+from oct_image_segmentation_models.evaluation.evaluation_parameters import (
     EvaluationParameters,
     EvaluationSaveParams,
 )
