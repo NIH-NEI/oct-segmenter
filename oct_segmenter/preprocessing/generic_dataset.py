@@ -93,7 +93,7 @@ def process_directory_mask(input_dir, output_dir, save_file=False):
         for file in files:
             if (file.endswith(".tiff") or file.endswith(".TIFF")) and not file.startswith("."):
                 image_file = Path(os.path.join(subdir, file))
-                print(f"Processing file from Wayne State University in mask format: {image_file}")
+                print(f"Processing file in mask format: {image_file}")
                 img_name, img_array, seg_map, segs = generate_image_label_mask(image_file, output_dir, save_file)
                 if img_name:
                     img_file_names.extend([img_name])

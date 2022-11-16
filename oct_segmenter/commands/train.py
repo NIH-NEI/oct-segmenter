@@ -3,10 +3,10 @@ import logging as log
 from pathlib import Path
 from tensorflow.keras import optimizers
 
-from unet.common.mlflow_parameters import MLflowParameters
-from unet.model import augmentation as aug
-from unet.training import training
-from unet.training.training_parameters import TrainingParams
+from oct_image_segmentation_models.common.mlflow_parameters import MLflowParameters
+from oct_image_segmentation_models.common import augmentation as aug
+from oct_image_segmentation_models.training import training
+from oct_image_segmentation_models.training.training_parameters import TrainingParams
 
 DEFAULT_AUGMENTATION_MODE = "none"
 DEFAULT_BATCH_SIZE = 2
