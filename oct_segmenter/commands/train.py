@@ -14,6 +14,8 @@ DEFAULT_EARLY_STOPPING = True
 DEFAULT_EPOCHS = 1000
 DEFAULT_LOSS = "dice_loss"
 DEFAULT_METRIC = "dice_coef"
+DEFAULT_MODEL_ARCH = None
+DEFAULT_MODEL_HYPERPARAMETERS = {}
 DEFAULT_PATIENCE = 50
 DEFAULT_RESTORE_BEST_WEIGHTS = True
 DEFAULT_CLASS_WEIGHT = None
@@ -36,6 +38,8 @@ def train(args):
     mlflow_tracking_uri = DEFAULT_MLFLOW_TRACKING_URI
     mlflow_tracking_username = DEFAULT_MLFLOW_TRACKING_USERNAME
     mlflow_tracking_password = DEFUALT_MLFLOW_TRACKING_PASSWORD
+    model_architecture = DEFAULT_MODEL_ARCH
+    model_hyperparameters = DEFAULT_MODEL_HYPERPARAMETERS
     patience = DEFAULT_PATIENCE
     restore_best_weights = DEFAULT_RESTORE_BEST_WEIGHTS
 
@@ -51,6 +55,8 @@ def train(args):
             )
             loss = config_data.get("loss", DEFAULT_LOSS)
             metric = config_data.get("metric", DEFAULT_METRIC)
+            model_architecture = config_data.get("model_architecture", DEFAULT_MODEL_ARCH)
+            model_hyperparameters = config_data.get("model_hyperparameters", DEFAULT_MODEL_HYPERPARAMETERS)
             epochs = config_data.get("epochs", DEFAULT_EPOCHS)
             augment = config_data.get("augment")
             if augment:
@@ -72,6 +78,8 @@ def train(args):
                 "restore_best_weights", DEFAULT_RESTORE_BEST_WEIGHTS
             )
 
+    log.info(f"Training Parameter: Model Architecture: {model_architecture}")
+    log.info(f"Training Parameter: Model Hyperparameters: {model_hyperparameters}")
     log.info(f"Training Parameter: Early Stopping: {early_stopping}")
     log.info(f"Training Parameter: Loss: {loss}")
     log.info(f"Training Parameter: Metric: {metric}")
@@ -89,6 +97,7 @@ def train(args):
     initial_model = Path(args.model) if args.model else None
 
     t_params = TrainingParams(
+        model_architecture=model_architecture,
         training_dataset_path=Path(args.input).absolute(),
         initial_model=initial_model,
         results_location=Path(args.output_dir),
@@ -98,6 +107,7 @@ def train(args):
         metric=metric,
         epochs=epochs,
         batch_size=batch_size,
+        model_hyperparameters=model_hyperparameters,
         aug_fn_args=[
             (aug.no_aug, {}),
             (aug.flip_aug, {"flip_type": "left-right"}),
