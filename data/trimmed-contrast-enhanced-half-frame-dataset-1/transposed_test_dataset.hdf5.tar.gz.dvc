@@ -1,4 +1,4 @@
 outs:
 - md5: bb66df320fbe9cdea638662c4232af5b
   size: 178580139
-  path: test_dataset.hdf5.tar.gz
+  path: transposed_test_dataset.hdf5.tar.gz
