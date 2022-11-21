@@ -17,7 +17,7 @@ def get_install_requires():
     return [
         "art",
         "imgviz",
-        "oct_unet==0.7.0",
+        "oct_image_segmentation_models==0.7.0",
         "pillow==9.0.1",
         "prettytable",
         "typeguard",
