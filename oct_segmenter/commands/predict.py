@@ -3,7 +3,7 @@ import os
 import json
 import logging as log
 import numpy as np
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from oct_image_segmentation_models.common.dataset import Dataset
 from oct_image_segmentation_models.prediction import prediction
@@ -30,7 +30,7 @@ def predict(args):
         model_path = Path(args.model_path)
         model_name = model_path
     elif args.mlflow_run_uuid:
-        model_path = Path(f"runs:/{args.mlflow_run_uuid}/model")
+        model_path = PurePosixPath(f"runs:/{args.mlflow_run_uuid}/model")
         mlflow_tracking_uri = Path.home() / Path("mlruns")
         if os.environ.get("MLFLOW_TRACKING_URI"):
             mlflow_tracking_uri = os.environ["MLFLOW_TRACKING_URI"]
