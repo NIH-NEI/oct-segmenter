@@ -11,9 +11,9 @@ from oct_segmenter.common import utils
 
 @typechecked
 def create_labelme_file_from_boundaries(
-    img_arr: np.array,
+    img_arr: np.ndarray,
     image_name: Path,
-    boundaries: np.array,
+    boundaries: np.ndarray,
 ) -> dict | None:
     SPACING = 20
 

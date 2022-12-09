@@ -158,11 +158,6 @@ def predict(args):
         dataset=dataset,
         config_output_dir=root_output_dir,
         save_params=save_params,
-        flatten_image=False,
-        flatten_ind=0,
-        flatten_poly=False,
-        flatten_pred_edges=False,
-        flat_marg=0,
         trim_maps=False,
         trim_ref_ind=0,
         trim_window=(0, 0),
@@ -183,7 +178,7 @@ def predict(args):
             # Reverting it.
             img_arr=np.transpose(np.squeeze(prediction_output.image)),
             image_name=image_name,
-            boundaries=prediction_output.delineations,
+            boundaries=prediction_output.gs_pred_segs,
         )
 
         with open(

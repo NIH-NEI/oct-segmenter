@@ -83,7 +83,8 @@ def process_directory_wayne(input_dir: Path, output_dir: Path, save_file: bool=F
     return img_file_names, img_file_data, segments_data, labeled_file_data
 
 
-def process_directory_mask(input_dir, output_dir, save_file=False):
+@typechecked
+def process_directory_mask(input_dir: Path, output_dir: Path, save_file: bool=False):
     img_file_names = []
     img_file_data = [] # Original image (xhat)
     labeled_file_data = [] # Segmenation map (yhat)
@@ -105,13 +106,12 @@ def process_directory_mask(input_dir, output_dir, save_file=False):
         log.info("No images were processed successfully. Exiting...")
         exit(1)
 
-    # Images a transposed so dim 0 is image width
     if not all(x.shape[0] == img_file_data[0].shape[0] for x in img_file_data):
-        log.error("Images contain different widths. All images should have same width. Exiting...")
+        log.error("Images contain different heights. All images should have same height. Exiting...")
         exit(1)
 
     if not all(x.shape[1] == img_file_data[0].shape[1] for x in img_file_data):
-        log.error("Images contain different heights. All images should have same height. Exiting...")
+        log.error("Images contain different widths. All images should have same width. Exiting...")
         exit(1)
 
     return img_file_names, img_file_data, segments_data, labeled_file_data
@@ -221,10 +221,10 @@ def generate_generic_dataset(
             process_directory_labelme(input_dir, file_name.parent, layer_names, save_file=False)
     elif input_format == "mask":
         img_file_names, img_file_data, segments_data, labeled_file_data = \
-            process_directory_mask(input_dir, str(file_name.parent), save_file=False)
+            process_directory_mask(input_dir, file_name.parent, save_file=False)
     elif input_format == "visual":
         img_file_names, img_file_data, segments_data, labeled_file_data = \
-            process_directory(input_dir, str(file_name.parent), save_file=False)
+            process_directory(input_dir, file_name.parent, save_file=False)
     else:
         log.error(f"Unrecognized input format: {input_format}. Exiting...")
         exit(1)
