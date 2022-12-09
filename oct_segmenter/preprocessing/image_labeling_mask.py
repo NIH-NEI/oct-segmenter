@@ -4,13 +4,18 @@ import logging as log
 import numpy as np
 from pathlib import Path
 import PIL.Image
+from typeguard import typechecked
+from typing import Tuple
 
 from oct_segmenter.common import utils
 from oct_segmenter.preprocessing import UNET_IMAGE_DIMENSION_MULTIPLICITY
 from oct_segmenter.preprocessing.image_labeling_common import generate_boundary
 
 
-def generate_image_label_mask(image_path, output_dir, save_file=True):
+@typechecked
+def generate_image_label_mask(
+    image_path: Path, output_dir: Path, save_file: bool = True
+) -> Tuple[bytes, np.ndarray, np.ndarray, np.ndarray]:
     if save_file and not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
@@ -20,39 +25,48 @@ def generate_image_label_mask(image_path, output_dir, save_file=True):
         mask = []
         for line in f.readlines():
             try:
-                mask.append([int(x) for x in line.replace(" ", "").rstrip("\n").split(",")])
+                mask.append(
+                    [
+                        int(x)
+                        for x in line.replace(" ", "").rstrip("\n").split(",")
+                    ]
+                )
             except ValueError:
-                err_msg = "Failed to parse CSV line."
-                log.error(err_msg)
-                log.error(f"Conflicting line in {csv_path}: {line}")
+                log.error(
+                    "Failed to parse CSV line. Conflicting line in ",
+                    f"{csv_path}: {line}",
+                )
                 exit(1)
 
     img = PIL.Image.open(image_path, "r")
 
-    if img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0 \
-        or img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0:
-        warn_msg = " ".join((f"Image dimensions need to be a multiple of 16",
-            f"Image: {image_path} is {img.width} by {img.height}. Skipping..."))
-        log.warn(warn_msg)
+    if (
+        img.height % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0
+        or img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0
+    ):
+        log.warn(
+            "Image dimensions need to be a multiple of ",
+            f"{UNET_IMAGE_DIMENSION_MULTIPLICITY}. "
+            f"Image: {image_path} is {img.width} by {img.height}.",
+            "Skipping...",
+        )
         return None, None, None, None
 
     if len(mask) != img.height:
-        err_msg = " ".join((
-            "The number of lines in CSV file has to be equal to the image height:",
-            f"{img.height}. Found in CSV file: {len(mask)} lines.",
-            "Please check CSV"
-        ))
-        log.error(err_msg)
+        log.error(
+            "The number of lines in CSV file has to be equal to the image",
+            f"height: {img.height}. Found in CSV file: {len(mask)} lines.",
+            "Please check CSV",
+        )
         exit(1)
 
     for x_coords in mask:
         if len(x_coords) != img.width:
-            err_msg = " ".join((
-                "The number of data points has to be equal to the image width:",
-                f"{img.width}. Found line in CSV file: {csv_path} with length {len(x_coords)}.",
-                "Please check CSV"
-            ))
-            log.error(err_msg)
+            log.error(
+                "The number of data points has to be equal to the image ",
+                f"width: {img.width}. Found line in CSV file: {csv_path} ",
+                f"with length {len(x_coords)}. Please check CSV",
+            )
             exit(1)
 
     img = utils.convert_to_grayscale(img)
@@ -61,12 +75,18 @@ def generate_image_label_mask(image_path, output_dir, save_file=True):
 
     if save_file:
         utils.lblsave(output_dir + "/" + image_path.stem + "_label.png", mask)
-        np.savetxt(output_dir + "/" + image_path.stem + "_matrix.txt", mask, fmt="%d")
-        np.savetxt(output_dir + "/" + image_path.stem + "_segs.csv", segs, fmt="%d", delimiter=",")
+        np.savetxt(
+            output_dir + "/" + image_path.stem + "_matrix.txt", mask, fmt="%d"
+        )
+        np.savetxt(
+            output_dir + "/" + image_path.stem + "_segs.csv",
+            segs,
+            fmt="%d",
+            delimiter=",",
+        )
 
-    img = np.transpose(utils.pil_to_array(img))
+    img = utils.pil_to_array(img)
     img = img[..., np.newaxis]
-    mask = np.transpose(mask)
     mask = mask[..., np.newaxis]
 
     return str(image_path).encode("ascii"), img, mask, segs
