@@ -1,37 +1,85 @@
-clc
-clear all
-close all
+function crop_oct_images(input_dir, output_dir, annot_output_dir)
+    %
+    % Using a 'threshold' value, it estimates the location of the ILM
+    % layer. Then it fits a second degree polynomial to the estimated
+    % coordinates. Finally, it uses the min and max curve values and
+    % fixed top and bottom margins to crop the OCT image and remove as
+    % much background as possible
+    %
+    % Note that the 'threshold' value used here works with OCT images that
+    % have been processed using the 'exponentiation + compensation' method
+    % described in:
+    %
+    % Girard MJ, Strouthidis NG, Ethier CR, Mari JM. Shadow removal and
+    % contrast enhancement in optical coherence tomography images of the
+    % human optic nerve head. Invest Ophthalmol Vis Sci. 2011;52(10):7738-7748.
+    % Published 2011 Sep 29. doi:10.1167/iovs.10-6925
+    %
+    % Note: This function requires the MATLAB "Computer Vision Toolbox"
+    %
+    % Input
+    % -----
+    % [string]
+    % input_dir: Path to the input directory. The TIFF files found will be
+    % processed.
+    %
+    % [string]
+    % output_dir: Output path to save the cropped TIFF images.
+    %
+    % [string]
+    % annot_output_dir: Output path to save the input images with the
+    % estimates of the ILM (yellow) and the fitted polynomial (green)
+    %
+    threshold = 50; % Is computed manually by analysing the intensity of the RPE layer
+    crop_top = 30;
+    crop_bottom = 200;
 
-img=imread('NORMAL-1384-12.jpeg');
+    for input_image = dir(input_dir + "/*.tiff")'
+        input_image_name = input_image.folder + "/" + input_image.name;
+        disp("Processing: " + input_image_name)
+        img = imread(input_image_name);
+        ilm = NaN(1, size(img, 2));
 
+        for j = 1:size(img, 2)
+            ilm(j) = find(img(:,j) >= threshold, 1, 'first');
+        end
+        % Fit polynomial
+        x = 1:length(ilm);
+        p = polyfit(x, ilm, 2);
+        ilm_fit = round(polyval(p, x));
 
-threshold =80;  %%%% is computed manually by analysing the intensity of the RPE  layer
+        img_height = size(img, 1);
+        new_top = max(1, max(ilm_fit) - crop_top);
+        new_bottom = min(img_height, max(ilm_fit) + crop_bottom);
+        if new_top == 1
+            disp("WARNING: Top margin reached top of original image")
+        end
 
-retina = NaN(1, size(img,2));
+        if new_bottom == img_height
+            disp("WARNING: Bottom margin reached bottom of original image")
+        end
 
-for j = 1:size(img,2)
-    retina(j) = find(img(:,j) >= threshold, 1, 'last');
+        cropped_img = img(new_top : new_bottom, :);
+
+        output_image_name = output_dir + "/" + input_image.name;
+        imwrite(cropped_img, output_image_name);
+
+        % Interleave x and ILM
+        x_t = x(:).';
+        ilm_t = ilm(:).';
+        x_ilm_concat = [x_t; ilm_t]; % concatenate them vertically
+        x_ilm_interleaved = x_ilm_concat(:);
+
+        % Interleave x and fitted polynomial
+        ilm_fit_t = ilm_fit(:).';
+        x_ilm_fit_concat = [x_t; ilm_fit_t];
+        x_ilm_fit_interleaved = x_ilm_fit_concat(:);
+
+        img = insertShape(img, "line", ...
+            [x_ilm_interleaved'; x_ilm_fit_interleaved'], ...
+            "Color", ["yellow", "green"] ...
+        );
+
+        imwrite(img, annot_output_dir + "/" + input_image.name);
+    end
 end
-
-% Fit polynomial
-x = 1:length(retina);
-p = polyfit(x, retina, 2);
-retina_fit = round(polyval(p, x));
-
-cropped_img = zeros(size(img), 'uint8');
-
-%%%----- the crop top and bottom are also defined by analysing the images
-%%%in the dataset.
-crop_top=120;
-crop_bottom=40;
-
-
-cropped_img = img(max(retina_fit)-crop_top:max(retina_fit)+crop_bottom,:);
-
-figure;
-imshow(img,[]);
-hold on;
-plot(x, retina_fit);
-plot(x, retina)
-figure;
-imshow(cropped_img,[])
