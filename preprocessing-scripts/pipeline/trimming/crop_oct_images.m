@@ -1,4 +1,6 @@
-function crop_oct_images(input_dir, output_dir, annot_output_dir)
+function crop_oct_images(input_dir, output_dir, annot_output_dir, ...
+    csv_input_dir ...
+)
     %
     % Using a 'threshold' value, it estimates the location of the ILM
     % layer. Then it fits a second degree polynomial to the estimated
@@ -30,13 +32,17 @@ function crop_oct_images(input_dir, output_dir, annot_output_dir)
     % annot_output_dir: Output path to save the input images with the
     % estimates of the ILM (yellow) and the fitted polynomial (green)
     %
+    % [boolean]
+    % crop_csv: Apply the same cropping to the CSV corresponding to the
+    % image
+    %
     threshold = 50; % Is computed manually by analysing the intensity of the RPE layer
     crop_top = 30;
     crop_bottom = 200;
 
     for input_image = dir(input_dir + "/*.tiff")'
         input_image_name = input_image.folder + "/" + input_image.name;
-        disp("Processing: " + input_image_name)
+        disp("Processing crop TIFF: " + input_image_name)
         img = imread(input_image_name);
         ilm = NaN(1, size(img, 2));
 
@@ -60,7 +66,6 @@ function crop_oct_images(input_dir, output_dir, annot_output_dir)
         end
 
         cropped_img = img(new_top : new_bottom, :);
-
         output_image_name = output_dir + "/" + input_image.name;
         imwrite(cropped_img, output_image_name);
 
@@ -81,5 +86,16 @@ function crop_oct_images(input_dir, output_dir, annot_output_dir)
         );
 
         imwrite(img, annot_output_dir + "/" + input_image.name);
+
+        if exist(csv_input_dir)
+            [~, file_name, ~] = fileparts(input_image.name);
+            input_csv_file_name = csv_input_dir + "/" + ...
+                 file_name + ".csv";
+            disp("Processing crop CSV: " + input_csv_file_name);
+            mask = readmatrix(input_csv_file_name);
+            mask = mask(new_top : new_bottom, :);
+            output_csv_file_name = output_dir + "/" + file_name + ".csv";
+            writematrix(mask, output_csv_file_name);
+        end
     end
 end
