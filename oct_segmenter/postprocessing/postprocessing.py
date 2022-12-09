@@ -5,7 +5,10 @@ import numpy as np
 from pathlib import Path
 from typeguard import typechecked
 
-from oct_segmenter import VISUAL_FUNCTION_CORE_LAYER_NAMES, WAYNE_STATE_LAYER_NAMES
+from oct_segmenter import (
+    VISUAL_FUNCTION_CORE_LAYER_NAMES,
+    WAYNE_STATE_LAYER_NAMES,
+)
 from oct_segmenter.common import utils
 
 
@@ -20,7 +23,10 @@ def create_labelme_file_from_boundaries(
     image_width = img_arr.shape[1]
     boundaries_width = boundaries.shape[1]
     if image_width != boundaries_width:
-        log.warn(f"Image width: {image_width} is not equal to boundaries width: {boundaries_width}. Skipping...")
+        log.warn(
+            f"Image width: {image_width} is not equal to boundaries width: ",
+            f"{boundaries_width}. Skipping..."
+        )
         return None
 
     num_boundaries = boundaries.shape[0]
@@ -35,7 +41,7 @@ def create_labelme_file_from_boundaries(
     image_height, image_width = img_arr.shape
 
     file = {}
-    file['imageData'] = str(utils.img_arr_to_b64(img_arr), "utf-8")
+    file["imageData"] = str(utils.img_arr_to_b64(img_arr), "utf-8")
     file["imagePath"] = str(image_name)
     file["version"] = "4.5.9"
     file["flags"] = {}
@@ -53,8 +59,10 @@ def create_labelme_file_from_boundaries(
         for x in range(0, len(boundary), SPACING):
             shape["points"].append([x, int(boundary[x])])
 
-        if image_width % SPACING != 0: # Add right-most point
-            shape["points"].append([image_width - 1, int(boundary[image_width - 1])])
+        if image_width % SPACING != 0:  # Add right-most point
+            shape["points"].append(
+                [image_width - 1, int(boundary[image_width - 1])]
+            )
 
         shapes.append(shape)
 
