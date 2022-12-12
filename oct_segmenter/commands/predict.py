@@ -174,9 +174,7 @@ def predict(args):
     for prediction_output in prediction_outputs:
         image_name = prediction_output.image_name
         labelme_data = create_labelme_file_from_boundaries(
-            # Image is in "batch" format and transposed for model processing.
-            # Reverting it.
-            img_arr=np.transpose(np.squeeze(prediction_output.image)),
+            img_arr=np.squeeze(prediction_output.image),
             image_name=image_name,
             boundaries=prediction_output.gs_pred_segs,
         )
