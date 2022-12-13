@@ -177,6 +177,7 @@ def predict(args):
             img_arr=np.squeeze(prediction_output.image),
             image_name=image_name,
             boundaries=prediction_output.gs_pred_segs,
+            spacing=args.spacing,
         )
 
         with open(

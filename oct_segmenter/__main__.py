@@ -312,6 +312,14 @@ def main():
         help="Output directory",
     )
 
+    predict_subparser.add_argument(
+        "--spacing",
+        "-s",
+        default=20,
+        type=int,
+        help="Spacing between layer annotations in LabelMe JSON file",
+    )
+
     # Evaluate
     evaluate_subparser = cmd_subparser.add_parser("evaluate")
 

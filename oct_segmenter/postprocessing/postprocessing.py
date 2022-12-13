@@ -17,8 +17,8 @@ def create_labelme_file_from_boundaries(
     img_arr: np.ndarray,
     image_name: Path,
     boundaries: np.ndarray,
+    spacing: int=20,
 ) -> dict | None:
-    SPACING = 20
 
     image_width = img_arr.shape[1]
     boundaries_width = boundaries.shape[1]
@@ -56,10 +56,10 @@ def create_labelme_file_from_boundaries(
         shape["flags"] = {}
         shape["group_id"] = None
 
-        for x in range(0, len(boundary), SPACING):
+        for x in range(0, len(boundary), spacing):
             shape["points"].append([x, int(boundary[x])])
 
-        if image_width % SPACING != 0:  # Add right-most point
+        if image_width % spacing != 0:  # Add right-most point
             shape["points"].append(
                 [image_width - 1, int(boundary[image_width - 1])]
             )
