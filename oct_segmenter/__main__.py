@@ -189,7 +189,7 @@ def main():
         "-c",
         "--config",
         help="Path to JSON config file",
-        required=False,
+        required=True,
     )
 
     train_subparser.add_argument(

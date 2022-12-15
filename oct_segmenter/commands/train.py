@@ -96,32 +96,36 @@ def train(args):
 
     initial_model = Path(args.model) if args.model else None
 
-    t_params = TrainingParams(
-        model_architecture=model_architecture,
-        training_dataset_path=Path(args.input).absolute(),
-        initial_model=initial_model,
-        results_location=Path(args.output_dir),
-        opt_con=optimizers.Adam,
-        opt_params={},
-        loss=loss,
-        metric=metric,
-        epochs=epochs,
-        batch_size=batch_size,
-        model_hyperparameters=model_hyperparameters,
-        aug_fn_args=[
-            (aug.no_aug, {}),
-            (aug.flip_aug, {"flip_type": "left-right"}),
-        ],
-        aug_mode=aug_mode,
-        aug_probs=(0.5, 0.5),
-        aug_val=False,
-        aug_fly=True,
-        model_save_best=True,
-        class_weight=class_weight,
-        early_stopping=early_stopping,
-        restore_best_weights=restore_best_weights,
-        patience=patience,
-    )
+    try:
+        t_params = TrainingParams(
+            model_architecture=model_architecture,
+            training_dataset_path=Path(args.input).absolute(),
+            initial_model=initial_model,
+            results_location=Path(args.output_dir),
+            opt_con=optimizers.Adam,
+            opt_params={},
+            loss=loss,
+            metric=metric,
+            epochs=epochs,
+            batch_size=batch_size,
+            model_hyperparameters=model_hyperparameters,
+            aug_fn_args=[
+                (aug.no_aug, {}),
+                (aug.flip_aug, {"flip_type": "left-right"}),
+            ],
+            aug_mode=aug_mode,
+            aug_probs=(0.5, 0.5),
+            aug_val=False,
+            aug_fly=True,
+            model_save_best=True,
+            class_weight=class_weight,
+            early_stopping=early_stopping,
+            restore_best_weights=restore_best_weights,
+            patience=patience,
+        )
+    except ValueError as e:
+        log.error(f"Error creating Training Parameters: {e}")
+        exit(1)
 
     mlflow_params = MLflowParameters(
         mlflow_tracking_uri,
