@@ -1,5 +1,6 @@
 import os
 
+import json
 import logging as log
 from pathlib import Path
 
@@ -14,6 +15,8 @@ from oct_segmenter import (
     MODELS_TABLE,
     MODELS_INDEX_MAP,
 )
+
+DEFAULT_GRAPH_SEARCH = True
 
 
 def evaluate(args):
@@ -65,6 +68,17 @@ def evaluate(args):
         print("Output directory should be empty. Exiting...")
         exit(1)
 
+    graph_search = DEFAULT_GRAPH_SEARCH
+    if args.config:
+        with open(args.config, "r") as f:
+            config_data = json.load(f)
+            graph_search = config_data.get(
+                "graph_search",
+                DEFAULT_GRAPH_SEARCH,
+            )
+
+    log.info(f"Evaluation Parameter: Graph Search: {graph_search}")
+
     save_params = EvaluationSaveParams(
         predicted_labels=True,
         categorical_pred=False,
@@ -78,8 +92,8 @@ def evaluate(args):
         test_dataset_path=test_dataset_path,
         save_foldername=output_dir.absolute(),
         save_params=save_params,
+        graph_search=graph_search,
         gsgrad=1,
-        transpose=False,
         dice_errors=True,
         binarize=True,
         bg_ilm=True,
