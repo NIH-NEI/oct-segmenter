@@ -146,11 +146,22 @@ oct-segmenter predict -d testing_images
 
 ### Evaluation
 
-To evaluate the model with a test dataset use the `oct-segmenter evaluate` subcommand. It requires
-a test dataset (HDF5 file) as an input which can be generated using the `generate test` subcommand.
+To evaluate the model with a test dataset use the `oct-segmenter evaluate`
+subcommand. It requires a test dataset (HDF5 file) as an input which can be
+generated using the `generate test` subcommand.
 [See above](#generating-test-dataset-hdf5-file)
-In addition to generating plots with labels, `evaluate` will create a `results.csv` and
-`results.hdf5` that contain the following model's performance statistics:
+The user must configure the evaluation parameters by providing a JSON formatted
+configuration file like the following:
+
+```
+{
+  "graph_search": true
+}
+```
+
+In addition to generating plots with labels, `evaluate` will create a
+`results.csv` and `results.hdf5` that contain the following model's
+performance statistics:
 - `Mean absolute errors`
 - `Mean errors`
 - `Median absolute errors`
@@ -163,8 +174,17 @@ In addition to generating plots with labels, `evaluate` will create a `results.c
 #### Example
 
 ```
-oct-segmenter evaluate -i current/wayne_state_test_dataset.hdf5  -o current/test-results/
+oct-segmenter evaluate \
+    -i test_dataset.hdf5 \
+    -c config.json \
+    -o evaluation-results/
 ```
+
+### Evaluation Configurable Parameters
+The following is a list of the parameters that can be configured for
+evaluation:
+- `grap_search`: Perform a graph search based on the model predictions
+to generate the delineations of the layers.
 
 ## Advanced Usage
 ### Training

@@ -330,6 +330,7 @@ def main():
     evaluate_model_group = evaluate_subparser.add_mutually_exclusive_group(
         required=False
     )
+
     evaluate_model_group.add_argument(
         "--model-index",
         "-n",
@@ -358,6 +359,13 @@ def main():
         "-o",
         required=True,
         help="Output directory",
+    )
+
+    evaluate_subparser.add_argument(
+        "-c",
+        "--config",
+        required=True,
+        help="Path to JSON config file",
     )
 
     # List Models
