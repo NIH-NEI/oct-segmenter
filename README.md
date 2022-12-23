@@ -1,73 +1,120 @@
 # oct-segmenter
 
-The `oct-segmenter` is a command line interface (CLI) tool that allows researchers to automatically
-label a mouse retina scans. Given an input image, the tool outputs a CSV files with the coordinates
-of each of the layers. Internally, the `oct-segmenter` uses a trained U-net ML model based on the
-paper "Automatic choroidal segmentation in OCT images using supervised deep learning methods"
-
-Link: https://www.nature.com/articles/s41598-019-49816-4
-
+The `oct-segmenter` is a command line interface (CLI) tool that allows
+researchers to easily segment OCT images. In addition, the `oct-segmenter`
+provides functionalities to streamline the process of creating training and
+test datasets as well as training Machine Learning models.
+The `oct-segmenter` was developed with a focus on the needs of researchers
+working in the ophthalmology field. However, this tool is flexible enough that
+it can also accomodate for other use cases as well.
 
 ## Installation
 
 ### Package Files
 
 To use `oct-segmenter` you should have:
-1. recieved two wheel files from Bioteam named: `oct_segmenter-x-py2.py3-none-any.whl`
-and `oct_unet-x-py2.py3-none-any.whl`
+1. recieved two wheel files from the NEI OSIO named
+  - `oct_segmenter-x-py2.py3-none-any.whl`
+  - `oct_image_segmentation_models-x-py2.py3-none-any.whl`
 
 or
 
 2. Run the `build.sh` scripts located in:
-  - `mouse-image-segmentation` directory: this will generate the `oct-segmenter` wheel file under
-  the `dist` directory.
-  - `unet-mod` directory: this will generate the `oct_unet` wheel file under the `unet-mod/dist` directory.
+  - `mouse-image-segmentation` directory: this will generate the
+  `oct-segmenter` wheel file under the `dist` directory.
+  - `oct-image-segmentation-models-mod` directory: this will generate the
+  `oct_image_segmentation_models` wheel file in the
+  `oct-image-segmentation-models-mod/dist` directory.
 
 
 ### Windows
 
-The following steps describe all the steps and dependencies to run `oct-segmenter`:
+The following steps describe all the steps and dependencies to run the
+`oct-segmenter`:
 
 1. Install Anaconda:
-  - Download Anaconda from https://www.anaconda.com/products/individual. At the time of this writing
-  the current anaconda lives in https://repo.anaconda.com/archive/Anaconda3-2021.05-Windows-x86_64.exe
+  - Download Anaconda from https://www.anaconda.com/products/individual. At
+  the time of this writing the current anaconda lives
+  [here](https://repo.anaconda.com/archive/Anaconda3-2021.05-Windows-x86_64.exe)
 
 2. Open the Conda Powershell and create a new Conda environment:
 
-`conda create --name <env_name> python=3.9`
+`conda create --name <env_name> python=3.10`
 
 For example:
 
-`conda create --name oct-segmenter-env python=3.9`
+`conda create --name oct-segmenter-env python=3.10`
 
-3. Install the `oct-segmenter` python package:
+3. Install the `Surface-Distance-Based-Measures` package:
+The `oct-segmenter` uses a library which at the time of this writing is
+not published as Python package. The GitHub repository of this library is
+[here](https://github.com/deepmind/surface-distance). To install it:
+```
+git clone https://github.com/deepmind/surface-distance.git
+pip install surface-distance/
+```
+
+4. Install the `oct-segmenter` python package:
 
 There are two ways to install `oct-segmenter`:
 
   - Installing each package separately:
 
-    3.a.i. `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org <path/to/oct_unet/wheel/file>`
+    4.a.i.
+    ```
+    pip install \
+        --trusted-host pypi.org \
+        --trusted-host files.pythonhosted.org \
+        <path/to/oct_image_segmentation_models/wheel/file>
+    ```
+    For example:
+
+    ```
+    pip install \
+        --trusted-host pypi.org \
+        --trusted-host files.pythonhosted.org \
+        ~/oct_image_segmentation_models-0.3.0-py2.py3-none-any.whl
+    ```
+
+    4.a.ii.
+    ```
+    pip install \
+      --trusted-host pypi.org \
+      --trusted-host files.pythonhosted.org \
+      <path/to/oct_segmenter/wheel/file>
+    ```
 
     For example:
 
-    `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org ~/oct_unet-0.3.0-py2.py3-none-any.whl`
+    ```
+    pip install \
+        --trusted-host pypi.org \
+        --trusted-host files.pythonhosted.org \
+        ~/oct_segmenter-1.0-py2.py3-none-any.whl
+    ```
 
-    3.a.ii. `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org <path/to/oct_segmenter/wheel/file>`
+    or you can also install both packages simultaneously (instead of the doing
+the two steps above):
+
+    ```
+    pip install \
+        --trusted-host pypi.org
+        --trusted-host files.pythonhosted.org \
+        <path/to/oct-segmenter/wheel/file> \
+        --no-index --find-links \
+        file://<path/to/oct_image_segmentation_models/wheel/package>
+    ```
 
     For example:
-
-    `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org ~/oct_segmenter-1.0-py2.py3-none-any.whl`
-
-or
-
-  - Install both packages simultaneously:
-
-    `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org <path/to/oct-segmenter/wheel/file> --no-index --find-links file://<path/to/unet/wheel/package>`
-
-  For example:
   
-    `pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org ~/oct_segmenter-1.0-py2.py3-none-any.whl --no-index --find-links file://~/unet-1.0-py2.py3-none-any.whl` 
-
+    ```
+    pip install \
+        --trusted-host pypi.org \
+        --trusted-host files.pythonhosted.org \
+        ~/oct_segmenter-1.0-py2.py3-none-any.whl \
+        --no-index --find-links \
+        file://~/oct_image_segmentation_models-1.0-py2.py3-none-any.whl
+    ```
 
 ## Usage
 
@@ -155,7 +202,8 @@ configuration file like the following:
 
 ```
 {
-  "graph_search": true
+  "graph_search": true,
+  "metrics": ["dice", "average_surface_distance", "hausdorff_distance"]
 }
 ```
 

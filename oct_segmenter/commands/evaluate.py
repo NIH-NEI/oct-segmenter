@@ -17,6 +17,7 @@ from oct_segmenter import (
 )
 
 DEFAULT_GRAPH_SEARCH = True
+DEFAULT_METRICS = ["dice"]
 
 
 def evaluate(args):
@@ -69,6 +70,7 @@ def evaluate(args):
         exit(1)
 
     graph_search = DEFAULT_GRAPH_SEARCH
+    metrics = DEFAULT_METRICS
     if args.config:
         with open(args.config, "r") as f:
             config_data = json.load(f)
@@ -76,8 +78,13 @@ def evaluate(args):
                 "graph_search",
                 DEFAULT_GRAPH_SEARCH,
             )
+            metrics = config_data.get(
+                "metrics",
+                DEFAULT_GRAPH_SEARCH,
+            )
 
     log.info(f"Evaluation Parameter: Graph Search: {graph_search}")
+    log.info(f"Evaluation Parameter: Metrics: {metrics}")
 
     save_params = EvaluationSaveParams(
         predicted_labels=True,
@@ -93,6 +100,7 @@ def evaluate(args):
         save_foldername=output_dir.absolute(),
         save_params=save_params,
         graph_search=graph_search,
+        metrics=metrics,
         gsgrad=1,
         dice_errors=True,
         binarize=True,
