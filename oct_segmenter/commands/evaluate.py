@@ -80,7 +80,7 @@ def evaluate(args):
             )
             metrics = config_data.get(
                 "metrics",
-                DEFAULT_GRAPH_SEARCH,
+                DEFAULT_METRICS,
             )
 
     log.info(f"Evaluation Parameter: Graph Search: {graph_search}")
