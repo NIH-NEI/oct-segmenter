@@ -231,8 +231,11 @@ oct-segmenter evaluate \
 ### Evaluation Configurable Parameters
 The following is a list of the parameters that can be configured for
 evaluation:
-- `grap_search`: Perform a graph search based on the model predictions
+- `graph_search`: bool: Perform a graph search based on the model predictions
 to generate the delineations of the layers.
+- `metrics`: Metrics to compute as part of the evaluation. Currently supported
+metrics are: `dice_coef_classes`, `dice_coef_macro`, `dice_coef_micro`,
+`average_surface_distance` and `hausdorff_distance`.
 
 ## Advanced Usage
 ### Training
@@ -316,9 +319,9 @@ chosen `model_architecture` parameter. The allowed values for:
 - `experiment`: string: Name of the experiment under which the run will be
   logged in MLflow.
 - `loss`: string: Loss function to use during training. Currently supported
-functions are: `dice_loss`, `focal_loss`.
+functions are: `dice_loss_macro`, `dice_loss_micro`, `focal_loss`.
 - `metric`: string: Metric to monitor during training. Currently supported
-metrics are: `dice_coef`.
+metrics are: `dice_coef_macro`, `dice_coef_micro`.
 - `tracking_uri`: string: Tracking URI for logging the run. The URI can either
   be a HTTP/HTTPS URI for a MLflow remote server, a database connection string,
   or a local path to log data to a directory. The URI defaults to `mlruns`.
