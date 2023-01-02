@@ -271,6 +271,14 @@ configuration file like the following:
       "arguments": {
         "flip_type": "left-right"
       }
+    },
+    {
+      "name": "add_noise",
+      "arguments": {
+        "mode": "gaussian",
+        "mean": 0,
+        "variance": 0.01
+      }
     }
   ]
   "experiment": "my-experiment",
@@ -384,6 +392,16 @@ The augmentation types supported are:
   }
   ```
 
+- Add noise:
+```
+{
+  "name": "add_noise",
+  "arguments": {
+    "mode": "gaussian",
+    "mean": 0,
+    "variance": 0.01
+  }
+}
 
 ## Post-processing (Currently not supported, to be implemented)
 The script `merge_images.py` merges the original image withe the segmentation
