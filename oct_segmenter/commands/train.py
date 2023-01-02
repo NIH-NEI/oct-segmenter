@@ -3,12 +3,16 @@ import logging as log
 from pathlib import Path
 from tensorflow.keras import optimizers
 
-from oct_image_segmentation_models.common.mlflow_parameters import MLflowParameters
-from oct_image_segmentation_models.common import augmentation as aug
+from oct_image_segmentation_models.common.mlflow_parameters import (
+    MLflowParameters,
+)
 from oct_image_segmentation_models.training import training
-from oct_image_segmentation_models.training.training_parameters import TrainingParams
+from oct_image_segmentation_models.training.training_parameters import (
+    TrainingParams,
+)
 
 DEFAULT_AUGMENTATION_MODE = "none"
+DEFAULT_AUGMENTATIONS = []
 DEFAULT_BATCH_SIZE = 2
 DEFAULT_EARLY_STOPPING = True
 DEFAULT_EPOCHS = 1000
@@ -20,7 +24,7 @@ DEFAULT_PATIENCE = 50
 DEFAULT_RESTORE_BEST_WEIGHTS = True
 DEFAULT_CLASS_WEIGHT = None
 
-DEFAULT_MLFLOW_EXPERIMENT_NAME = "mice-image-segmentation"
+DEFAULT_MLFLOW_EXPERIMENT_NAME = "image-segmentation"
 DEFAULT_MLFLOW_TRACKING_URI = Path.home() / Path("mlruns")
 DEFAULT_MLFLOW_TRACKING_USERNAME = None
 DEFUALT_MLFLOW_TRACKING_PASSWORD = None
@@ -32,6 +36,7 @@ def train(args):
     class_weight = DEFAULT_CLASS_WEIGHT
     epochs = DEFAULT_EPOCHS
     batch_size = DEFAULT_BATCH_SIZE
+    augmentations = DEFAULT_AUGMENTATIONS
     aug_mode = DEFAULT_AUGMENTATION_MODE
     early_stopping = DEFAULT_EARLY_STOPPING
     mlflow_experiment_name = DEFAULT_MLFLOW_EXPERIMENT_NAME
@@ -55,12 +60,18 @@ def train(args):
             )
             loss = config_data.get("loss", DEFAULT_LOSS)
             metric = config_data.get("metric", DEFAULT_METRIC)
-            model_architecture = config_data.get("model_architecture", DEFAULT_MODEL_ARCH)
-            model_hyperparameters = config_data.get("model_hyperparameters", DEFAULT_MODEL_HYPERPARAMETERS)
+            model_architecture = config_data.get(
+                "model_architecture", DEFAULT_MODEL_ARCH
+            )
+            model_hyperparameters = config_data.get(
+                "model_hyperparameters", DEFAULT_MODEL_HYPERPARAMETERS
+            )
             epochs = config_data.get("epochs", DEFAULT_EPOCHS)
             augment = config_data.get("augment")
             if augment:
                 aug_mode = "all"
+                augmentations = config_data.get("augmentations")
+
             mlflow_experiment_name = config_data.get(
                 "experiment", DEFAULT_MLFLOW_EXPERIMENT_NAME
             )
@@ -79,14 +90,17 @@ def train(args):
             )
 
     log.info(f"Training Parameter: Model Architecture: {model_architecture}")
-    log.info(f"Training Parameter: Model Hyperparameters: {model_hyperparameters}")
+    log.info(
+        f"Training Parameter: Model Hyperparameters: {model_hyperparameters}"
+    )
     log.info(f"Training Parameter: Early Stopping: {early_stopping}")
     log.info(f"Training Parameter: Loss: {loss}")
     log.info(f"Training Parameter: Metric: {metric}")
     log.info(f"Training Parameter: Epochs: {epochs}")
     log.info(f"Training Parameter: Batch Size: {batch_size}")
     log.info(f"Training Parameter: Class Weight: {class_weight}")
-    log.info(f"Training Parameter: Augmentation: {aug_mode}")
+    log.info(f"Training Parameter: Augmentation Mode: {aug_mode}")
+    log.info(f"Training Parameter: Augmentations: {augmentations}")
     log.info(f"Training Parameter: Patience: {patience}")
     log.info(
         f"Training Parameter: Restore Best Weights: {restore_best_weights}"
@@ -109,10 +123,7 @@ def train(args):
             epochs=epochs,
             batch_size=batch_size,
             model_hyperparameters=model_hyperparameters,
-            aug_fn_args=[
-                (aug.no_aug, {}),
-                (aug.flip_aug, {"flip_type": "left-right"}),
-            ],
+            augmentations=augmentations,
             aug_mode=aug_mode,
             aug_probs=(0.5, 0.5),
             aug_val=False,
