@@ -17,6 +17,7 @@ DEFAULT_BATCH_SIZE = 2
 DEFAULT_EARLY_STOPPING = True
 DEFAULT_EPOCHS = 1000
 DEFAULT_LOSS = "dice_loss"
+DEFAULT_LOSS_FN_KWARGS = {}
 DEFAULT_METRIC = "dice_coef"
 DEFAULT_MODEL_ARCH = None
 DEFAULT_MODEL_HYPERPARAMETERS = {}
@@ -32,6 +33,7 @@ DEFUALT_MLFLOW_TRACKING_PASSWORD = None
 
 def train(args):
     loss = DEFAULT_LOSS
+    loss_fn_kwargs = DEFAULT_LOSS_FN_KWARGS
     metric = DEFAULT_METRIC
     class_weight = DEFAULT_CLASS_WEIGHT
     epochs = DEFAULT_EPOCHS
@@ -59,6 +61,10 @@ def train(args):
                 "early_stopping", DEFAULT_EARLY_STOPPING
             )
             loss = config_data.get("loss", DEFAULT_LOSS)
+            loss_fn_kwargs = config_data.get(
+                "loss_arguments",
+                DEFAULT_LOSS_FN_KWARGS,
+            )
             metric = config_data.get("metric", DEFAULT_METRIC)
             model_architecture = config_data.get(
                 "model_architecture", DEFAULT_MODEL_ARCH
@@ -95,6 +101,7 @@ def train(args):
     )
     log.info(f"Training Parameter: Early Stopping: {early_stopping}")
     log.info(f"Training Parameter: Loss: {loss}")
+    log.info(f"Training Parameter: Loss Function Arguments: {loss_fn_kwargs}")
     log.info(f"Training Parameter: Metric: {metric}")
     log.info(f"Training Parameter: Epochs: {epochs}")
     log.info(f"Training Parameter: Batch Size: {batch_size}")
@@ -117,12 +124,13 @@ def train(args):
             initial_model=initial_model,
             results_location=Path(args.output_dir),
             opt_con=optimizers.Adam,
-            opt_params={},
             loss=loss,
             metric=metric,
             epochs=epochs,
             batch_size=batch_size,
             model_hyperparameters=model_hyperparameters,
+            opt_params={},
+            loss_fn_kwargs=loss_fn_kwargs,
             augmentations=augmentations,
             aug_mode=aug_mode,
             aug_probs=(0.5, 0.5),
