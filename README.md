@@ -256,6 +256,23 @@ configuration file like the following:
   "epochs": 1000,
   "batch_size": 3,
   "augment": true,
+  "augmentations": [
+    {
+      "name": "no_augmentation"
+    },
+    {
+      "name": "flip",
+      "arguments": {
+        "flip_type": "up-down"
+      }
+    },
+    {
+      "name": "flip",
+      "arguments": {
+        "flip_type": "left-right"
+      }
+    }
+  ]
   "experiment": "my-experiment",
   "tracking_uri": "mlruns",
   "username": "balvisio",
@@ -303,11 +320,19 @@ chosen `model_architecture` parameter. The allowed values for:
         - `enc_kernel`: list
         - `dec_kernel`: list
 - `augment`: bool: If `True`, images are augmented by flipping left-right.
+- `augmentations`: list: A list of dictionaries containing information about
+the augmentation functions to apply and its parameters. Each dictionary must
+contain the following keys:
+    - `name`: str: Augmentation function name.
+    - `arguments`: dict: (Optional) A dictionary of key/value arguments.
+  See [Supported Augmentation Functions](#supported-augmentation-functions)
+  section for more information on supported augmentation and examples.
 - `batch_size`: int
 - `class_weight`: "balanced" | list:
     - "balanced": Calculates classes' weights from the class distribution in
     the training and validation datasets. It will use the
-    `compute_class_weight` method from the `scikit-learn` library. ([See here](https://scikit-learn.org/stable/modules/generated/sklearn.utils.class_weight.compute_class_weight.html))
+    `compute_class_weight` method from the `scikit-learn` library.
+    ([See here](https://scikit-learn.org/stable/modules/generated/sklearn.utils.class_weight.compute_class_weight.html))
     - list: List of length equal to the number of classes. Each element is a
     weighting factor for each of the classes.
 - `early_stopping`: bool: Stop training when a monitored metric has stopped
@@ -330,14 +355,56 @@ metrics are: `dice_coef_macro`, `dice_coef_micro`.
 - `patience`: Number of epochs with no improvement after which training will be
   stopped. (Only applicable when `early_stopping = True`)
 
-## Post-processing (Currently not supported, to be implemented)
-The script `merge_images.py` merges the original image withe the segmentation plots from the model evaluation/prediction. Usage:
+## Supported Augmentation Functions
+The augmentation types supported are:
+- No augmentation (i.e. use raw image):
+  ```
+  {
+    "name": "no_augmentation",
+  }
+  ```
 
-`python3 merge_image.py <path/to/original/image> <path/to/left/segment/plot> <path/to/right/segment/plot> <path/to/output_file>`
+- Flip left-right:
+  ```
+  {
+    "name": "flip",
+    "arguments": {
+      "flip_type": "left-right"
+    }
+  }
+  ```
+
+- Flip up-down:
+  ```
+  {
+    "name": "flip",
+    "arguments": {
+      "flip_type": "up-down"
+    }
+  }
+  ```
+
+
+## Post-processing (Currently not supported, to be implemented)
+The script `merge_images.py` merges the original image withe the segmentation
+plots from the model evaluation/prediction. Usage:
+
+```
+python merge_image.py \
+  <path/to/original/image> \
+  <path/to/left/segment/plot> \
+  <path/to/right/segment/plot> \
+  <path/to/output_file>
+```
 
 For example:
 
-`python3 merge_image.py ../images/testing/2019.10.23/508_OD_R_1_0_0000097_RegAvg/001.tiff ../../ML-Image-Segmentation/results/2021-09-21_21_26_25_U-net_mice_oct/no\ aug_testing_dataset.hdf5/image_6/seg_plot.png ../../ML-Image-Segmentation/results/2021-09-21_21_26_25_U-net_mice_oct/no\ aug_testing_dataset.hdf5/image_7/seg_plot.png mice4.png`
+```
+python merge_image.py \
+  ../images/testing/2019.10.23/508_OD_R_1_0_0000097_RegAvg/001.tiff \
+  ../../ML-Image-Segmentation/results/2021-09-21_21_26_25_U-net_mice_oct/no\ aug_testing_dataset.hdf5/image_6/seg_plot.png \
+  ../../ML-Image-Segmentation/results/2021-09-21_21_26_25_U-net_mice_oct/no\ aug_testing_dataset.hdf5/image_7/seg_plot.png mice4.png
+```
 
 
 # Other Information
@@ -369,10 +436,12 @@ python3 run.py predict -d images/
 
 ## Preprocess
 
-The script `preprocess.py` labels and creates segmentation maps from a given image. It outputs 4 files:
-- <image_name>_{left,right}.json: Two sections of the original image are cropped and labeled. These files are `labelme`
-compatible JSON files.
-- <image_name>_{left,right}_label.png: These files are the segmentation maps corresponding to the images above.
+The script `preprocess.py` labels and creates segmentation maps from a given
+image. It outputs 4 files:
+- <image_name>_{left,right}.json: Two sections of the original image are
+cropped and labeled. These files are `labelme` compatible JSON files.
+- <image_name>_{left,right}_label.png: These files are the segmentation maps
+corresponding to the images above.
 
 Usage:
 
