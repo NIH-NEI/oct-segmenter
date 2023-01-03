@@ -28,7 +28,7 @@ def process_directory(input_dir, output_dir, save_file=False):
     labeled_file_data = []  # Segmenation map (yhat)
     segments_data = []  # Contains the boundaries
 
-    for subdir, dirs, files in os.walk(input_dir):
+    for subdir, _, files in os.walk(input_dir):
         for file in files:
             if (
                 file.endswith(".tiff")
@@ -67,14 +67,14 @@ def process_directory(input_dir, output_dir, save_file=False):
     # Images a transposed so dim 0 is image width
     if not all(x.shape[0] == img_file_data[0].shape[0] for x in img_file_data):
         log.error(
-            "Images contain different widths. All images should have same ",
+            "Images contain different widths. All images should have same "
             "width. Exiting..."
         )
         exit(1)
 
     if not all(x.shape[1] == img_file_data[0].shape[1] for x in img_file_data):
         log.error(
-            "Images contain different heights. All images should have same ",
+            "Images contain different heights. All images should have same "
             "height. Exiting..."
         )
         exit(1)
@@ -98,7 +98,7 @@ def process_directory_wayne(
             ) and not file.startswith("."):
                 image_file = Path(os.path.join(subdir, file))
                 print(
-                    "Processing file from Wayne State University format: ",
+                    "Processing file from Wayne State University format: "
                     f"{image_file}"
                 )
                 (
@@ -122,14 +122,14 @@ def process_directory_wayne(
     # Images a transposed so dim 0 is image width
     if not all(x.shape[0] == img_file_data[0].shape[0] for x in img_file_data):
         log.error(
-            "Images contain different widths. All images should have same ",
+            "Images contain different widths. All images should have same "
             "width. Exiting..."
         )
         exit(1)
 
     if not all(x.shape[1] == img_file_data[0].shape[1] for x in img_file_data):
         log.error(
-            "Images contain different heights. All images should have same ",
+            "Images contain different heights. All images should have same "
             "height. Exiting..."
         )
         exit(1)
@@ -139,14 +139,17 @@ def process_directory_wayne(
 
 @typechecked
 def process_directory_mask(
-    input_dir: Path, output_dir: Path, save_file: bool = False
+    input_dir: Path,
+    output_dir: Path,
+    rgb_format: bool,
+    save_file: bool = False,
 ):
     img_file_names = []
     img_file_data = []  # Original image (xhat)
     labeled_file_data = []  # Segmenation map (yhat)
     segments_data = []  # Contains the boundaries
 
-    for subdir, dirs, files in os.walk(input_dir):
+    for subdir, _, files in os.walk(input_dir):
         for file in files:
             if (
                 file.endswith(".tiff") or file.endswith(".TIFF")
@@ -154,7 +157,7 @@ def process_directory_mask(
                 image_file = Path(os.path.join(subdir, file))
                 print(f"Processing file in mask format: {image_file}")
                 img_name, img_array, seg_map, segs = generate_image_label_mask(
-                    image_file, output_dir, save_file
+                    image_file, output_dir, rgb_format, save_file
                 )
                 if img_name:
                     img_file_names.extend([img_name])
@@ -168,14 +171,14 @@ def process_directory_mask(
 
     if not all(x.shape[0] == img_file_data[0].shape[0] for x in img_file_data):
         log.error(
-            "Images contain different heights. All images should have same ",
+            "Images contain different heights. All images should have same "
             "height. Exiting..."
         )
         exit(1)
 
     if not all(x.shape[1] == img_file_data[0].shape[1] for x in img_file_data):
         log.error(
-            "Images contain different widths. All images should have same ",
+            "Images contain different widths. All images should have same "
             "width. Exiting..."
         )
         exit(1)
@@ -225,14 +228,14 @@ def process_directory_labelme(
     # Images a transposed so dim 0 is image width
     if not all(x.shape[0] == img_file_data[0].shape[0] for x in img_file_data):
         log.error(
-            "Images contain different widths. All images should have same ",
+            "Images contain different widths. All images should have same "
             "width. Exiting..."
         )
         exit(1)
 
     if not all(x.shape[1] == img_file_data[0].shape[1] for x in img_file_data):
         log.error(
-            "Images contain different heights. All images should have same ",
+            "Images contain different heights. All images should have same "
             "height. Exiting..."
         )
         exit(1)
@@ -296,6 +299,7 @@ def generate_generic_dataset(
     input_dir: Path,
     file_name: Path,
     input_format: str,
+    rgb_format: bool,
     layer_names: list[str] | None,
     backing_store: bool = True,
 ) -> h5py.File:
@@ -329,7 +333,7 @@ def generate_generic_dataset(
             segments_data,
             labeled_file_data,
         ) = process_directory_mask(
-            input_dir, file_name.parent, save_file=False
+            input_dir, file_name.parent, rgb_format, save_file=False
         )
     elif input_format == "visual":
         (

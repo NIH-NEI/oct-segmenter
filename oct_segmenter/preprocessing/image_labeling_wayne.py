@@ -172,9 +172,12 @@ def generate_image_label_wayne(image_path: Path, output_dir: Path, save_file: bo
         np.savetxt(output_dir / Path(image_path.stem + "_matrix.txt"), label_img, fmt="%d")
         np.savetxt(output_dir / Path(image_path.stem + "_segs.csv"), segs, fmt="%d", delimiter=",")
 
-    img = np.transpose(utils.pil_to_array(img))
-    img = img[..., np.newaxis]
-    label_img = np.transpose(label_img)
+    img = utils.pil_to_array(img)
+    ndim = 3  # Make sure images images have dim: (height, width, num_channels)
+    # Adds one (i.e. num_channel) dimension when img is 2D.
+    padded_shape = (img.shape + (1,)*ndim)[:ndim]
+    img = img.reshape(padded_shape)
+
     label_img = label_img[..., np.newaxis]
 
     return str(image_path).encode("ascii"), img, label_img, segs

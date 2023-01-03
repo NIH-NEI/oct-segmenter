@@ -193,13 +193,17 @@ def generate_image_label_visual_core(image_path: Path, output_dir, save_file=Tru
         np.savetxt(output_dir + "/" + image_path.stem + "_left_matrix.txt", utils.pil_to_array(label_img_left), fmt="%d")
         np.savetxt(output_dir + "/" + image_path.stem + "_right_matrix.txt", utils.pil_to_array(label_img_right), fmt="%d")
 
-    img_left = np.transpose(utils.pil_to_array(img_left))
-    img_left = img_left[..., np.newaxis]
-    img_right = np.transpose(utils.pil_to_array(img_right))
-    img_right = img_right[..., np.newaxis]
-    label_img_left = np.transpose(label_img_left)
+    ndim = 3  # Make sure images images have dim: (height, width, num_channels)
+    # Adds one (i.e. num_channel) dimension when img is 2D.
+    img_left = utils.pil_to_array(img_left)
+    padded_shape = (img_left.shape + (1,)*ndim)[:ndim]
+    img_left = img_left.reshape(padded_shape)
+
+    img_right = utils.pil_to_array(img_right)
+    padded_shape = (img_right.shape + (1,)*ndim)[:ndim]
+    img_right = img_right.reshape(padded_shape)
+
     label_img_left = label_img_left[..., np.newaxis]
-    label_img_right = np.transpose(label_img_right)
     label_img_right = label_img_right[..., np.newaxis]
 
     return str(image_path).encode("ascii"), img_left, label_img_left, segs_left, str(image_path).encode("ascii"), img_right, label_img_right, segs_right

@@ -14,7 +14,10 @@ from oct_segmenter.preprocessing.image_labeling_common import generate_boundary
 
 @typechecked
 def generate_image_label_mask(
-    image_path: Path, output_dir: Path, save_file: bool = True
+    image_path: Path,
+    output_dir: Path,
+    rgb_format: bool,
+    save_file: bool = True,
 ) -> Tuple[bytes, np.ndarray, np.ndarray, np.ndarray]:
     if save_file and not os.path.isdir(output_dir):
         os.mkdir(output_dir)
@@ -69,7 +72,11 @@ def generate_image_label_mask(
             )
             exit(1)
 
-    img = utils.convert_to_grayscale(img)
+    if rgb_format:
+        img = img.convert("RGB")
+    else:
+        img = utils.convert_to_grayscale(img)
+
     mask = np.array(mask)
     segs = generate_boundary(mask)
 
@@ -86,7 +93,10 @@ def generate_image_label_mask(
         )
 
     img = utils.pil_to_array(img)
-    img = img[..., np.newaxis]
+    ndim = 3  # Make sure images images have dim: (height, width, num_channels)
+    # Adds one (i.e. num_channel) dimension when img is 2D.
+    padded_shape = (img.shape + (1,)*ndim)[:ndim]
+    img = img.reshape(padded_shape)
     mask = mask[..., np.newaxis]
 
     return str(image_path).encode("ascii"), img, mask, segs
