@@ -12,12 +12,14 @@ def generate_test_dataset(
     test_input_dir: Path,
     output_file: Path,
     input_format: str,
+    rgb_format: bool,
     layer_names: list[str] | None,
 ) -> h5py.File:
     test_hdf5_file = generator.generate_generic_dataset(
         test_input_dir,
         output_file,
         input_format,
+        rgb_format,
         layer_names,
     )
 

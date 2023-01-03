@@ -96,6 +96,13 @@ def main():
     )
 
     gen_test_parser.add_argument(
+        "--rgb",
+        default=False,
+        action="store_true",
+        help="Output images in RGB format",
+    )
+
+    gen_test_parser.add_argument(
         "-o",
         "--output-dir",
         help="Name of the output name file",
@@ -164,6 +171,13 @@ def main():
         help="Required when using '-l' flag. Visual Function Core layers: "
         "['ILM', 'ELM', 'RPE']. Wayne State Layers: ['RNFL-vitreous', "
         "'GCL-RNFL', 'INL-IPL', 'ONL-OPL', 'ELM', 'RPE']",
+    )
+
+    gen_train_parser.add_argument(
+        "--rgb",
+        default=False,
+        action="store_true",
+        help="Output images in RGB format",
     )
 
     gen_train_parser.add_argument(

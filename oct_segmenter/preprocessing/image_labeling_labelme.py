@@ -282,15 +282,12 @@ def generate_image_label_labelme(
     # Generate boundaries out of the segmentation map image
     boundaries = generate_boundary(segmentation_map_img)
 
-    """
-    The images need to be transposed because the `model` expects
-    and array of shape (image_width, image_height) and recall that
-    in an array (rows x columns) the rows are the height and columns
-    are the width.
-    """
-    img = np.transpose(utils.pil_to_array(img))
-    img = img[..., np.newaxis]
-    segmentation_map_img = np.transpose(segmentation_map_img)
+    img = utils.pil_to_array(img)
+    ndim = 3  # Make sure images images have dim: (height, width, num_channels)
+    # Adds one (i.e. num_channel) dimension when img is 2D.
+    padded_shape = (img.shape + (1,)*ndim)[:ndim]
+    img = img.reshape(padded_shape)
+
     segmentation_map_img = segmentation_map_img[..., np.newaxis]
 
     return str(img_path).encode("ascii"), img, segmentation_map_img, boundaries

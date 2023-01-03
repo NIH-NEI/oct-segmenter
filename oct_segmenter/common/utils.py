@@ -60,7 +60,8 @@ def pil_to_data(img):
         return f.read()
 
 
-def pil_to_array(img_pil):
+@typechecked
+def pil_to_array(img_pil: PIL.Image) -> np.ndarray:
     img_arr = np.array(img_pil)
     return img_arr
 
