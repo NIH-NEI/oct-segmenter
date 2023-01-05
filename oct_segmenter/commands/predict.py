@@ -22,6 +22,8 @@ from oct_segmenter.postprocessing.postprocessing import (
     create_labelme_file_from_boundaries,
 )
 
+DEFAULT_GRAPH_SEARCH = False
+
 
 def predict(args):
     mlflow_tracking_uri = DEFAULT_MLFLOW_TRACKING_URI
@@ -101,41 +103,22 @@ def predict(args):
         else:
             output = input_path.parent
 
-        if args.c:
-            img = preprocess.generate_input_image(
-                input_path, args.flip_top_bottom
-            )
-            if img is not None:
-                pred_images.append(img)
-                pred_images_names.append(Path(input_path.name))
-                output_paths.append(
-                    output / Path(input_path.stem + "_labeled")
-                )
-        else:
-            img_left, img_right = preprocess.generate_side_region_input_image(
-                input_path, args.flip_top_bottom
-            )
-            if img_left is not None:
-                pred_images.append(img_left)
-                pred_images.append(img_right)
-                img_left_path = Path(
-                    input_path.stem + "_left" + input_path.suffix
-                )
-                pred_images_names.append(img_left_path)
-                img_right_path = Path(
-                    input_path.stem + "_right" + input_path.suffix
-                )
-                pred_images_names.append(img_right_path)
-                output_paths.extend(
-                    [
-                        output / Path(input_path.stem + "_left"),
-                        output / Path(input_path.stem + "_right"),
-                    ]
-                )
+        img = preprocess.generate_input_image(input_path)
+        if img is not None:
+            pred_images.append(img)
+            pred_images_names.append(Path(input_path.name))
+            output_paths.append(output / Path(input_path.stem + "_labeled"))
 
     if len(pred_images) == 0:
         log.info("No images were processed successfully. Exiting...")
         exit(1)
+
+    graph_search = DEFAULT_GRAPH_SEARCH
+    with open(args.config, "r") as f:
+        config_data = json.load(f)
+        graph_search = config_data.get("graph_search", DEFAULT_GRAPH_SEARCH)
+
+    log.info(f"Prediction Parameter: Graph Search: {graph_search}")
 
     pred_images = np.array(pred_images)
     dataset = Dataset(
@@ -159,6 +142,7 @@ def predict(args):
         dataset=dataset,
         config_output_dir=root_output_dir,
         save_params=save_params,
+        graph_search=graph_search,
         trim_maps=False,
         trim_ref_ind=0,
         trim_window=(0, 0),
@@ -172,18 +156,19 @@ def predict(args):
 
     prediction_outputs = prediction.predict(predict_params)
 
-    for prediction_output in prediction_outputs:
-        image_name = prediction_output.image_name
-        labelme_data = create_labelme_file_from_boundaries(
-            img_arr=np.squeeze(prediction_output.image),
-            image_name=image_name,
-            boundaries=prediction_output.gs_pred_segs,
-            spacing=args.spacing,
-        )
+    if graph_search:
+        for prediction_output in prediction_outputs:
+            image_name = prediction_output.image_name
+            labelme_data = create_labelme_file_from_boundaries(
+                img_arr=np.squeeze(prediction_output.image),
+                image_name=image_name,
+                boundaries=prediction_output.gs_pred_segs,
+                spacing=args.spacing,
+            )
 
-        with open(
-            prediction_output.image_output_dir
-            / Path(image_name.stem + ".json"),
-            "w",
-        ) as file:
-            json.dump(labelme_data, file)
+            with open(
+                prediction_output.image_output_dir
+                / Path(image_name.stem + ".json"),
+                "w",
+            ) as file:
+                json.dump(labelme_data, file)

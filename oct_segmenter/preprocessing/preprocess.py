@@ -78,12 +78,10 @@ def generate_side_region_input_image(
 
 
 @typechecked
-def generate_input_image(
-    image_path: Path, flip_top_bottom: bool = False
-) -> np.ndarray:
+def generate_input_image(image_path: Path) -> np.ndarray:
     """
-    Generates the numpy matrix that can be fed to the Unet model
-    for prediction. It performs dimension expansion and transpose.
+    Generates the numpy matrix that can be fed to the model
+    for prediction.
 
     Parameters
     ----------
@@ -96,23 +94,10 @@ def generate_input_image(
         The numpy matrices that can be fed to Unet for prediction.
     """
     img = PIL.Image.open(image_path, "r")
-
-    if (
-        img.height % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0
-        or img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0
-    ):
-        log.warn(
-            "Image dimensions need to be a multiple of "
-            f"{UNET_IMAGE_DIMENSION_MULTIPLICITY}",
-            f"Image: {image_path} is {img.width} by {img.height}. Skipping...",
-        )
-        return None
-
-    if flip_top_bottom:
-        img = img.transpose(PIL.Image.FLIP_TOP_BOTTOM)
-    img = utils.convert_to_grayscale(img)
     img = utils.pil_to_array(img)
-    img = img[..., np.newaxis]
-    assert img.shape[0] % UNET_IMAGE_DIMENSION_MULTIPLICITY == 0
-    assert img.shape[1] % UNET_IMAGE_DIMENSION_MULTIPLICITY == 0
+    ndim = 3  # Make sure images images have dim: (height, width, num_channels)
+    # Adds one (i.e. num_channel) dimension when img is 2D.
+    padded_shape = (img.shape + (1,) * ndim)[:ndim]
+    img = img.reshape(padded_shape)
+
     return img

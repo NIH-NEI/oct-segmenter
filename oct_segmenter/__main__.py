@@ -3,7 +3,6 @@ import art
 import logging as log
 
 from oct_segmenter import (
-    DEFAULT_MODEL_INDEX,
     DEFAULT_TRAINING_PARTITION,
     DEFAULT_TEST_PARTITION,
     DEFAULT_VALIDATION_PARTITION,
@@ -283,15 +282,6 @@ def main():
     )
 
     predict_model_group.add_argument(
-        "--model-index",
-        "-n",
-        help="Model to use for prediction. Run 'oct-segmenter list' to see "
-        "the full list.",
-        default=DEFAULT_MODEL_INDEX,
-        type=int,
-    )
-
-    predict_model_group.add_argument(
         "--model-path",
         "-m",
         help="Path to model to use for prediction (HDF5 file).",
@@ -307,17 +297,9 @@ def main():
 
     predict_subparser.add_argument(
         "-c",
-        default=False,
-        action="store_true",
-        help="Label complete PNG image instead of left/right regions",
-    )
-
-    predict_subparser.add_argument(
-        "--flip-top-bottom",
-        "-f",
-        default=False,
-        action="store_true",
-        help="Flip images w.r.t. the horizontal axis before prediction",
+        "--config",
+        required=True,
+        help="Path to JSON config file",
     )
 
     predict_subparser.add_argument(
