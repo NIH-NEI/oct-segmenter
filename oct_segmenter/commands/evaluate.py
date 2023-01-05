@@ -96,6 +96,7 @@ def evaluate(args):
     eval_params = EvaluationParameters(
         model_path=model_path,
         mlflow_tracking_uri=mlflow_tracking_uri,
+        mlflow_run_uuid=args.mlflow_run_uuid,
         test_dataset_path=test_dataset_path,
         save_foldername=output_dir.absolute(),
         save_params=save_params,
