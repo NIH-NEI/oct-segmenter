@@ -346,15 +346,6 @@ def main():
     )
 
     evaluate_model_group.add_argument(
-        "--model-index",
-        "-n",
-        default=DEFAULT_MODEL_INDEX,
-        type=int,
-        help="Model to use for evaluation. Run 'oct-segmenter list' to see "
-        "the full list.",
-    )
-
-    evaluate_model_group.add_argument(
         "--model-path",
         "-m",
         help="Path to model to use for evaluation (HDF5 file).",

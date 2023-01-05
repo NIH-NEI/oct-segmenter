@@ -155,6 +155,7 @@ def predict(args):
     predict_params = PredictionParams(
         model_path=model_path,
         mlflow_tracking_uri=mlflow_tracking_uri,
+        mlflow_run_uuid=args.mlflow_run_uuid,
         dataset=dataset,
         config_output_dir=root_output_dir,
         save_params=save_params,
