@@ -317,51 +317,58 @@ running: `mlflow ui --port <port>`.
 ### Training Configurable Parameters
 The following is a list of the parameters that can be configured for training:
 - `model_architecture`: string: The model architecture to use for training.
-Current supported values are: `"unet"` and `"deeplabv3+"`.
+  Current supported values are: `"unet"` and `"deeplabv3plus"`.
 - `model_hyperparameters`: dict: A dictionary to specify different parameters
-of the model architecture. The key/value pairs will be dependent on the
-chosen `model_architecture` parameter. The allowed values for:
+  of the model architecture. The key/value pairs will be dependent on the
+  chosen `model_architecture` parameter. The allowed values for:
     - `unet`:
-        - `start_neurons`: int
-        - `pool_layers`: int
-        - `conv_layers`: int
-        - `enc_kernel`: list
-        - `dec_kernel`: list
-- `augment`: bool: If `True`, images are augmented by flipping left-right.
-- `augmentations`: list: A list of dictionaries containing information about
-the augmentation functions to apply and its parameters. Each dictionary must
-contain the following keys:
+        - `start_neurons`: int (default = `8`)
+        - `pool_layers`: int (default = `4`)
+        - `conv_layers`: int (default = `2`)
+        - `enc_kernel`: list (default = `[3, 3]`)
+        - `dec_kernel`: list (default = `[2, 2]`)
+- `augment`: bool (default = `False`): If `True`, images are augmented
+  according to the list specified in the `augmentations` field.
+- `augment_validation`: bool (default = `False`): If `True` images in the
+  validation set are also augmented according to the list specified in the
+  `augmentations` field.
+- `augmentations`: list (default = `[]`): A list of dictionaries containing
+  information about the augmentation functions to apply and its parameters.
+  Each dictionary must contain the following keys:
     - `name`: str: Augmentation function name.
     - `arguments`: dict: (Optional) A dictionary of key/value arguments.
   See [Supported Augmentation Functions](#supported-augmentation-functions)
   section for more information on supported augmentation and examples.
-- `batch_size`: int
-- `class_weight`: "balanced" | list:
+- `batch_size`: int (default = `2`)
+- `class_weight`: "balanced" | list | `null` (default = `null`):
     - "balanced": Calculates classes' weights from the class distribution in
     the training and validation datasets. It will use the
     `compute_class_weight` method from the `scikit-learn` library.
     ([See here](https://scikit-learn.org/stable/modules/generated/sklearn.utils.class_weight.compute_class_weight.html))
     - list: List of length equal to the number of classes. Each element is a
     weighting factor for each of the classes.
-- `early_stopping`: bool: Stop training when a monitored metric has stopped
-  improving. ([See EarlyStopping](https://keras.io/api/callbacks/early_stopping/))
-- `epochs`: int
-- `early_stopping`: bool: If ``True`` training will stop when the validation
-  dice coefficient stops improving after 5 epochs. Overrides `epochs`
-  parameter.
+- `early_stopping`: bool (default = `True`): Stop training when a monitored
+   metric has stopped improving.
+   ([See EarlyStopping](https://keras.io/api/callbacks/early_stopping/))
+- `epochs`: int (default = `1000`)
+- `early_stopping`: bool (default = `True`): If `True` training will stop when
+  the validation metric stops improving after `<patience>` epochs.
 - `experiment`: string: Name of the experiment under which the run will be
   logged in MLflow.
-- `loss`: string: Loss function to use during training. Currently supported
-functions are: `dice_loss_macro`, `dice_loss_micro`, `focal_loss`.
-- `metric`: string: Metric to monitor during training. Currently supported
-metrics are: `dice_coef_macro`, `dice_coef_micro`.
+- `loss`: string (default = `dice_loss_macro`): Loss function to use during
+  training. Currently supported functions are: `dice_loss_macro`,
+  `dice_loss_micro`, `focal_loss`.
+- `metric`: string (default = `dice_coef_macro`): Metric to monitor during
+  training. Currently supported metrics are: `dice_coef_macro`,
+  `dice_coef_micro`.
 - `tracking_uri`: string: Tracking URI for logging the run. The URI can either
   be a HTTP/HTTPS URI for a MLflow remote server, a database connection string,
   or a local path to log data to a directory. The URI defaults to `mlruns`.
 - `username`: string: MLflow server username.
 - `password`: string: MLflow server password.
-- `patience`: Number of epochs with no improvement after which training will be
-  stopped. (Only applicable when `early_stopping = True`)
+- `patience`: int (default = `50`) Number of epochs with no improvement after
+  which training will be stopped. (Only applicable when
+  `early_stopping = True`)
 
 ## Supported Augmentation Functions
 The augmentation types supported are:
