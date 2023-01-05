@@ -13,12 +13,13 @@ from oct_image_segmentation_models.training.training_parameters import (
 
 DEFAULT_AUGMENTATION_MODE = "none"
 DEFAULT_AUGMENTATIONS = []
+DEFAULT_AUGMENT_VALIDATION = False
 DEFAULT_BATCH_SIZE = 2
 DEFAULT_EARLY_STOPPING = True
 DEFAULT_EPOCHS = 1000
-DEFAULT_LOSS = "dice_loss"
+DEFAULT_LOSS = "dice_loss_macro"
 DEFAULT_LOSS_FN_KWARGS = {}
-DEFAULT_METRIC = "dice_coef"
+DEFAULT_METRIC = "dice_coef_macro"
 DEFAULT_MODEL_ARCH = None
 DEFAULT_MODEL_HYPERPARAMETERS = {}
 DEFAULT_PATIENCE = 50
@@ -40,6 +41,7 @@ def train(args):
     batch_size = DEFAULT_BATCH_SIZE
     augmentations = DEFAULT_AUGMENTATIONS
     aug_mode = DEFAULT_AUGMENTATION_MODE
+    augment_validation = DEFAULT_AUGMENT_VALIDATION
     early_stopping = DEFAULT_EARLY_STOPPING
     mlflow_experiment_name = DEFAULT_MLFLOW_EXPERIMENT_NAME
     mlflow_tracking_uri = DEFAULT_MLFLOW_TRACKING_URI
@@ -78,6 +80,10 @@ def train(args):
                 aug_mode = "all"
                 augmentations = config_data.get("augmentations")
 
+            augment_validation = config_data.get(
+                "augment_validation",
+                DEFAULT_AUGMENT_VALIDATION
+            )
             mlflow_experiment_name = config_data.get(
                 "experiment", DEFAULT_MLFLOW_EXPERIMENT_NAME
             )
@@ -108,6 +114,7 @@ def train(args):
     log.info(f"Training Parameter: Class Weight: {class_weight}")
     log.info(f"Training Parameter: Augmentation Mode: {aug_mode}")
     log.info(f"Training Parameter: Augmentations: {augmentations}")
+    log.info(f"Training Parameter: Augment Validation: {augment_validation}")
     log.info(f"Training Parameter: Patience: {patience}")
     log.info(
         f"Training Parameter: Restore Best Weights: {restore_best_weights}"
@@ -134,7 +141,7 @@ def train(args):
             augmentations=augmentations,
             aug_mode=aug_mode,
             aug_probs=(0.5, 0.5),
-            aug_val=False,
+            aug_val=augment_validation,
             aug_fly=True,
             model_save_best=True,
             class_weight=class_weight,
