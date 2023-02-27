@@ -1,0 +1,32 @@
+Bootstrap: docker
+From: tensorflow/tensorflow:2.9.0-gpu
+
+%files
+  *.whl /oct-segmenter-dist/
+
+%post
+  # Next 3 lines are needed due to https://github.com/NVIDIA/nvidia-docker/issues/1632
+  apt-key del 7fa2af80 && \
+  apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub && \
+  apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64/7fa2af80.pub && \
+  apt-get update
+
+  apt-get install -y git vim
+
+  # Install Deepmind's surface-distance package
+  git clone https://github.com/deepmind/surface-distance.git
+  pip install surface-distance/
+
+  python -m pip install --upgrade pip
+  pip install /oct-segmenter-dist/*.whl
+
+%runscript
+  exec /usr/local/bin/oct-segmenter "$@"
+
+%environment
+  # We set HOME tp '/tmp' to be able to write the oct-segmenter config file
+  export HOME="/tmp"
+
+%labels
+  "org.opencontainers.image.authors": "Bruno Alvisio <bruno@bioteam.net>"
+  "org.opencontainers.image.source": "https://github.com/NIH-NEI/oct-segmenter"

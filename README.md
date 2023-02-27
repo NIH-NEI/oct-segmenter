@@ -409,6 +409,7 @@ The augmentation types supported are:
     "variance": 0.01
   }
 }
+```
 
 ## Post-processing (Currently not supported, to be implemented)
 The script `merge_images.py` merges the original image withe the segmentation
@@ -430,6 +431,75 @@ python merge_image.py \
   ../../ML-Image-Segmentation/results/2021-09-21_21_26_25_U-net_mice_oct/no\ aug_testing_dataset.hdf5/image_6/seg_plot.png \
   ../../ML-Image-Segmentation/results/2021-09-21_21_26_25_U-net_mice_oct/no\ aug_testing_dataset.hdf5/image_7/seg_plot.png mice4.png
 ```
+
+# Biowulf
+It is possible to easily use the `oct-segmenter` in Biowulf by downloading
+the Singularity image published in the GitHub repo. The following instructions
+show how to use the `oct-segmenter` in Biowulf. The steps assume some
+familiarity with the Linux console.
+
+## Environment Setup
+
+### Setting up Singularity Directories
+Singularity uses the directory `$HOME/.singularity/cache` to store downloaded
+or generated SIF container images by defaul. Since this directory might grow
+in size and the space in `$HOME` is limited, it is first recommended to change
+it to the `/data` partition. The steps are:
+1. Add the following line to the end of the `$HOME/.bash_profile` file where
+`<user>` should be replaced by the Biowulf username:
+
+```
+export SINGULARITY_CACHEDIR=/data/<user>/.singularity/cache
+```
+
+For example:
+```
+export SINGULARITY_CACHEDIR=/data/alvisiob2/.singularity/cache
+```
+
+2. For the change to take effect either logout and login again or execute:
+```
+$source .bash_profile
+```
+
+Also it is a good idea to create a dedicated directory to store the singularity
+images in the `/data` paratition:
+
+```
+mkdir /data/<user>/singularity-images
+```
+
+### Creating a GitHub Personal Access Token (PAT)
+A GitHub PAT is required to download the singularity image into Biowulf. The
+steps required to create it are:
+1. Go to your GitHub account and click on the your profile icon on top right
+of the screen. Once the dropdown menu appears go to "Settings":
+
+![readme-images/github_pat_1.png](readme-images/github_pat_1.png)
+
+
+### Starting a Interactive Session
+Start an interactive session in a compute node in Biowulf. An example command
+that requests a node with one NVIDIA K80 GPU:
+
+```
+sinteractive --tunnel -gres=gpu:k80:1 --cpus-per-task=8 --mem=32g --time=24:00:00
+```
+
+### Load Singularity and Download the Singularity Image
+```
+module load singularity
+singularity remote login -u <github_username> oras://ghcr.io
+```
+
+You will be prompted for the GitHub PAT created in the previous section.
+
+Then the oct-segmenter singularity image can be downloaded as:
+```
+singularity pull --dir /data/<user>/singularity-images oras://ghcr.io/nih-nei/oct-segmenter-singularity:latest
+```
+
+Detailed information on interactive jobs can be in the [Biowulf User Guide](https://hpc.nih.gov/docs/userguide.html).
 
 
 # Other Information
