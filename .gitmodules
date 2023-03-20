@@ -1,3 +1,4 @@
 [submodule "oct-image-segmentation-models"]
 	path = oct-image-segmentation-models-mod
 	url = git@github.com:NIH-NEI/oct-image-segmentation-models.git
+	ignore = untracked
