@@ -8,6 +8,7 @@ import math
 import numpy as np
 from pathlib import Path
 from PIL import Image
+from typing import Dict, List, Tuple
 from typeguard import typechecked
 
 
@@ -29,7 +30,7 @@ def order_label_lines_from_left_to_right(shapes):
 
 
 @typechecked
-def order_layers_from_top_to_bottom(shapes: list[dict]) -> list[str]:
+def order_layers_from_top_to_bottom(shapes: List[Dict]) -> List[str]:
     layers_height = {}
     for shape in shapes:
         layers_height[shape["label"]] = shape["points"][0][1]
@@ -38,7 +39,7 @@ def order_layers_from_top_to_bottom(shapes: list[dict]) -> list[str]:
     return bottom_to_top_layers
 
 
-def get_vertical_margins(shapes) -> tuple[int, int]:
+def get_vertical_margins(shapes) -> Tuple[int, int]:
     left_margin = float("-inf")
     for shape in shapes:
         left_margin = left_margin if left_margin > shape["points"][0][0] else shape["points"][0][0]
@@ -147,9 +148,9 @@ def adjust_and_shift_layer(shape, shift, img_width):
 @typechecked
 def create_labelme_file(
     img: Image,
-    shapes: list[dict],
+    shapes: List[Dict],
     shift: int,
-    layer_names: list[str],
+    layer_names: List[str],
     original_file_path: str,
     out_file_name: Path,
     save_file: bool,
@@ -208,7 +209,7 @@ def create_labelme_file(
 def generate_image_label_labelme(
     img_path: Path,
     output_dir: Path,
-    layer_names: list[str],
+    layer_names: List[str],
     save_file: bool=True,
 ):
     if save_file and not os.path.isdir(output_dir):

@@ -6,6 +6,7 @@ import h5py
 import logging as log
 import math
 from pathlib import Path
+from typing import List, Optional
 from typeguard import typechecked
 
 from oct_segmenter.preprocessing.image_labeling_labelme import (
@@ -190,7 +191,7 @@ def process_directory_mask(
 def process_directory_labelme(
     input_dir: Path,
     output_dir: Path,
-    layer_names: list[str],
+    layer_names: List[str],
     save_file: bool = False,
 ):
     img_file_names = []
@@ -300,7 +301,7 @@ def generate_generic_dataset(
     file_name: Path,
     input_format: str,
     rgb_format: bool,
-    layer_names: list[str] | None,
+    layer_names: Optional[List[str]],
     backing_store: bool = True,
 ) -> h5py.File:
     if not os.path.isdir(file_name.parent):

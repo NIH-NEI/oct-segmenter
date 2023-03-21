@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import h5py
 from pathlib import Path
+from typing import List, Optional
 from typeguard import typechecked
 
 from oct_segmenter.preprocessing import generic_dataset as generator
@@ -14,7 +15,7 @@ def generate_training_dataset(
     output_file: Path,
     input_format: str,
     rgb_format: bool,
-    layer_names: list[str] | None,
+    layer_names: Optional[List[str]],
 ) -> h5py.File:
     training_dataset = generator.generate_generic_dataset(
         train_input_dir,
