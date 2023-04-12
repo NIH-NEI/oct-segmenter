@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging as log
 from pathlib import Path
+from typing import List
 
 from oct_segmenter import (
     VISUAL_FUNCTION_CORE_LAYER_NAMES,
@@ -27,7 +28,7 @@ def format_flags_to_string(args) -> str:
         exit(1)
 
 
-def get_layer_list_from_layer_format_flag(format_flag: str) -> list[str]:
+def get_layer_list_from_layer_format_flag(format_flag: str) -> List[str]:
     if format_flag == "visual-function-core":
         return VISUAL_FUNCTION_CORE_LAYER_NAMES
     elif format_flag == "wayne-state":

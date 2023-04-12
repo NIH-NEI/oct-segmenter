@@ -4,6 +4,7 @@ import logging as log
 import numpy as np
 from pathlib import Path
 from typeguard import typechecked
+from typing import Dict, Optional
 
 from oct_segmenter import (
     VISUAL_FUNCTION_CORE_LAYER_NAMES,
@@ -17,15 +18,15 @@ def create_labelme_file_from_boundaries(
     img_arr: np.ndarray,
     image_name: Path,
     boundaries: np.ndarray,
-    spacing: int=20,
-) -> dict | None:
+    spacing: int = 20,
+) -> Optional[Dict]:
 
     image_width = img_arr.shape[1]
     boundaries_width = boundaries.shape[1]
     if image_width != boundaries_width:
         log.warn(
             f"Image width: {image_width} is not equal to boundaries width: ",
-            f"{boundaries_width}. Skipping..."
+            f"{boundaries_width}. Skipping...",
         )
         return None
 

@@ -23,6 +23,7 @@ from oct_segmenter.postprocessing.postprocessing import (
 )
 
 DEFAULT_GRAPH_SEARCH = False
+DEFAULT_ANNOTATED_LABELME_FILE = False
 
 
 def predict(args):
@@ -113,10 +114,13 @@ def predict(args):
         log.info("No images were processed successfully. Exiting...")
         exit(1)
 
-    graph_search = DEFAULT_GRAPH_SEARCH
     with open(args.config, "r") as f:
         config_data = json.load(f)
         graph_search = config_data.get("graph_search", DEFAULT_GRAPH_SEARCH)
+        annotated_labelme_file = config_data.get(
+            "annotated_labelme_file",
+            DEFAULT_ANNOTATED_LABELME_FILE,
+        )
 
     log.info(f"Prediction Parameter: Graph Search: {graph_search}")
 
@@ -156,7 +160,7 @@ def predict(args):
 
     prediction_outputs = prediction.predict(predict_params)
 
-    if graph_search:
+    if annotated_labelme_file:
         for prediction_output in prediction_outputs:
             image_name = prediction_output.image_name
             labelme_data = create_labelme_file_from_boundaries(

@@ -5,6 +5,7 @@ import numpy as np
 from pathlib import Path
 import PIL.Image
 from typeguard import typechecked
+from typing import Tuple
 
 from oct_segmenter.common import utils
 from oct_segmenter.preprocessing import (
@@ -19,7 +20,7 @@ from oct_segmenter.preprocessing import (
 @typechecked
 def generate_side_region_input_image(
     image_path: Path, flip_top_bottom: bool
-) -> tuple[np.ndarray]:
+) -> Tuple[np.ndarray]:
     """Generates the numpy matrices that can be fed to the Unet model
     for prediction. It crops the input image (left and right sections),
     performing dimension expansion and transpose.
