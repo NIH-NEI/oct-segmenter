@@ -35,12 +35,10 @@ def generate_training_dataset(
 
     training_dataset["train_images"] = training_dataset["xhat"]
     training_dataset["train_labels"] = training_dataset["yhat"]
-    training_dataset["train_segs"] = training_dataset["segs"]
     training_dataset["train_images_source"] = training_dataset["image_source"]
 
     del training_dataset["xhat"]
     del training_dataset["yhat"]
-    del training_dataset["segs"]
     del training_dataset["image_source"]
 
     training_dataset.create_dataset(
@@ -48,9 +46,6 @@ def generate_training_dataset(
     )
     training_dataset.create_dataset(
         "val_labels", data=validation_dataset["yhat"]
-    )
-    training_dataset.create_dataset(
-        "val_segs", data=validation_dataset["segs"]
     )
     training_dataset.create_dataset(
         "val_images_source", data=validation_dataset["image_source"]

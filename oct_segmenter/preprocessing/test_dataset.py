@@ -26,12 +26,10 @@ def generate_test_dataset(
 
     test_hdf5_file["test_images"] = test_hdf5_file["xhat"]
     test_hdf5_file["test_labels"] = test_hdf5_file["yhat"]
-    test_hdf5_file["test_segs"] = test_hdf5_file["segs"]
     test_hdf5_file["test_images_source"] = test_hdf5_file["image_source"]
 
     del test_hdf5_file["xhat"]
     del test_hdf5_file["yhat"]
-    del test_hdf5_file["segs"]
     del test_hdf5_file["image_source"]
 
     return test_hdf5_file

@@ -226,7 +226,6 @@ def process_directory_labelme(
         log.info("No images were processed successfully. Exiting...")
         exit(1)
 
-    # Images a transposed so dim 0 is image width
     if not all(x.shape[0] == img_file_data[0].shape[0] for x in img_file_data):
         log.error(
             "Images contain different widths. All images should have same "
@@ -313,7 +312,7 @@ def generate_generic_dataset(
         (
             img_file_names,
             img_file_data,
-            segments_data,
+            _,
             labeled_file_data,
         ) = process_directory_wayne(
             input_dir, file_name.parent, save_file=False
@@ -322,7 +321,7 @@ def generate_generic_dataset(
         (
             img_file_names,
             img_file_data,
-            segments_data,
+            _,
             labeled_file_data,
         ) = process_directory_labelme(
             input_dir, file_name.parent, layer_names, save_file=False
@@ -331,7 +330,7 @@ def generate_generic_dataset(
         (
             img_file_names,
             img_file_data,
-            segments_data,
+            _,
             labeled_file_data,
         ) = process_directory_mask(
             input_dir, file_name.parent, rgb_format, save_file=False
@@ -340,7 +339,7 @@ def generate_generic_dataset(
         (
             img_file_names,
             img_file_data,
-            segments_data,
+            _,
             labeled_file_data,
         ) = process_directory(input_dir, file_name.parent, save_file=False)
     else:
@@ -349,7 +348,6 @@ def generate_generic_dataset(
 
     hf.create_dataset("xhat", data=img_file_data)
     hf.create_dataset("yhat", data=labeled_file_data)
-    hf.create_dataset("segs", data=segments_data)
     hf.create_dataset("image_source", data=img_file_names)
 
     return hf
