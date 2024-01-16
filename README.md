@@ -20,12 +20,23 @@ To use `oct-segmenter` you should have:
 or
 
 2. Run the `build.sh` scripts located in:
-  - `mouse-image-segmentation` directory: this will generate the
+  - `oct-segmenter` directory: this will generate the
   `oct-segmenter` wheel file under the `dist` directory.
   - `oct-image-segmentation-models-mod` directory: this will generate the
   `oct_image_segmentation_models` wheel file in the
   `oct-image-segmentation-models-mod/dist` directory.
 
+Note: if you receive the following error message:
+
+```
+error: invalid command 'bdist_wheel'    
+```
+
+You need to install the wheel library before running the build script.
+
+```
+pip install wheel
+```
 
 ### Windows
 
