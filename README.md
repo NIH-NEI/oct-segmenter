@@ -54,7 +54,7 @@ This will create two wheel files:
 
 ### Installing The Oct-Segmenter
 
-Install the
+From the root of the project directory, install the
 [Surface-Distance-Based-Measures](https://github.com/deepmind/surface-distance)
 package. The `oct-segmenter` uses a library which at the time of this writing
 is not published as Python package. To install it:

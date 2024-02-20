@@ -11,3 +11,4 @@ construct_hdf5/*
 *.pyc
 *.tiff
 .DS_Store
+/surface-distance
