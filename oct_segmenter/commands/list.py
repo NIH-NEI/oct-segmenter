@@ -1,7 +1,9 @@
-from oct_segmenter import CONFIG, CONFIG_FILE_PATH, MODELS_INDEX_MAP, MODELS_TABLE_ASCII
+from oct_segmenter import CONFIG, CONFIG_FILE_PATH, MODELS_INDEX_MAP, MODELS_TABLE_ASCII, MODELS_DIR
 
 def list_models():
     models_len = len(MODELS_INDEX_MAP)
+    print(f"models from the directory: ")
+    print(MODELS_DIR)
     print(f"There are {models_len} choices for the models:\n")
     print(MODELS_TABLE_ASCII)
     print()
