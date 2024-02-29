@@ -431,24 +431,23 @@ or generated SIF container images by default. Since this directory might grow
 in size and the space in `$HOME` is limited, it is first recommended to change
 it to the `/data` partition. The steps are:
 
-1. Add the following line to the end of the `$HOME/.bash_profile` file where
-   `<user>` should be replaced by the Biowulf username:
+1. Run the following command to set the `SINGULARITY_CACHEDIR`:
 
    ```
-   export SINGULARITY_CACHEDIR=/data/<user>/.singularity/cache
+   echo "export SINGULARITY_CACHEDIR=/data/$USER/.singularity/cache" >> .bash_profile
    ```
 
 2. For the change to take effect either logout and login again or execute:
 
    ```
-   $source .bash_profile
+   source .bash_profile
    ```
 
    Also it is a good idea to create a dedicated directory to store the singularity
    images in the `/data` directory:
 
    ```
-   mkdir /data/<user>/singularity-images
+   mkdir /data/$USER/singularity-images
    ```
 
 ### Creating a GitHub Personal Access Token (PAT)
@@ -468,7 +467,7 @@ Start an interactive session in a compute node in Biowulf. An example command
 that requests a node with one NVIDIA K80 GPU:
 
 ```
-sinteractive --tunnel -gres=gpu:k80:1 --cpus-per-task=8 --mem=32g --time=24:00:00
+sinteractive --tunnel --gres=gpu:k80:1 --cpus-per-task=8 --mem=32g --time=24:00:00
 ```
 
 ### Load Singularity and Download the Singularity Image
@@ -483,7 +482,7 @@ You will be prompted for the GitHub PAT created in the previous section.
 Then the oct-segmenter singularity image can be downloaded as:
 
 ```
-singularity pull --dir /data/<user>/singularity-images oras://ghcr.io/nih-nei/oct-segmenter-singularity:latest
+singularity pull --dir /data/$USER/singularity-images oras://ghcr.io/nih-nei/oct-segmenter-singularity:latest
 ```
 
 Detailed information on interactive jobs can be in the [Biowulf User Guide](https://hpc.nih.gov/docs/userguide.html).
