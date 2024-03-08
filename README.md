@@ -474,7 +474,7 @@ sinteractive --tunnel --gres=gpu:k80:1 --cpus-per-task=8 --mem=32g --time=24:00:
 
 ```
 module load singularity
-singularity remote login -u <github_username> oras://ghcr.io
+singularity registry login --username <github_username> oras://ghcr.io
 ```
 
 You will be prompted for the GitHub PAT created in the previous section.
@@ -482,7 +482,7 @@ You will be prompted for the GitHub PAT created in the previous section.
 Then the oct-segmenter singularity image can be downloaded as:
 
 ```
-singularity pull --dir /data/$USER/singularity-images oras://ghcr.io/nih-nei/oct-segmenter-singularity:latest
+singularity pull --dir /data/$USER/singularity-images oras://ghcr.io/nih-nei/oct-segmenter-singularity:master
 ```
 
 Detailed information on interactive jobs can be in the [Biowulf User Guide](https://hpc.nih.gov/docs/userguide.html).
