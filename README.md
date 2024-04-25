@@ -80,6 +80,12 @@ pip install \
     ./dist/oct_segmenter-0.8.0-py2.py3-none-any.whl
 ```
 
+## Building Docker Locally
+
+```
+docker build -f docker/Dockerfile.local -t oct-segmenter .
+```
+
 ## Usage
 
 ### Partitioning Input Images into Datasets
