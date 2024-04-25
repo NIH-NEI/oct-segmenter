@@ -12,3 +12,4 @@ construct_hdf5/*
 *.tiff
 .DS_Store
 /surface-distance
+venv*
