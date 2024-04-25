@@ -60,6 +60,7 @@ package. The `oct-segmenter` uses a library which at the time of this writing
 is not published as Python package. To install it:
 
 ```
+cd ..
 git clone https://github.com/deepmind/surface-distance.git
 pip install surface-distance/
 ```
@@ -129,26 +130,6 @@ corresponding CSVs to be identical.
 #### Example
 
 `oct-segmenter generate test -i <path/to/test/dir> -o <directory/to/place/the/test_hdf5_file>`
-
-### Listing and selecting available models
-
-`oct-segmenter` is packaged with trained models. Currently the included models are:
-- `visual-function-core`: Model trained with images provided by the NIH-NEI
-  Visual Function Core group.
-- `wayne-state-university`: Model trained with images provided by Wayne State
-  University.
-
-To list the available models:
-
-```
-oct-segmenter list
-```
-
-The command will display the list of available models and the default model to
-use in the `predict` and `evaluate` subcommands.
-
-The command will prompt the user to type a number to select a new default
-model. If no change is desired, press `Enter`.
 
 ### Prediction
 
