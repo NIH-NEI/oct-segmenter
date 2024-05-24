@@ -16,22 +16,18 @@ it can also accommodate other use cases as well.
 If this is your first time checking out this repository, you'll want to
 checkout the submodules:
 
-```
+```bash
 git submodule update --init --recursive
 ```
 
-You may also find it easier to install the oct-segmenter if you use Anaconda
-instead of a Python virtual environment.
-
 - Install [Anaconda](https://www.anaconda.com/download).
 
-- Create a new Conda environment:
+- Create a new Conda environment and activate your environment:
 
-`conda create --name oct-segmenter-env python=3.10`
-
-- Activate the environment:
-
-`conda activate oct-segmenter-env`
+```bash
+conda create --name oct-segmenter-env python=3.10
+conda activate oct-segmenter-env
+```
 
 ## Installation
 
@@ -40,7 +36,7 @@ instead of a Python virtual environment.
 From the root of the project directory, run the following commands to create
 the Python wheels:
 
-```
+```bash
 pip install wheel
 ./build.sh 
 cd oct-image-segmentation-models-mod
@@ -59,7 +55,7 @@ From the root of the project directory, install the
 package. The `oct-segmenter` uses a library which at the time of this writing
 is not published as Python package. To install it:
 
-```
+```bash
 cd ..
 git clone https://github.com/deepmind/surface-distance.git
 pip install surface-distance/
@@ -68,7 +64,7 @@ pip install surface-distance/
 From the root of the project directory, run the following commands to install
 the wheels:
 
-```
+```bash
 pip install \
     --trusted-host pypi.org \
     --trusted-host files.pythonhosted.org \
@@ -82,7 +78,7 @@ pip install \
 
 ## Building Docker Locally
 
-```
+```bash
 docker build -f docker/Dockerfile.local -t oct-segmenter .
 ```
 
@@ -105,6 +101,9 @@ corresponding CSVs to be identical.
 `oct-segmenter partition -i <path/to/input/images> -o
 <path/to/output/partition> --training 0.3 --validation 0.5 --test 0.2`
 
+> [!WARNING]
+> This does not prevent images from the same specimen from being used in two or
+> three sections, which can introduce bias into the model.
 
 ### Generating Training Dataset HDF5 File
 
@@ -276,10 +275,11 @@ following
 
 To run the MLflow server locally run: `mlflow ui`.
 
-*MacOS Note*: By default, MLflow runs in port 5000. However, in MacOS Monterey
-the `ControlCenter` process, which is a native macOS application, uses port
-5000. Thus, you can make the MLflow server listen in another port by
-running: `mlflow ui --port <port>`.
+> [!NOTE]
+> By default, MLflow runs in port 5000. However, in MacOS Monterey the
+> `ControlCenter` process, which is a native macOS application, uses port 5000.
+> Thus, you can make the MLflow server listen in another port by running:
+> `mlflow ui --port <port>`.
 
 ### Training Configurable Parameters
 The following is a list of the parameters that can be configured for training:
@@ -402,79 +402,6 @@ python merge_image.py \
   ../../ML-Image-Segmentation/results/2021-09-21_21_26_25_U-net_mice_oct/no\ aug_testing_dataset.hdf5/image_7/seg_plot.png mice4.png
 ```
 
-# Biowulf
-
-It is possible to easily use the `oct-segmenter` in Biowulf by downloading the
-Singularity image published in the GitHub repo. The following instructions show
-how to use the `oct-segmenter` in Biowulf. The steps assume some familiarity
-with the Linux console.
-
-## Environment Setup
-
-### Setting up Singularity Directories
-
-Singularity uses the directory `$HOME/.singularity/cache` to store downloaded
-or generated SIF container images by default. Since this directory might grow
-in size and the space in `$HOME` is limited, it is first recommended to change
-it to the `/data` partition. The steps are:
-
-1. Run the following command to set the `SINGULARITY_CACHEDIR`:
-
-   ```
-   echo "export SINGULARITY_CACHEDIR=/data/$USER/.singularity/cache" >> .bash_profile
-   ```
-
-2. For the change to take effect either logout and login again or execute:
-
-   ```
-   source .bash_profile
-   ```
-
-   Also it is a good idea to create a dedicated directory to store the singularity
-   images in the `/data` directory:
-
-   ```
-   mkdir /data/$USER/singularity-images
-   ```
-
-### Creating a GitHub Personal Access Token (PAT)
-
-A GitHub PAT is required to download the singularity image into Biowulf. The
-steps required to create it are:
-
-Go to your GitHub account and click on the your profile icon on top right of
-the screen. Once the dropdown menu appears go to "Settings":
-
-![readme-images/github_pat_1.png](readme-images/github_pat_1.png)
-
-
-### Starting a Interactive Session
-
-Start an interactive session in a compute node in Biowulf. An example command
-that requests a node with one NVIDIA K80 GPU:
-
-```
-sinteractive --tunnel --gres=gpu:k80:1 --cpus-per-task=8 --mem=32g --time=24:00:00
-```
-
-### Load Singularity and Download the Singularity Image
-
-```
-module load singularity
-singularity registry login --username <github_username> oras://ghcr.io
-```
-
-You will be prompted for the GitHub PAT created in the previous section.
-
-Then the oct-segmenter singularity image can be downloaded as:
-
-```
-singularity pull --dir /data/$USER/singularity-images oras://ghcr.io/nih-nei/oct-segmenter-singularity:master
-```
-
-Detailed information on interactive jobs can be in the [Biowulf User Guide](https://hpc.nih.gov/docs/userguide.html).
-
-
 # Other Information
 
 ## Using the OCT-Segmenter Without Installing Wheels
@@ -519,15 +446,6 @@ Usage:
 
 Note: The script assumes that given the path to an input image, a corresponding CSV files with the labels for each layer will
 be present in the ◊same directory.
-
-
-## Building Python Wheel Package
-
-To build the `oct-segmenter` wheel package, from the root directory do
-
-```
-./build.sh
-```
 
 ## Additional Scripts
 
