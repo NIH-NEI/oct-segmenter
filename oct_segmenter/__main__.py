@@ -13,7 +13,6 @@ from oct_segmenter.commands.generate import (
     generate_test_dataset,
 )
 from oct_segmenter.commands.label import label
-from oct_segmenter.commands.list import list_models
 from oct_segmenter.commands.partition import partition
 from oct_segmenter.commands.predict import predict
 from oct_segmenter.commands.train import train
@@ -355,9 +354,6 @@ def main():
         help="Path to JSON config file",
     )
 
-    # List Models
-    cmd_subparser.add_parser("list")
-
     # Generate labelme files from raw image and boundaries CSV file
     label_subparser = cmd_subparser.add_parser("label")
     label_input_group = label_subparser.add_mutually_exclusive_group(
@@ -407,8 +403,6 @@ def main():
         evaluate(args)
     elif args.command == "label":
         label(args)
-    elif args.command == "list":
-        list_models()
     elif args.command == "train":
         train(args)
 
