@@ -30,9 +30,7 @@ def main():
     cmd_subparser = parser.add_subparsers(dest="command", required=True)
     generate = cmd_subparser.add_parser("generate")
 
-    generate_subparser = generate.add_subparsers(
-        dest="generate", required=True
-    )
+    generate_subparser = generate.add_subparsers(dest="generate", required=True)
 
     # Generate test dataset
     gen_test_parser = generate_subparser.add_parser("test")
@@ -63,8 +61,7 @@ def main():
         "--wayne-state-format",
         default=False,
         action="store_true",
-        help="Generate dataset using the Wayne state format. (.tiff + 6 "
-        "layer .csv)",
+        help="Generate dataset using the Wayne state format. (.tiff + 6 layer .csv)",
     )
 
     gen_test_csv_format_group.add_argument(
@@ -264,9 +261,7 @@ def main():
 
     # Predict
     predict_subparser = cmd_subparser.add_parser("predict")
-    predict_input_group = predict_subparser.add_mutually_exclusive_group(
-        required=True
-    )
+    predict_input_group = predict_subparser.add_mutually_exclusive_group(required=True)
     predict_input_group.add_argument(
         "--input", "-i", help="input file image to segment"
     )
@@ -276,9 +271,7 @@ def main():
         help="input directory containing .tiff images to be segmented.",
     )
 
-    predict_model_group = predict_subparser.add_mutually_exclusive_group(
-        required=False
-    )
+    predict_model_group = predict_subparser.add_mutually_exclusive_group(required=False)
 
     predict_model_group.add_argument(
         "--model-path",
@@ -356,12 +349,8 @@ def main():
 
     # Generate labelme files from raw image and boundaries CSV file
     label_subparser = cmd_subparser.add_parser("label")
-    label_input_group = label_subparser.add_mutually_exclusive_group(
-        required=True
-    )
-    label_input_group.add_argument(
-        "--input", "-i", help="input file image to label"
-    )
+    label_input_group = label_subparser.add_mutually_exclusive_group(required=True)
+    label_input_group.add_argument("--input", "-i", help="input file image to label")
     label_input_group.add_argument(
         "--input-dir",
         "-d",

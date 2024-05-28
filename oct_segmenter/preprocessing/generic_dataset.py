@@ -47,9 +47,7 @@ def process_directory(input_dir, output_dir, save_file=False):
                     img_array_right,
                     seg_map_right,
                     segs_right,
-                ) = generate_image_label_visual_core(
-                    image_file, output_dir, save_file
-                )
+                ) = generate_image_label_visual_core(image_file, output_dir, save_file)
                 if img_name_left:
                     img_file_names.extend(
                         [
@@ -84,9 +82,7 @@ def process_directory(input_dir, output_dir, save_file=False):
 
 
 @typechecked
-def process_directory_wayne(
-    input_dir: Path, output_dir: Path, save_file: bool = False
-):
+def process_directory_wayne(input_dir: Path, output_dir: Path, save_file: bool = False):
     img_file_names = []
     img_file_data = []  # Original image (xhat)
     labeled_file_data = []  # Segmenation map (yhat)
@@ -107,9 +103,7 @@ def process_directory_wayne(
                     img_array,
                     seg_map,
                     segs,
-                ) = generate_image_label_wayne(
-                    image_file, output_dir, save_file
-                )
+                ) = generate_image_label_wayne(image_file, output_dir, save_file)
                 if img_name:
                     img_file_names.extend([img_name])
                     img_file_data.extend([img_array])
@@ -204,12 +198,7 @@ def process_directory_labelme(
             if file.endswith(".json") and not file.startswith("."):
                 image_file = Path(os.path.join(subdir, file))
                 print(f"Processing file: {image_file}")
-                (
-                    img_name,
-                    img_array,
-                    seg_map,
-                    segs,
-                ) = generate_image_label_labelme(
+                (img_name, img_array, seg_map, segs,) = generate_image_label_labelme(
                     image_file,
                     output_dir,
                     layer_names,
@@ -257,9 +246,7 @@ def crop_images_to_same_size(img_file_data, segments_data, labeled_file_data):
 
     for img in img_file_data:
         min_rows = min_rows if min_rows < img.shape[0] else img.shape[0]
-        min_columns = (
-            min_columns if min_columns < img.shape[1] else img.shape[1]
-        )
+        min_columns = min_columns if min_columns < img.shape[1] else img.shape[1]
 
     """
     Recall that the function "generate_image_label()" transposes the original
@@ -314,9 +301,7 @@ def generate_generic_dataset(
             img_file_data,
             _,
             labeled_file_data,
-        ) = process_directory_wayne(
-            input_dir, file_name.parent, save_file=False
-        )
+        ) = process_directory_wayne(input_dir, file_name.parent, save_file=False)
     elif input_format == "labelme":
         (
             img_file_names,
@@ -327,12 +312,7 @@ def generate_generic_dataset(
             input_dir, file_name.parent, layer_names, save_file=False
         )
     elif input_format == "mask":
-        (
-            img_file_names,
-            img_file_data,
-            _,
-            labeled_file_data,
-        ) = process_directory_mask(
+        (img_file_names, img_file_data, _, labeled_file_data,) = process_directory_mask(
             input_dir, file_name.parent, rgb_format, save_file=False
         )
     elif input_format == "visual":

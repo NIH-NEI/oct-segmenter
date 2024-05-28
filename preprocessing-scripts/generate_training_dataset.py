@@ -3,6 +3,7 @@ import sys
 import h5py
 
 from pathlib import Path
+
 file = Path(__file__).resolve()
 package_root_directory = file.parents[1]
 sys.path.append(str(package_root_directory))
@@ -14,7 +15,9 @@ python3 preprocessing-scripts/generate_training_dataset.py wayne-images/training
 """
 if __name__ == "__main__":
     if len(sys.argv) != 4:
-        print("Usage: python3 generate_training_dataset.py <path/to/training/input/dir> <path/to/validation/input/dir> <output_file_name>")
+        print(
+            "Usage: python3 generate_training_dataset.py <path/to/training/input/dir> <path/to/validation/input/dir> <output_file_name>"
+        )
         exit(1)
 
     train_input_dir = Path(sys.argv[1])
@@ -22,10 +25,7 @@ if __name__ == "__main__":
     output_file = Path(sys.argv[3])
 
     training_dataset: h5py.File = generate_training_dataset(
-        train_input_dir,
-        validation_input_dir,
-        output_file,
-        input_format="wayne"
+        train_input_dir, validation_input_dir, output_file, input_format="wayne"
     )
 
     training_dataset.close()

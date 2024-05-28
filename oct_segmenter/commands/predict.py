@@ -171,8 +171,7 @@ def predict(args):
             )
 
             with open(
-                prediction_output.image_output_dir
-                / Path(image_name.stem + ".json"),
+                prediction_output.image_output_dir / Path(image_name.stem + ".json"),
                 "w",
             ) as file:
                 json.dump(labelme_data, file)

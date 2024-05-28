@@ -61,9 +61,7 @@ def create_labelme_file_from_boundaries(
             shape["points"].append([x, int(boundary[x])])
 
         if image_width % spacing != 0:  # Add right-most point
-            shape["points"].append(
-                [image_width - 1, int(boundary[image_width - 1])]
-            )
+            shape["points"].append([image_width - 1, int(boundary[image_width - 1])])
 
         shapes.append(shape)
 

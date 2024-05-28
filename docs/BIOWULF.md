@@ -75,6 +75,3 @@ singularity pull --dir /data/$USER/singularity-images oras://ghcr.io/nih-nei/oct
 ```
 
 Detailed information on interactive jobs can be in the [Biowulf User Guide](https://hpc.nih.gov/docs/userguide.html).
-
-
-

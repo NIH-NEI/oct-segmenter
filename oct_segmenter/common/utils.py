@@ -70,9 +70,9 @@ def pil_to_array(img_pil: PIL.Image) -> np.ndarray:
 def img_arr_to_b64(img_arr: np.array):
     img_pil = PIL.Image.fromarray(img_arr)
     f = io.BytesIO()
-    img_pil.save(f, format='PNG')
+    img_pil.save(f, format="PNG")
     img_bin = f.getvalue()
-    if hasattr(base64, 'encodebytes'):
+    if hasattr(base64, "encodebytes"):
         img_b64 = base64.encodebytes(img_bin)
     else:
         img_b64 = base64.encodestring(img_bin)
@@ -106,9 +106,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
     return cls, ins
 
 
-def shape_to_mask(
-    img_shape, points, shape_type=None, line_width=10, point_size=5
-):
+def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=5):
     mask = np.zeros(img_shape[:2], dtype=np.uint8)
     mask = PIL.Image.fromarray(mask)
     draw = PIL.ImageDraw.Draw(mask)
@@ -158,36 +156,40 @@ def lblsave(filename, lbl):
 
 
 def make_img_size_multiple(img, multiple=16) -> PIL.Image:
-    new_width = (int) (img.width // multiple) * multiple
-    left_margin = (int) ((img.width - new_width)/2)
-    right_margin = (int) (left_margin + new_width)
+    new_width = (int)(img.width // multiple) * multiple
+    left_margin = (int)((img.width - new_width) / 2)
+    right_margin = (int)(left_margin + new_width)
 
-    new_height = (int) (img.height // multiple) * multiple
-    top_margin = (int) ((img.height - new_height)/2)
-    bottom_margin = (int) (top_margin + new_height)
+    new_height = (int)(img.height // multiple) * multiple
+    top_margin = (int)((img.height - new_height) / 2)
+    bottom_margin = (int)(top_margin + new_height)
 
-    return img.crop((left_margin, top_margin, right_margin, bottom_margin)), left_margin, top_margin
+    return (
+        img.crop((left_margin, top_margin, right_margin, bottom_margin)),
+        left_margin,
+        top_margin,
+    )
 
 
 def make_height_multiple(img, multiple=16, cut_bottom=False) -> PIL.Image:
-        """
-        cut_bottom tells whether the cropping should be centered: removing half the pixels from top
-        and half from bottom. Or it should remove all the pixels from the bottom of the image
-        """
-        new_height = (int) (img.height // multiple) * multiple
-        top_margin = 0 if cut_bottom else (int) ((img.height - new_height)/2)
-        bottom_margin = (int) (top_margin + new_height)
+    """
+    cut_bottom tells whether the cropping should be centered: removing half the pixels from top
+    and half from bottom. Or it should remove all the pixels from the bottom of the image
+    """
+    new_height = (int)(img.height // multiple) * multiple
+    top_margin = 0 if cut_bottom else (int)((img.height - new_height) / 2)
+    bottom_margin = (int)(top_margin + new_height)
 
-        return img.crop((0, top_margin, img.width, bottom_margin))
+    return img.crop((0, top_margin, img.width, bottom_margin))
 
 
 def convert_to_grayscale(img: PIL.Image) -> PIL.Image:
     if img.mode == "RGBA" or img.mode == "RGB":
         img = img.convert("L")
     elif img.mode == "I":
-        img = img.point(lambda i : i*(1./256)).convert("L")
+        img = img.point(lambda i: i * (1.0 / 256)).convert("L")
     elif img.mode == "I;16":
-        img = img.point(lambda i : i*(1./256)).convert("L")
+        img = img.point(lambda i: i * (1.0 / 256)).convert("L")
     elif img.mode == "L":
         pass
     elif img.mode == "I;16B":

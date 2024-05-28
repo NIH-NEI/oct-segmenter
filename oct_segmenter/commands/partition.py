@@ -35,12 +35,14 @@ def partition(args):
     test_partition = args.test
     partition_sum = training_partition + validation_partition + test_partition
 
-    if(partition_sum != 1.0):
+    if partition_sum != 1.0:
         print(f"Parititons sum is {partition_sum}. They should add up to 1")
         exit(1)
 
-    logging.info(f"Paritioning images with the following proportions: training {training_partition}"
-        f", validation: {validation_partition}, testing: {test_partition}")
+    logging.info(
+        f"Paritioning images with the following proportions: training {training_partition}"
+        f", validation: {validation_partition}, testing: {test_partition}"
+    )
 
     input_dir = args.input_dir
     if not os.path.isdir(input_dir):
@@ -59,7 +61,9 @@ def partition(args):
     image_paths = []
     for subdir, dirs, files in os.walk(input_dir):
         for file in files:
-            if (file.endswith(extension) or file.endswith(extension.upper())) and not file.startswith("."):
+            if (
+                file.endswith(extension) or file.endswith(extension.upper())
+            ) and not file.startswith("."):
                 image_paths.append(Path(os.path.join(subdir, file)))
 
     logging.info(f"Found {len(image_paths)} images")
@@ -76,7 +80,7 @@ def partition(args):
     os.makedirs(training_path)
     os.makedirs(validation_path)
     os.makedirs(test_path)
-    
+
     permutation = np.random.permutation(len(image_paths))
 
     test_images = int(round(test_partition * len(image_paths)))

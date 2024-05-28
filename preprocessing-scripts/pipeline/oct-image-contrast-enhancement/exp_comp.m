@@ -20,7 +20,7 @@ function exp_comp(input_path, output_path)
     I = read(t);
     I = double(I);
     I = (I/255).^4;
-    I = (I.^2)./ (flipud(cumtrapz(flipud(I.^2)))); % L (Equation A8 - Appendix) 
+    I = (I.^2)./ (flipud(cumtrapz(flipud(I.^2)))); % L (Equation A8 - Appendix)
     I = nthroot(I, 4)*255;
     I = uint8(I);
     imwrite(I, output_path)

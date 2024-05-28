@@ -35,9 +35,7 @@ if __name__ == "__main__":
     for root, _, files in os.walk(input_dir):
         for filename in files:
             if filename.endswith(".csv") and not filename.startswith("."):
-                mask = np.loadtxt(
-                    Path(root) / Path(filename), delimiter=",", dtype=int
-                )
+                mask = np.loadtxt(Path(root) / Path(filename), delimiter=",", dtype=int)
                 image_class_fractions = np.vstack(
                     [image_class_fractions, calculate_classes_fraction(mask)]
                 )

@@ -2,6 +2,7 @@ import PIL.Image
 
 import sys
 
+
 def merge_images(raw_img_file, left_img_file, right_img_file, output_file):
     raw_img = PIL.Image.open(raw_img_file)
     left_img = PIL.Image.open(left_img_file)
@@ -10,7 +11,7 @@ def merge_images(raw_img_file, left_img_file, right_img_file, output_file):
     output_img = raw_img.copy()
 
     if output_img.mode == "I;16":
-        output_img = output_img.point(lambda i : i*(1./256)).convert("RGB")
+        output_img = output_img.point(lambda i: i * (1.0 / 256)).convert("RGB")
     print(output_img.size)
     print(left_img.size)
     print(right_img.size)
@@ -20,11 +21,12 @@ def merge_images(raw_img_file, left_img_file, right_img_file, output_file):
     output_img.save(output_file)
 
 
-
 if __name__ == "__main__":
 
     if len(sys.argv) != 5:
-        print("Usage: python3 merge_image.py <path/to/original/image> <path/to/left/segment/plot> <path/to/right/segment/plot> <path/to/output_file>")
+        print(
+            "Usage: python3 merge_image.py <path/to/original/image> <path/to/left/segment/plot> <path/to/right/segment/plot> <path/to/output_file>"
+        )
         exit(1)
 
     raw_img_file = sys.argv[1]

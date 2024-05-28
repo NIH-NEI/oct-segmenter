@@ -2,7 +2,7 @@
 
 The `oct-segmenter` is a command line interface (CLI) tool that allows
 researchers to automatically segment OCT images. The `oct-segmenter` also
-provides the following abilities: 
+provides the following abilities:
 
 - Creating training and test datasets
 - Training machine learning models
@@ -38,7 +38,7 @@ the Python wheels:
 
 ```bash
 pip install wheel
-./build.sh 
+./build.sh
 cd oct-image-segmentation-models-mod
 ./build.sh
 ```

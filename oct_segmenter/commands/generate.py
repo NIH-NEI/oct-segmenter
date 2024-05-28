@@ -46,9 +46,7 @@ def generate_training_dataset(args):
 
     validation_input_dir = Path(args.validation_input_dir)
     if not validation_input_dir.is_dir():
-        print(
-            "oct-segmenter: Validation input directory not found. Exiting..."
-        )
+        print("oct-segmenter: Validation input directory not found. Exiting...")
         exit(1)
 
     output_dir = Path(args.output_dir)

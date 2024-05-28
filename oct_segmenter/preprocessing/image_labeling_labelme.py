@@ -16,7 +16,10 @@ MIN_WIDTH_THRESHOLD = 780
 
 from oct_segmenter.common import utils
 from oct_segmenter.preprocessing import UNET_IMAGE_DIMENSION_MULTIPLICITY
-from oct_segmenter.preprocessing.image_labeling_common import create_label_image, generate_boundary
+from oct_segmenter.preprocessing.image_labeling_common import (
+    create_label_image,
+    generate_boundary,
+)
 
 
 def order_label_lines_from_left_to_right(shapes):
@@ -35,18 +38,28 @@ def order_layers_from_top_to_bottom(shapes: List[Dict]) -> List[str]:
     for shape in shapes:
         layers_height[shape["label"]] = shape["points"][0][1]
 
-    bottom_to_top_layers = [key for key, _ in sorted(layers_height.items(), key=lambda item: item[1])]
+    bottom_to_top_layers = [
+        key for key, _ in sorted(layers_height.items(), key=lambda item: item[1])
+    ]
     return bottom_to_top_layers
 
 
 def get_vertical_margins(shapes) -> Tuple[int, int]:
     left_margin = float("-inf")
     for shape in shapes:
-        left_margin = left_margin if left_margin > shape["points"][0][0] else shape["points"][0][0]
+        left_margin = (
+            left_margin
+            if left_margin > shape["points"][0][0]
+            else shape["points"][0][0]
+        )
 
     right_margin = float("inf")
     for shape in shapes:
-        right_margin = right_margin if right_margin < shape["points"][-1][0] else shape["points"][-1][0]
+        right_margin = (
+            right_margin
+            if right_margin < shape["points"][-1][0]
+            else shape["points"][-1][0]
+        )
 
     # The margins here can be floats since they can come from using shapes
     left_margin = math.ceil(left_margin)
@@ -61,7 +74,9 @@ def get_vertical_margins(shapes) -> Tuple[int, int]:
     left_margin == 0
     pixels_to_remove = (15 - 0 + 1) % 16 = 0
     """
-    pixels_to_remove = (right_margin - left_margin + 1) % UNET_IMAGE_DIMENSION_MULTIPLICITY
+    pixels_to_remove = (
+        right_margin - left_margin + 1
+    ) % UNET_IMAGE_DIMENSION_MULTIPLICITY
     pixels_to_remove_left = pixels_to_remove // 2
     pixels_to_remove_right = math.ceil(pixels_to_remove / 2)
 
@@ -73,7 +88,7 @@ def get_multiplicity_height(img_height):
 
 
 def interpolate(x1, y1, x2, y2, xhat):
-    a = (y2 - y1)/(x2 - x1)
+    a = (y2 - y1) / (x2 - x1)
     b = y1 - a * x1
 
     yhat = a * xhat + b
@@ -124,7 +139,9 @@ def adjust_and_shift_layer(shape, shift, img_width):
     elif new_points[0][0] == 0:
         pass
     else:
-        print("ERROR: The leftmost point is not negative or equal to 0; does not reach the left side of the image")
+        print(
+            "ERROR: The leftmost point is not negative or equal to 0; does not reach the left side of the image"
+        )
         exit(1)
 
     if outside_right_point != None:
@@ -136,10 +153,12 @@ def adjust_and_shift_layer(shape, shift, img_width):
         xhat = img_width - 1
         yhat = interpolate(x1, y1, x2, y2, xhat)
         new_points.append([img_width - 1, yhat])
-    elif new_points[-1][0] == img_width-1:
+    elif new_points[-1][0] == img_width - 1:
         pass
     else:
-        print("ERROR: The rightmost point is lower than width-1; it does not reach right side of the image")
+        print(
+            "ERROR: The rightmost point is lower than width-1; it does not reach right side of the image"
+        )
         exit(1)
 
     return new_points
@@ -158,7 +177,7 @@ def create_labelme_file(
     file = {}
     layer_names.insert(0, "background")
     img_data = utils.pil_to_data(img)
-    file['imageData'] = str(utils.img_data_to_img_b64(img_data), "utf-8")
+    file["imageData"] = str(utils.img_data_to_img_b64(img_data), "utf-8")
     file["imagePath"] = original_file_path
     file["version"] = "4.5.9"
     file["flags"] = {}
@@ -183,7 +202,7 @@ def create_labelme_file(
     # Lower polygon
     extra_points = layer_points
     extra_points.reverse()
-    polygon = [[0, img.height-1], [img.width-1, img.height-1]]
+    polygon = [[0, img.height - 1], [img.width - 1, img.height - 1]]
     polygon.extend(extra_points)
     shape = {}
     shape["points"] = polygon
@@ -199,7 +218,7 @@ def create_labelme_file(
     file["imageWidth"] = img.width
 
     if save_file:
-        with open(out_file_name, 'w') as outfile:
+        with open(out_file_name, "w") as outfile:
             json.dump(file, outfile)
 
     return file
@@ -210,7 +229,7 @@ def generate_image_label_labelme(
     img_path: Path,
     output_dir: Path,
     layer_names: List[str],
-    save_file: bool=True,
+    save_file: bool = True,
 ):
     if save_file and not os.path.isdir(output_dir):
         os.mkdir(output_dir)
@@ -220,7 +239,9 @@ def generate_image_label_labelme(
 
     img_layers = len(data["shapes"])
     if img_layers != len(layer_names):
-        log.warn(f"Labelme file {img_path} has unexpected {img_layers} layers. Skipping...")
+        log.warn(
+            f"Labelme file {img_path} has unexpected {img_layers} layers. Skipping..."
+        )
         return None, None, None, None
 
     layer_set = set()
@@ -235,21 +256,31 @@ def generate_image_label_labelme(
 
     top_to_bottom_layers = order_layers_from_top_to_bottom(data["shapes"])
 
-    left_margin, right_margin = get_vertical_margins(data["shapes"]) # (int, int)
+    left_margin, right_margin = get_vertical_margins(data["shapes"])  # (int, int)
     labeled_region_width = right_margin - left_margin
     if labeled_region_width < MIN_WIDTH_THRESHOLD:
-        warn_msg = " ".join((f"Labeled region of file {img_path} is {labeled_region_width}.",
-            f"Below minimum threshold: {MIN_WIDTH_THRESHOLD}. Skipping..."))
+        warn_msg = " ".join(
+            (
+                f"Labeled region of file {img_path} is {labeled_region_width}.",
+                f"Below minimum threshold: {MIN_WIDTH_THRESHOLD}. Skipping...",
+            )
+        )
         log.warn(warn_msg)
         return None, None, None, None
 
     multiplicty_height = get_multiplicity_height(data["imageHeight"])
     img = utils.img_b64_to_pil(data["imageData"])
 
-    if img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0 \
-        or img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0:
-        warn_msg = " ".join((f"Image dimensions need to be a multiple of 16",
-            f"Image: {img_path} is {img.width} by {img.height}. Skipping..."))
+    if (
+        img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0
+        or img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY != 0
+    ):
+        warn_msg = " ".join(
+            (
+                f"Image dimensions need to be a multiple of 16",
+                f"Image: {img_path} is {img.width} by {img.height}. Skipping...",
+            )
+        )
         log.warn(warn_msg)
         return None, None, None, None
 
@@ -258,8 +289,8 @@ def generate_image_label_labelme(
     # Since margins are 0-indexed we need to add 1 to the margin to get right width
     img = img.crop((left_margin, 0, right_margin + 1, multiplicty_height))
 
-    assert(img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY == 0)
-    assert(img.height % UNET_IMAGE_DIMENSION_MULTIPLICITY == 0)
+    assert img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY == 0
+    assert img.height % UNET_IMAGE_DIMENSION_MULTIPLICITY == 0
 
     # Create cropped/shifted labelme file
     output_img_path = output_dir / Path(img_path.stem + "_cropped.json")
@@ -275,10 +306,17 @@ def generate_image_label_labelme(
     )
 
     # Generate image segmentation map
-    segmentation_map_img = create_label_image(labelme_img_json, output_dir / Path(img_path.stem + "_label.json"), save_file)
+    segmentation_map_img = create_label_image(
+        labelme_img_json, output_dir / Path(img_path.stem + "_label.json"), save_file
+    )
 
     if save_file:
-        np.savetxt(output_dir / Path(img_path.stem + "_matrix.txt"), utils.pil_to_array(segmentation_map_img), fmt="%d", delimiter=",")
+        np.savetxt(
+            output_dir / Path(img_path.stem + "_matrix.txt"),
+            utils.pil_to_array(segmentation_map_img),
+            fmt="%d",
+            delimiter=",",
+        )
 
     # Generate boundaries out of the segmentation map image
     boundaries = generate_boundary(segmentation_map_img)
@@ -286,7 +324,7 @@ def generate_image_label_labelme(
     img = utils.pil_to_array(img)
     ndim = 3  # Make sure images images have dim: (height, width, num_channels)
     # Adds one (i.e. num_channel) dimension when img is 2D.
-    padded_shape = (img.shape + (1,)*ndim)[:ndim]
+    padded_shape = (img.shape + (1,) * ndim)[:ndim]
     img = img.reshape(padded_shape)
 
     segmentation_map_img = segmentation_map_img[..., np.newaxis]

@@ -2,11 +2,12 @@ import sys
 
 from pathlib import Path
 
+
 def parse_csv(file_name):
 
     file_path = Path(file_name)
 
-    with open (file_name, "r") as f:
+    with open(file_name, "r") as f:
         lines = f.readlines()
 
         with open(str(file_path.parent) + "/001.csv", "w") as f1:

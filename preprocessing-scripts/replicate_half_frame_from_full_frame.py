@@ -32,17 +32,14 @@ if __name__ == "__main__":
 
     dataset = h5py.File(dataset_path, "r")
     image_paths = [
-        Path(str(x, "ascii"))
-        for x in dataset.get(partition + "_images_source")
+        Path(str(x, "ascii")) for x in dataset.get(partition + "_images_source")
     ]
 
     for image in image_paths:
         left_tiff_filename = Path(half_frame_input_dir) / Path(
             image.stem + "_left.tiff"
         )
-        left_csv_filename = Path(half_frame_input_dir) / Path(
-            image.stem + "_left.csv"
-        )
+        left_csv_filename = Path(half_frame_input_dir) / Path(image.stem + "_left.csv")
         right_tiff_filename = Path(half_frame_input_dir) / Path(
             image.stem + "_right.tiff"
         )

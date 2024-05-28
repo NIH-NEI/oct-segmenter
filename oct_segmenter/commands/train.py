@@ -56,12 +56,8 @@ def train(args):
         with open(args.config, "r") as f:
             config_data = json.load(f)
             batch_size = config_data.get("batch_size", DEFAULT_BATCH_SIZE)
-            class_weight = config_data.get(
-                "class_weight", DEFAULT_CLASS_WEIGHT
-            )
-            early_stopping = config_data.get(
-                "early_stopping", DEFAULT_EARLY_STOPPING
-            )
+            class_weight = config_data.get("class_weight", DEFAULT_CLASS_WEIGHT)
+            early_stopping = config_data.get("early_stopping", DEFAULT_EARLY_STOPPING)
             loss = config_data.get("loss", DEFAULT_LOSS)
             loss_fn_kwargs = config_data.get(
                 "loss_arguments",
@@ -81,8 +77,7 @@ def train(args):
                 augmentations = config_data.get("augmentations")
 
             augment_validation = config_data.get(
-                "augment_validation",
-                DEFAULT_AUGMENT_VALIDATION
+                "augment_validation", DEFAULT_AUGMENT_VALIDATION
             )
             mlflow_experiment_name = config_data.get(
                 "experiment", DEFAULT_MLFLOW_EXPERIMENT_NAME
@@ -102,9 +97,7 @@ def train(args):
             )
 
     log.info(f"Training Parameter: Model Architecture: {model_architecture}")
-    log.info(
-        f"Training Parameter: Model Hyperparameters: {model_hyperparameters}"
-    )
+    log.info(f"Training Parameter: Model Hyperparameters: {model_hyperparameters}")
     log.info(f"Training Parameter: Early Stopping: {early_stopping}")
     log.info(f"Training Parameter: Loss: {loss}")
     log.info(f"Training Parameter: Loss Function Arguments: {loss_fn_kwargs}")
@@ -116,9 +109,7 @@ def train(args):
     log.info(f"Training Parameter: Augmentations: {augmentations}")
     log.info(f"Training Parameter: Augment Validation: {augment_validation}")
     log.info(f"Training Parameter: Patience: {patience}")
-    log.info(
-        f"Training Parameter: Restore Best Weights: {restore_best_weights}"
-    )
+    log.info(f"Training Parameter: Restore Best Weights: {restore_best_weights}")
     log.info(f"MLFlow Tracking URI: {mlflow_tracking_uri}")
     log.info(f"MLFlow Experiment Name: {mlflow_experiment_name}")
 

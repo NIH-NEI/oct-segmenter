@@ -67,24 +67,13 @@ if __name__ == "__main__":
 
         for root, _, files in os.walk(input_dir):
             for filename in files:
-                if filename.lower().endswith(
-                    ".tiff"
-                ) and not filename.startswith("."):
+                if filename.lower().endswith(".tiff") and not filename.startswith("."):
                     img = Image.open(Path(root) / Path(filename), "r")
-                    cropped_img = img.crop(
-                        (0, top_margin, img.width, bottom_margin)
-                    )
-                    assert (
-                        cropped_img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY
-                        == 0
-                    )
+                    cropped_img = img.crop((0, top_margin, img.width, bottom_margin))
+                    assert cropped_img.width % UNET_IMAGE_DIMENSION_MULTIPLICITY == 0
                     cropped_img.save(Path(output_dir) / Path(filename))
-                if filename.lower().endswith(
-                    ".csv"
-                ) and not filename.startswith("."):
-                    arr = np.loadtxt(
-                        Path(root) / Path(filename), delimiter=","
-                    )
+                if filename.lower().endswith(".csv") and not filename.startswith("."):
+                    arr = np.loadtxt(Path(root) / Path(filename), delimiter=",")
                     arr = arr[top_margin:bottom_margin, :]
                     np.savetxt(
                         Path(output_dir) / Path(filename),

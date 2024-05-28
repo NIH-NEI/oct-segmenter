@@ -29,10 +29,7 @@ def generate_image_label_mask(
         for line in f.readlines():
             try:
                 mask.append(
-                    [
-                        int(x)
-                        for x in line.replace(" ", "").rstrip("\n").split(",")
-                    ]
+                    [int(x) for x in line.replace(" ", "").rstrip("\n").split(",")]
                 )
             except ValueError:
                 log.error(
@@ -82,9 +79,7 @@ def generate_image_label_mask(
 
     if save_file:
         utils.lblsave(output_dir + "/" + image_path.stem + "_label.png", mask)
-        np.savetxt(
-            output_dir + "/" + image_path.stem + "_matrix.txt", mask, fmt="%d"
-        )
+        np.savetxt(output_dir + "/" + image_path.stem + "_matrix.txt", mask, fmt="%d")
         np.savetxt(
             output_dir + "/" + image_path.stem + "_segs.csv",
             segs,
@@ -95,7 +90,7 @@ def generate_image_label_mask(
     img = utils.pil_to_array(img)
     ndim = 3  # Make sure images images have dim: (height, width, num_channels)
     # Adds one (i.e. num_channel) dimension when img is 2D.
-    padded_shape = (img.shape + (1,)*ndim)[:ndim]
+    padded_shape = (img.shape + (1,) * ndim)[:ndim]
     img = img.reshape(padded_shape)
     mask = mask[..., np.newaxis]
 

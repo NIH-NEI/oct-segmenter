@@ -6,7 +6,9 @@ import numpy as np
 from pathlib import Path
 from PIL import Image
 
-from oct_segmenter.postprocessing.postprocessing import create_labelme_file_from_boundaries
+from oct_segmenter.postprocessing.postprocessing import (
+    create_labelme_file_from_boundaries,
+)
 
 
 def label(args):
@@ -26,10 +28,14 @@ def label(args):
 
         for subdir, _, files in os.walk(args.input_dir):
             for file in files:
-                if (file.endswith(".tiff") or file.endswith(".TIFF")) and not file.startswith("."):
+                if (
+                    file.endswith(".tiff") or file.endswith(".TIFF")
+                ) and not file.startswith("."):
                     input_paths.append(Path(os.path.join(subdir, file)))
     else:
-        print("oct-segmenter: No input image file or directory were provided. Exiting...")
+        print(
+            "oct-segmenter: No input image file or directory were provided. Exiting..."
+        )
         exit(1)
 
     root_output_dir = Path(args.output_dir)
@@ -46,11 +52,15 @@ def label(args):
 
         img_arr = np.array(Image.open(input_path))
         boundaries = np.genfromtxt(boundaries_path, delimiter=",")
-            
-        labelme_data = create_labelme_file_from_boundaries(img_arr, input_path, boundaries)
+
+        labelme_data = create_labelme_file_from_boundaries(
+            img_arr, input_path, boundaries
+        )
         if labelme_data:
             output_dir = root_output_dir / input_path.parent.relative_to(input_dir)
             with open(output_dir / Path(input_path.stem + ".json"), "w") as file:
                 json.dump(labelme_data, file)
         else:
-            log.warn(f"Encountered error when processing image: {input_path}. Skipping...")
+            log.warn(
+                f"Encountered error when processing image: {input_path}. Skipping..."
+            )

@@ -45,9 +45,13 @@ def create_label_image(labelme_img_json, output_name, save_file=True) -> np.arra
     # We apply the convention that the top layer is labeled as 0 and increase downwards.
     # This is done for consistency across images, so that get_boundaries() works, and because
     # it is the convention used by the unet repo
-    num_classes = np.max(label_arr) # Get max value
-    _, idx = np.unique(label_arr[:,0], return_index=True) # Gets the row indices of the first occurences of each class in the first column
-    index_list = label_arr[np.sort(idx),0] # index_list lists the classes as they appear in the array from top to bottom
+    num_classes = np.max(label_arr)  # Get max value
+    _, idx = np.unique(
+        label_arr[:, 0], return_index=True
+    )  # Gets the row indices of the first occurences of each class in the first column
+    index_list = label_arr[
+        np.sort(idx), 0
+    ]  # index_list lists the classes as they appear in the array from top to bottom
 
     # Mapping dictionary
     index_dict = {}
