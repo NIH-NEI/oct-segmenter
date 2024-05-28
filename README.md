@@ -68,12 +68,12 @@ the wheels:
 pip install \
     --trusted-host pypi.org \
     --trusted-host files.pythonhosted.org \
-    ./oct-image-segmentation-models-mod/dist/oct_image_segmentation_models-0.8.0-py2.py3-none-any.whl
+    ./oct-image-segmentation-models-mod/dist/oct_image_segmentation_models-0.8.0-py3-none-any.whl
 
 pip install \
     --trusted-host pypi.org \
     --trusted-host files.pythonhosted.org \
-    ./dist/oct_segmenter-0.8.0-py2.py3-none-any.whl
+    ./dist/oct_segmenter-0.8.0-py3-none-any.whl
 ```
 
 ## Building Docker Locally

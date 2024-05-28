@@ -1,8 +1,10 @@
+from pathlib import Path
+import configparser
+import importlib.metadata
 import os
 
-import configparser
-from pathlib import Path
 from prettytable import PrettyTable
+
 
 __appname__ = "octsegmenter"
 
@@ -11,6 +13,7 @@ __appname__ = "octsegmenter"
 # 2. MINOR version when you add functionality in a backwards-compatible manner;
 # 3. PATCH version when you make backwards-compatible bug fixes.
 __version__ = "0.8.0"
+# __version__ = importlib.metadata.version("oct-segmenter")
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 

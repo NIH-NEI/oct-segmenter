@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oct-segmenter"
+version = "0.8.0"
+description = "A CLI tool to segment OCT images"
+readme = "README.md"
+requires-python = ">=3.8.10"
+license = {file = "LICENSE.md"}
+keywords = ["Image Segmentation", "Machine Learning"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.8.10",
+]
+authors = [
+  {name = "Bruno Alvisio"},
+  {name = "Jacob Czech", email = "jacob@bioteam.net"},
+  {name = "Wisdom Akpan", email = "wisdom@bioteam.net"},
+]
+dependencies = [
+    "art",
+    "imgviz",
+    "oct_image_segmentation_models==0.8.0",
+    "pillow==9.0.1",
+    "prettytable",
+    "typeguard",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23",
+    "pre-commit>=3",
+    "build",
+]
+
+[project.urls]
+homepage = "https://www.bioteam.net"
+repository = "https://github.com/NIH-NEI/oct-segmenter"
+
+[project.scripts]
+oct-segmenter = "oct_segmenter.__main__:main"
+
+[tool.setuptools.packages]
+find = {}
