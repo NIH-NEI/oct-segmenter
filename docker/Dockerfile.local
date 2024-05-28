@@ -12,11 +12,6 @@ RUN apt-key del 7fa2af80 && \
 RUN python -m pip install --upgrade pip
 RUN apt-get install -y git vim
 
-# Surface-distance package (https://github.com/deepmind/surface-distance)
-# is not in PyPI
-RUN git clone https://github.com/deepmind/surface-distance.git && \
-    pip install surface-distance/
-
 COPY ./oct-image-segmentation-models-mod/dist/oct_image_segmentation_models-0.8.0-py3-none-any.whl /oct-segmenter-dist/
 COPY ./dist/oct_segmenter-0.8.0-py3-none-any.whl /oct-segmenter-dist/
 RUN pip install /oct-segmenter-dist/*.whl

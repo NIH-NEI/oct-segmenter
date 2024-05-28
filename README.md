@@ -29,6 +29,15 @@ conda create --name oct-segmenter-env python=3.10
 conda activate oct-segmenter-env
 ```
 
+If you are going to be commiting code back to this repo, be sure to install pre-commit:
+
+```bash
+pre-commit install
+cd oct-image-segmentation-models-mod
+pre-commit install
+cd ..
+```
+
 ## Installation
 
 ### Creating Python Wheels
@@ -37,9 +46,10 @@ From the root of the project directory, run the following commands to create
 the Python wheels:
 
 ```bash
-pip install wheel
-./build.sh
+pip install '.[dev]'
 cd oct-image-segmentation-models-mod
+./build.sh
+cd ..
 ./build.sh
 ```
 
@@ -49,17 +59,6 @@ This will create two wheel files:
 - `oct-image-segmentation-models-mod/dist/oct_image_segmentation_models-0.8.0-py2.py3-none-any.whl`
 
 ### Installing The Oct-Segmenter
-
-From the root of the project directory, install the
-[Surface-Distance-Based-Measures](https://github.com/deepmind/surface-distance)
-package. The `oct-segmenter` uses a library which at the time of this writing
-is not published as Python package. To install it:
-
-```bash
-cd ..
-git clone https://github.com/deepmind/surface-distance.git
-pip install surface-distance/
-```
 
 From the root of the project directory, run the following commands to install
 the wheels:
