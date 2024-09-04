@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oct-segmenter"
-version = "0.8.0"
+version = "0.8.2"
 description = "A CLI tool to segment OCT images"
 readme = "README.md"
-requires-python = ">=3.8.10"
+requires-python = ">=3.10"
 license = {file = "LICENSE.md"}
 keywords = ["Image Segmentation", "Machine Learning"]
 classifiers = [
@@ -25,10 +25,11 @@ authors = [
 dependencies = [
     "art",
     "imgviz",
-    "oct_image_segmentation_models==0.8.0",
+    # "oct_image_segmentation_models==0.8.2",
     "pillow==9.0.1",
     "prettytable",
     "typeguard",
+    "setuptools==70",
 ]
 
 [project.optional-dependencies]
