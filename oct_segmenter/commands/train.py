@@ -144,7 +144,7 @@ def train(args):
         log.error(f"Error creating Training Parameters: {e}")
         exit(1)
 
-    mlflow_params = MLflowParameters(
+    mlflow_params = None if not mlflow_tracking_uri else MLflowParameters(
         mlflow_tracking_uri,
         username=mlflow_tracking_username,
         password=mlflow_tracking_password,
