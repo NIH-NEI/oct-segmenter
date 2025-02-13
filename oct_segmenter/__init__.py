@@ -12,7 +12,7 @@ __appname__ = "octsegmenter"
 # 1. MAJOR version when you make incompatible API changes;
 # 2. MINOR version when you add functionality in a backwards-compatible manner;
 # 3. PATCH version when you make backwards-compatible bug fixes.
-__version__ = "0.8.2"
+__version__ = "0.8.3"
 # __version__ = importlib.metadata.version("oct-segmenter")
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
