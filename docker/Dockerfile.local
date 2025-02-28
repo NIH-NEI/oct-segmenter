@@ -12,8 +12,8 @@ RUN apt-key del 7fa2af80 && \
 RUN python -m pip install --upgrade pip
 RUN apt-get install -y git vim
 
-COPY ./oct-image-segmentation-models-mod/dist/oct_image_segmentation_models-0.8.3-py3-none-any.whl /oct-segmenter-dist/
-COPY ./dist/oct_segmenter-0.8.3-py3-none-any.whl /oct-segmenter-dist/
+COPY ./oct-image-segmentation-models-mod/dist/oct_image_segmentation_models-0.8.4-py3-none-any.whl /oct-segmenter-dist/
+COPY ./dist/oct_segmenter-0.8.4-py3-none-any.whl /oct-segmenter-dist/
 RUN pip install /oct-segmenter-dist/*.whl
 
 # We set $HOME to a writable location to write config files.
