@@ -10,12 +10,10 @@ LABEL org.opencontainers.image.source=https://github.com/NIH-NEI/oct-segmenter
 #     apt-get update
 
 RUN python -m pip install --upgrade pip
-RUN apt-get install -y git
 
 # Surface-distance package (https://github.com/deepmind/surface-distance)
 # is not in PyPI
-RUN git clone https://github.com/deepmind/surface-distance.git && \
-    pip install surface-distance/
+RUN pip install git+https://github.com/deepmind/surface-distance.git
 
 COPY *.whl /oct-segmenter-dist/
 RUN pip install /oct-segmenter-dist/*.whl
