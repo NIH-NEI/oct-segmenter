@@ -10,7 +10,7 @@ LABEL org.opencontainers.image.source=https://github.com/NIH-NEI/oct-segmenter
 #     apt-get update
 
 RUN python -m pip install --upgrade pip
-RUN apt-get install -y git vim
+RUN apt-get install -y git
 
 # Surface-distance package (https://github.com/deepmind/surface-distance)
 # is not in PyPI
