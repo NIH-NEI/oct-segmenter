@@ -11,6 +11,7 @@ LABEL org.opencontainers.image.source=https://github.com/NIH-NEI/oct-segmenter
 
 RUN sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
 
+RUN apt-get update -y
 RUN apt-get install -y git
 
 RUN python -m pip install --upgrade pip
