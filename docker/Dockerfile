@@ -9,6 +9,10 @@ LABEL org.opencontainers.image.source=https://github.com/NIH-NEI/oct-segmenter
 #     apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64/7fa2af80.pub && \
 #     apt-get update
 
+RUN sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+
+RUN apt-get install -y git
+
 RUN python -m pip install --upgrade pip
 
 # Surface-distance package (https://github.com/deepmind/surface-distance)
