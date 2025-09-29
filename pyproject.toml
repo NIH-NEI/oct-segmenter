@@ -29,7 +29,7 @@ dependencies = [
     "pillow==9.0.1",
     "prettytable",
     "typeguard",
-    "setuptools==70",
+    "setuptools==78.1.1",
 ]
 
 [project.optional-dependencies]
