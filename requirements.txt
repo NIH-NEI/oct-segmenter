@@ -27,7 +27,7 @@ opt-einsum
 packaging
 Pillow
 prettytable
-protobuf==3.19.0
+protobuf==4.25.8
 pyasn1
 pyasn1-modules
 pyparsing
