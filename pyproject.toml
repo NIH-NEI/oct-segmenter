@@ -26,7 +26,7 @@ dependencies = [
     "art",
     "imgviz",
     # "oct_image_segmentation_models==0.8.2",
-    "pillow==9.0.1",
+    "pillow==12.2.0",
     "prettytable",
     "typeguard",
     "setuptools==70",
